@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "879358697403",
+    "firebase_url": "https://aelf-marketmaker.firebaseio.com",
+    "project_id": "aelf-marketmaker",
+    "storage_bucket": "aelf-marketmaker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:879358697403:android:029e1a76b98b810495ee9e",
+        "android_client_info": {
+          "package_name": "com.aelf.aelfmarketmaker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "879358697403-0gcot4jtb4a1803jj2imdpo024vusrpu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5CPPqCMeGPq4Hkwm77wxo6y-KG-HyBFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "879358697403-0gcot4jtb4a1803jj2imdpo024vusrpu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

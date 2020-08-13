@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>879358697403-715q2ihigdlg5eb1p8h6vidb6ntrs4pq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.879358697403-715q2ihigdlg5eb1p8h6vidb6ntrs4pq</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAiDSfRy0LwcecLOH-QLMPMD9DaOzgagWU</string>
+	<key>GCM_SENDER_ID</key>
+	<string>879358697403</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.aelf.aelfMarketMaker</string>
+	<key>PROJECT_ID</key>
+	<string>aelf-marketmaker</string>
+	<key>STORAGE_BUCKET</key>
+	<string>aelf-marketmaker.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:879358697403:ios:8c3fa6c60e38d98195ee9e</string>
+	<key>DATABASE_URL</key>
+	<string>https://aelf-marketmaker.firebaseio.com</string>
+</dict>
+</plist>
