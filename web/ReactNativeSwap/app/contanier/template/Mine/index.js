@@ -83,14 +83,16 @@ const Tool = () => {
               />
               <TextL>{i18n.t('mineModule.transfer')}</TextL>
             </Touchable>
-            {/* <Touchable style={styles.toolItem}>
+            <Touchable
+              onPress={() => navigationService.navigate('MyLiquidity')}
+              style={styles.toolItem}>
               <FontAwesome5
-                name="plus-circle"
+                name="exchange-alt"
                 size={30}
                 color={Colors.primaryColor}
               />
-              <TextL>{i18n.t('mineModule.exchange')}</TextL>
-            </Touchable> */}
+              <TextL>{'Liquidity'}</TextL>
+            </Touchable>
           </View>
           {List.map((item, index) => (
             <ListItem key={index} {...item} />

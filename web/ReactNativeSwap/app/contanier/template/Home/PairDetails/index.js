@@ -9,6 +9,8 @@ import {
 } from '../../../../components/template';
 import {TextL, TextM, TextS} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
+import {bottomBarHeigth} from '../../../../utils/common/device';
+import navigationService from '../../../../utils/common/navigationService';
 let isActive = true;
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
@@ -69,14 +71,14 @@ const PairDetails = () => {
         />
         <ListItem
           style={styles.preBox}
-          title={'ELF per AEETH'}
-          subtitle="1,275,362 AEETH ($ 125.24)"
+          title={'ELF'}
+          subtitle="1,275,362 ELF/AEETH ($ 125.24)"
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
         <ListItem
-          title={'AEETH per ELF'}
-          subtitle="1,275,362 ELF ($ 125.24)"
+          title={'AEETH'}
+          subtitle="1,275,362 AEETH/ELF ($ 125.24)"
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
@@ -126,8 +128,26 @@ const PairDetails = () => {
         stickyHead={stickyHead}
         renderItem={renderItem}
         ref={list}
-        showFooter={!loadCompleted}
+        showFooter
+        allLoadedTips=" "
+        listFooterHight={pTd(90)}
       />
+      <View style={styles.bottomBox}>
+        <Touchable
+          onPress={() => navigationService.navigate('Swap')}
+          style={[
+            styles.toolBarItem,
+            styles.bottomItem,
+            {backgroundColor: Colors.primaryColor},
+          ]}>
+          <TextL style={styles.whiteColor}>Swap</TextL>
+        </Touchable>
+        <Touchable
+          onPress={() => navigationService.navigate('AddLiquidity')}
+          style={[styles.toolBarItem, styles.bottomItem]}>
+          <TextL style={{color: Colors.primaryColor}}>Add Liquidity</TextL>
+        </Touchable>
+      </View>
     </View>
   );
 };
@@ -181,5 +201,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     borderBottomWidth: 1,
     borderBottomColor: Colors.borderColor,
+  },
+  bottomBox: {
+    flexDirection: 'row',
+    paddingHorizontal: pTd(30),
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    paddingTop: pTd(30),
+    paddingBottom: bottomBarHeigth || pTd(30),
+    backgroundColor: 'white',
+    borderTopWidth: 2,
+    borderTopColor: Colors.borderColor,
+  },
+  bottomItem: {
+    borderRadius: pTd(15),
+    marginHorizontal: pTd(15),
   },
 });

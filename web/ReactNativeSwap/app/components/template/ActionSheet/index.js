@@ -4,8 +4,12 @@
 
 import React from 'react';
 import OverlayModal from '../OverlayModal';
-import {View, Text, StyleSheet} from 'react-native';
-import {bottomBarHeigth, statusBarHeight} from '../../../utils/common/device';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {
+  bottomBarHeigth,
+  statusBarHeight,
+  getWindowWidth,
+} from '../../../utils/common/device';
 import Touchable from '../Touchable';
 import {Colors} from '../../../assets/theme';
 /**
@@ -16,23 +20,25 @@ import {Colors} from '../../../assets/theme';
 const show = (items, cancelItem) => {
   OverlayModal.show(
     <>
-      <View style={styles.sheetBox}>
-        {items &&
-          items.map((item, index) => {
-            const {title, onPress} = item;
-            return (
-              <Touchable
-                key={index}
-                style={styles.itemBox}
-                onPress={() => {
-                  OverlayModal.hide();
-                  onPress && onPress(item);
-                }}>
-                <Text style={styles.itemText}>{title}</Text>
-              </Touchable>
-            );
-          })}
-      </View>
+      <ScrollView>
+        <View style={styles.sheetBox}>
+          {items &&
+            items.map((item, index) => {
+              const {title, onPress} = item;
+              return (
+                <Touchable
+                  key={index}
+                  style={styles.itemBox}
+                  onPress={() => {
+                    OverlayModal.hide();
+                    onPress && onPress(item);
+                  }}>
+                  <Text style={styles.itemText}>{title}</Text>
+                </Touchable>
+              );
+            })}
+        </View>
+      </ScrollView>
       {cancelItem && (
         <Touchable onPress={() => OverlayModal.hide()} style={styles.cancelBox}>
           <Text style={styles.concelText}>{cancelItem.title}</Text>
@@ -100,6 +106,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column-reverse',
   },
   containerStyle: {
+    marginTop: getWindowWidth() * 0.4,
     paddingHorizontal: 20,
     marginBottom: bottomBarHeigth + 50,
   },

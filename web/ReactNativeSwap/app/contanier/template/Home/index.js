@@ -60,6 +60,7 @@ const Home = () => {
         title={'Pair'}
         subtitle="Liquidity"
         rightElement={null}
+        disabled
       />
       <ListComponent
         ref={list}

@@ -3,6 +3,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../template/Home';
 import MineScreen from '../template/Mine';
+import TransactionScreen from '../template/Transaction';
 import {pixelSize} from '../../utils/common/device';
 import i18n from 'i18n-js';
 import {Colors} from '../../assets/theme';
@@ -80,6 +81,15 @@ const TabNavigatorStack = () => {
         options={{
           tabBarLabel: i18n.t('home'),
           tabBarIcon: ({color}) => <Icon name="home" size={20} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="TransactionScreen"
+        component={TransactionScreen}
+        listeners={listeners}
+        options={{
+          tabBarLabel: 'Transaction',
+          tabBarIcon: ({color}) => <Icon name="swap" size={20} color={color} />,
         }}
       />
       <Tab.Screen

@@ -42,10 +42,10 @@ const ListItem = props => {
         name={'right'}
         size={pTd(40)}
         style={styles.iconStyle}
-        color={Colors.fontGray}
+        color={subtitleStyle?.color || Colors.fontGray}
       />
     );
-  }, [onValueChange, switching, value]);
+  }, [onValueChange, subtitleStyle, switching, value]);
   return (
     <Touchable
       disabled={disabled}
@@ -83,7 +83,7 @@ export default memo(ListItem);
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    minHeight: pTd(110),
+    minHeight: pTd(100),
     paddingVertical: pTd(30),
     backgroundColor: 'white',
     borderBottomWidth: 1,

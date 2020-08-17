@@ -15,6 +15,7 @@ import HomeNav from '../template/Home/stackNav';
 import LoginNav from '../template/Login/stackNav';
 import MineNav from '../template/Mine/stackNav';
 import TermsNav from '../template/Terms/stackNav';
+import TransactionNav from '../template/Transaction/stackNav';
 const Stack = createStackNavigator();
 
 const stackNav = [
@@ -31,6 +32,7 @@ const stackNav = [
   ...TermsNav,
   ...LoginNav,
   ...MineNav,
+  ...TransactionNav,
 ];
 const NavigationMain = () => (
   <NavigationContainer ref={navigationService.setTopLevelNavigator}>

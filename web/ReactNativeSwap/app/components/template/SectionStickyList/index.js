@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
-  ViewPropTypes,
   View,
   SectionList,
   RefreshControl,
@@ -11,13 +10,11 @@ import {
 } from 'react-native';
 import Touchable from '../Touchable';
 import {Colors} from '../../../assets/theme';
-import {sreenHeight, statusBarHeight} from '../../../utils/common/device';
-import {pTd} from '../../../utils/common';
 export default class SectionStickyList extends Component {
   //renderItem
   static propTypes = {
     onRefresh: PropTypes.func, //callback for pull-down refresh
-    renderHeader: PropTypes.func, //Head element above the ceiling
+    renderHeader: PropTypes.element, //Head element above the ceiling
     stickyHead: PropTypes.func, //Ceiling element
     data: PropTypes.array, //Data source array
     onLoading: PropTypes.func, //Pull up loading callback
@@ -53,27 +50,33 @@ export default class SectionStickyList extends Component {
   }
   ListFooterComponent = _ => {
     const {bottomLoad} = this.state;
-    const {loadCompleted, allLoadedTips, data, bottomLoadTip} = this.props;
+    const {
+      loadCompleted,
+      allLoadedTips,
+      data,
+      bottomLoadTip,
+      listFooterHight,
+    } = this.props;
     let FirstComponent = null,
       SecondComponent = null;
-    if (Array.isArray(data) && data.length < 5) {
-      let height = sreenHeight - statusBarHeight - pTd(88);
-      switch (data.length) {
-        case 1:
-          height = (height * 4) / 5;
-          break;
-        case 2:
-          height = (height * 3) / 5;
-          break;
-        case 3:
-          height = (height * 2) / 5;
-          break;
-        case 4:
-          height = (height * 1) / 5;
-          break;
-        default:
-          break;
-      }
+    if (listFooterHight) {
+      let height = listFooterHight;
+      // switch (data.length) {
+      //   case 1:
+      //     height = (height * 4) / 5;
+      //     break;
+      //   case 2:
+      //     height = (height * 3) / 5;
+      //     break;
+      //   case 3:
+      //     height = (height * 2) / 5;
+      //     break;
+      //   case 4:
+      //     height = (height * 1) / 5;
+      //     break;
+      //   default:
+      //     break;
+      // }
       SecondComponent = <View style={{height: height}} />;
     }
     if (loadCompleted) {

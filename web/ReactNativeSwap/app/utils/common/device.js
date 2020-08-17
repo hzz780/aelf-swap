@@ -36,6 +36,9 @@ const bottomBarHeigth = (function() {
   }
   return Height;
 })();
+const getWindowWidth = () => {
+  return Dimensions.get('window').width;
+};
 export {
   isIos,
   sreenWidth,
@@ -45,4 +48,5 @@ export {
   windowHeight,
   statusBarHeight,
   bottomBarHeigth,
+  getWindowWidth,
 };
