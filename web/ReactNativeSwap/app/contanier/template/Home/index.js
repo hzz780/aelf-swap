@@ -2,18 +2,14 @@ import i18n from 'i18n-js';
 import React, {memo, useRef, useCallback, useState} from 'react';
 import {
   CommonHeader,
-  CommonButton,
   ListComponent,
-  Touchable,
   ListItem,
 } from '../../../components/template';
-import {ScrollView, View, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {useStateToProps} from '../../../utils/pages/hooks';
 import {GStyle, Colors} from '../../../assets/theme';
-import {TextM, TextL} from '../../../components/template/CommonText';
 import {pTd} from '../../../utils/common';
 import navigationService from '../../../utils/common/navigationService';
-import {color} from 'react-native-reanimated';
 let isActive = true;
 const Home = () => {
   const list = useRef();
