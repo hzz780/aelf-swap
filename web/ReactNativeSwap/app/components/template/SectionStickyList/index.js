@@ -53,7 +53,6 @@ export default class SectionStickyList extends Component {
     const {
       loadCompleted,
       allLoadedTips,
-      data,
       bottomLoadTip,
       listFooterHight,
     } = this.props;

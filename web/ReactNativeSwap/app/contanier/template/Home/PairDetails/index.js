@@ -121,7 +121,7 @@ const PairDetails = () => {
       <CommonHeader title="ELF-AEETH Pair" canBack />
       <SectionStickyList
         data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
-        loadCompleted={true}
+        loadCompleted={loadCompleted}
         upPullRefresh={upPullRefresh}
         onEndReached={onEndReached}
         renderHeader={renderHeader}
