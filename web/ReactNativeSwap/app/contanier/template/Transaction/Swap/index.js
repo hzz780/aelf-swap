@@ -97,7 +97,6 @@ const Swap = () => {
         </View>
       </View>
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language]);
   const SwapItem = useMemo(() => {
     return (
