@@ -79,7 +79,7 @@ const TabNavigatorStack = () => {
         name="HomePage"
         component={HomeScreen}
         options={{
-          tabBarLabel: i18n.t('home'),
+          tabBarLabel: i18n.t('swap.market'),
           tabBarIcon: ({color}) => <Icon name="home" size={20} color={color} />,
         }}
       />
@@ -88,7 +88,7 @@ const TabNavigatorStack = () => {
         component={TransactionScreen}
         listeners={listeners}
         options={{
-          tabBarLabel: 'Transaction',
+          tabBarLabel: i18n.t('swap.transaction'),
           tabBarIcon: ({color}) => <Icon name="swap" size={20} color={color} />,
         }}
       />

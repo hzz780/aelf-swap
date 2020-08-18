@@ -11,6 +11,7 @@ import {GStyle, Colors} from '../../../assets/theme';
 import {pTd} from '../../../utils/common';
 import navigationService from '../../../utils/common/navigationService';
 let isActive = true;
+
 const Home = () => {
   const list = useRef();
   const [loadCompleted, setLoadCompleted] = useState(true);
@@ -48,13 +49,13 @@ const Home = () => {
   }, []);
   return (
     <View style={GStyle.container}>
-      <CommonHeader title={'Market'} />
+      <CommonHeader title={i18n.t('swap.market')} />
       <ListItem
         style={styles.topBox}
         titleStyle={styles.topTitle}
         subtitleStyle={styles.topSubtitle}
-        title={'Pair'}
-        subtitle="Liquidity"
+        title={i18n.t('swap.pair')}
+        subtitle={i18n.t('swap.liquidity')}
         rightElement={null}
         disabled
       />

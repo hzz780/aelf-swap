@@ -1,5 +1,5 @@
 import React, {memo, useMemo, useCallback, useRef, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, LayoutAnimation} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
 import {
   CommonHeader,
@@ -11,10 +11,15 @@ import {TextL, TextM, TextS} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
 import {bottomBarHeigth} from '../../../../utils/common/device';
 import navigationService from '../../../../utils/common/navigationService';
+import i18n from 'i18n-js';
 let isActive = true;
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
-  const toolList = ['Swaps', 'Adds', 'Removes'];
+  const toolList = [
+    i18n.t('swap.swaps'),
+    i18n.t('swap.adds'),
+    i18n.t('swap.removes'),
+  ];
   return (
     <>
       <View style={styles.toolBarBox}>
@@ -22,7 +27,10 @@ const ToolBar = memo(props => {
           const current = j === index;
           return (
             <Touchable
-              onPress={() => setIndex(j)}
+              onPress={() => {
+                LayoutAnimation.easeInEaseOut();
+                setIndex(j);
+              }}
               key={j}
               style={[
                 styles.toolBarItem,
@@ -41,28 +49,31 @@ const ToolBar = memo(props => {
 });
 const PairDetails = () => {
   const [index, setIndex] = useState(0);
+  const [data, setData] = useState([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
   const [loadCompleted, setLoadCompleted] = useState(true);
   const list = useRef();
   const renderHeader = useMemo(() => {
     return (
       <View>
         <View style={styles.overviewBox}>
-          <TextL style={{color: Colors.primaryColor}}>Overview</TextL>
+          <TextL style={{color: Colors.primaryColor}}>
+            {i18n.t('swap.overview')}
+          </TextL>
         </View>
         <ListItem
-          title={'Liquidity'}
+          title={i18n.t('swap.liquidity')}
           subtitle="$ 234,123"
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
         <ListItem
-          title={'Fee (24h)'}
+          title={`${i18n.t('swap.fee')}(24h)`}
           subtitle="$ 234,123"
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
         <ListItem
-          title={'Pooled Tokens'}
+          title={i18n.t('swap.pooledTokens')}
           subtitle="1,275,362 ELF"
           subtitleDetails="1,873 AEETH"
           rightElement={null}
@@ -83,25 +94,50 @@ const PairDetails = () => {
           subtitleStyle={styles.subtitleStyle}
         />
         <View style={styles.overviewBox}>
-          <TextL style={{color: Colors.primaryColor}}>Transactions</TextL>
+          <TextL style={{color: Colors.primaryColor}}>
+            {i18n.t('swap.transactions')}
+          </TextL>
         </View>
       </View>
     );
   }, []);
   const stickyHead = useCallback(() => {
-    return <ToolBar setIndex={setIndex} index={index} />;
+    return (
+      <ToolBar
+        setIndex={i => {
+          if (i === 1) {
+            setData([]);
+          } else {
+            setData([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+          }
+          setIndex(i);
+        }}
+        index={index}
+      />
+    );
   }, [index]);
   const renderItem = useCallback(() => {
+    let leftTitle = i18n.t('swap.swap'),
+      rigthTitle = i18n.t('swap.for');
+    if (index === 1) {
+      leftTitle = i18n.t('swap.add');
+      rigthTitle = i18n.t('swap.and');
+    } else if (index === 2) {
+      leftTitle = i18n.t('swap.remove');
+      rigthTitle = i18n.t('swap.and');
+    }
     return (
       <View style={styles.itemBox}>
         <TextM style={{color: Colors.fontGray}}>
-          Swap <TextL style={{color: Colors.fontBlack}}>10.1234 ELF</TextL> for{' '}
+          {leftTitle}{' '}
+          <TextL style={{color: Colors.fontBlack}}>10.1234 ELF</TextL>{' '}
+          {rigthTitle}{' '}
           <TextL style={{color: Colors.fontBlack}}>1.2345 AEETH</TextL>
         </TextM>
         <TextS style={styles.timeStyle}>2020.08.15 12:30:00</TextS>
       </View>
     );
-  }, []);
+  }, [index]);
   const onSetLoadCompleted = useCallback(value => {
     if (isActive) {
       setLoadCompleted(value);
@@ -118,9 +154,9 @@ const PairDetails = () => {
   }, [onSetLoadCompleted]);
   return (
     <View style={GStyle.secondContainer}>
-      <CommonHeader title="ELF-AEETH Pair" canBack />
+      <CommonHeader title={`ELF-AEETH ${i18n.t('swap.pair')}`} canBack />
       <SectionStickyList
-        data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
+        data={data}
         loadCompleted={loadCompleted}
         upPullRefresh={upPullRefresh}
         onEndReached={onEndReached}
@@ -140,12 +176,14 @@ const PairDetails = () => {
             styles.bottomItem,
             {backgroundColor: Colors.primaryColor},
           ]}>
-          <TextL style={styles.whiteColor}>Swap</TextL>
+          <TextL style={styles.whiteColor}>{i18n.t('swap.swap')}</TextL>
         </Touchable>
         <Touchable
           onPress={() => navigationService.navigate('AddLiquidity')}
           style={[styles.toolBarItem, styles.bottomItem]}>
-          <TextL style={{color: Colors.primaryColor}}>Add Liquidity</TextL>
+          <TextL style={{color: Colors.primaryColor}}>
+            {i18n.t('swap.addLiquidity')}
+          </TextL>
         </Touchable>
       </View>
     </View>

@@ -5,11 +5,12 @@ import {pTd} from '../../../../utils/common';
 import {Colors} from '../../../../assets/theme';
 import {TextS} from '../../../../components/template/CommonText';
 import Entypo from 'react-native-vector-icons/Entypo';
+import i18n from 'i18n-js';
 const MAXComponent = memo(props => {
   const {onPress} = props;
   return (
     <Touchable onPress={onPress} style={styles.maxBox}>
-      <TextS style={styles.maxText}>MAX</TextS>
+      <TextS style={styles.maxText}>{i18n.t('swap.max')}</TextS>
     </Touchable>
   );
 });
@@ -19,7 +20,8 @@ const ChooseToken = memo(props => {
   return (
     <Touchable onPress={onPress} style={styles.maxBox}>
       <TextS style={styles.maxText}>
-        选择 Token <Entypo size={pTd(28)} name="chevron-down" />
+        {i18n.t('swap.select')} Token{' '}
+        <Entypo size={pTd(28)} name="chevron-down" />
       </TextS>
     </Touchable>
   );

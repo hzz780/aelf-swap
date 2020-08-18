@@ -9,22 +9,24 @@ import {pTd} from '../../../../utils/common';
 import {Colors} from '../../../../assets/theme';
 import {TextL} from '../../../../components/template/CommonText';
 import navigationService from '../../../../utils/common/navigationService';
+import i18n from 'i18n-js';
 const MeLiquidity = () => {
   const renderItem = useCallback(() => {
     const List = [
-      {title: 'Pooled ELF:', subtitle: '0.948835'},
-      {title: 'Pooled AEETH:', subtitle: '0.948835'},
-      {title: 'My Pool Tokens:', subtitle: '0.948835'},
-      {title: 'My Pool Share:', subtitle: '0.948835'},
+      {title: `${i18n.t('swap.pooled')} ELF:`, subtitle: '0.948835'},
+      {title: `${i18n.t('swap.pooled')} AEETH:`, subtitle: '0.948835'},
+      {title: `${i18n.t('swap.myPoolTokens')}:`, subtitle: '0.948835'},
+      {title: `${i18n.t('swap.myPoolShare')}:`, subtitle: '0.2%'},
     ];
     return (
       <Touchable activeOpacity={1} style={styles.itemBox}>
         <ListItem
+          onPress={() => navigationService.navigate('PairDetails')}
           titleStyle={styles.itemTitleStyle}
           style={styles.listItemBox}
           subtitleStyle={styles.itemSubtitleStyle}
           title="ELF-AEETH"
-          subtitle="More"
+          subtitle={i18n.t('swap.more')}
         />
         {List.map((item, index) => {
           return (
@@ -40,12 +42,12 @@ const MeLiquidity = () => {
         <View style={styles.toolBox}>
           <Touchable
             style={[styles.addTool, {backgroundColor: Colors.primaryColor}]}>
-            <TextL style={styles.whiteText}>Add</TextL>
+            <TextL style={styles.whiteText}>{i18n.t('swap.add')}</TextL>
           </Touchable>
           <Touchable
             onPress={() => navigationService.navigate('RemoveLiquidity')}
             style={styles.addTool}>
-            <TextL>Remove</TextL>
+            <TextL>{i18n.t('swap.remove')}</TextL>
           </Touchable>
         </View>
       </Touchable>

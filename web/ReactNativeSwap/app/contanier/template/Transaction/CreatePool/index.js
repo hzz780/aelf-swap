@@ -38,7 +38,7 @@ const CreatePool = () => {
         title: item.token,
         onPress: onSelect,
       }));
-      let tokenName = 'Please Select';
+      let tokenName = i18n.t('swap.pleaseSelect');
       let color = Colors.fontGray;
       if (token) {
         tokenName = token;
@@ -59,9 +59,12 @@ const CreatePool = () => {
   );
   const tokenDetails = useMemo(() => {
     const List = [
-      {title: 'Token Name:', subtitle: firstToken},
-      {title: 'Total Supply:', subtitle: `0.948835 ${firstToken}`},
-      {title: 'Circulating Supply:', subtitle: `0.948835 ${firstToken}`},
+      {title: i18n.t('swap.tokenName'), subtitle: firstToken},
+      {title: i18n.t('swap.totalSupply'), subtitle: `0.948835 ${firstToken}`},
+      {
+        title: i18n.t('swap.circulatingSupply'),
+        subtitle: `0.948835 ${firstToken}`,
+      },
     ];
     return (
       <View style={styles.tokenDetailsBox}>
@@ -78,12 +81,15 @@ const CreatePool = () => {
   }, [firstToken]);
   return (
     <View style={GStyle.container}>
-      <CommonHeader title="Create Pool" canBack />
+      <CommonHeader title={i18n.t('swap.createPool')} canBack />
       <View style={styles.container}>
         {selectToken(firstToken, 'firstToken')}
         {tokenDetails}
         {selectToken(secondToken, 'secondToken')}
-        <CommonButton title="Create" style={styles.buttonStyles} />
+        <CommonButton
+          title={i18n.t('swap.create')}
+          style={styles.buttonStyles}
+        />
       </View>
     </View>
   );

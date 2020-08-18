@@ -8,14 +8,21 @@ import Swap from './Swap';
 import LiquidityList from './LiquidityList';
 import {TextL} from '../../../components/template/CommonText';
 const tabActiveColor = Colors.primaryColor;
-
+import i18n from 'i18n-js';
+import {useStateToProps} from '../../../utils/pages/hooks';
 const Transaction = () => {
+  useStateToProps(base => {
+    const {settings} = base;
+    return {
+      language: settings.language,
+    };
+  });
   return (
     <Touchable
       activeOpacity={1}
       onPress={() => Keyboard.dismiss()}
       style={GStyle.container}>
-      <CommonHeader title={'Transaction'} />
+      <CommonHeader title={i18n.t('swap.transaction')} />
       <Tab.Navigator
         initialRouteName="FiveDirectElection"
         tabBarOptions={{
@@ -39,7 +46,7 @@ const Transaction = () => {
           component={Swap}
           options={{
             tabBarLabel: ({focused, color}) => {
-              return <TextL style={{color}}>Swap</TextL>;
+              return <TextL style={{color}}>{i18n.t('swap.swap')}</TextL>;
             },
           }}
         />
@@ -48,7 +55,9 @@ const Transaction = () => {
           component={LiquidityList}
           options={{
             tabBarLabel: ({focused, color}) => {
-              return <TextL style={{color}}>Add Liquidity</TextL>;
+              return (
+                <TextL style={{color}}>{i18n.t('swap.addLiquidity')}</TextL>
+              );
             },
           }}
         />

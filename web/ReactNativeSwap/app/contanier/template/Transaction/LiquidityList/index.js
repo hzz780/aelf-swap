@@ -6,16 +6,24 @@ import {TextL} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
 import MeLiquidity from '../MeLiquidity';
 import navigationService from '../../../../utils/common/navigationService';
+import i18n from 'i18n-js';
+import {useStateToProps} from '../../../../utils/pages/hooks';
 const LiquidityList = () => {
+  useStateToProps(base => {
+    const {settings} = base;
+    return {
+      language: settings.language,
+    };
+  });
   return (
     <View style={GStyle.container}>
       <CommonButton
         onPress={() => navigationService.navigate('AddLiquidity')}
-        title="Add Liquidity"
+        title={i18n.t('swap.addLiquidity')}
         style={styles.buttonStyles}
       />
       <View style={styles.titleBox}>
-        <TextL>My Liquidity</TextL>
+        <TextL>{i18n.t('swap.myLiquidity')}</TextL>
       </View>
       <MeLiquidity />
     </View>

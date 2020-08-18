@@ -15,6 +15,7 @@ import {pTd} from '../../../../utils/common';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {bottomBarHeigth} from '../../../../utils/common/device';
 import navigationService from '../../../../utils/common/navigationService';
+import i18n from 'i18n-js';
 const tokenList = [
   {token: 'ELF', balance: '234.123'},
   {token: 'BLF', balance: '204.123'},
@@ -82,8 +83,10 @@ const AddLiquidity = () => {
     return (
       <View>
         <View style={styles.inputTitleBox}>
-          <TextM>Input</TextM>
-          <TextM>Balance: {firstToken?.balance}</TextM>
+          <TextM>{i18n.t('swap.input')}</TextM>
+          <TextM>
+            {i18n.t('mineModule.balance')}: {firstToken?.balance}
+          </TextM>
         </View>
         <Input
           keyboardType="numeric"
@@ -100,8 +103,10 @@ const AddLiquidity = () => {
     return (
       <View>
         <View style={styles.inputTitleBox}>
-          <TextM>Input</TextM>
-          <TextM>Balance: {secondToken?.balance}</TextM>
+          <TextM>{i18n.t('swap.output')}</TextM>
+          <TextM>
+            {i18n.t('mineModule.balance')}: {secondToken?.balance}
+          </TextM>
         </View>
         <Input
           keyboardType="numeric"
@@ -119,38 +124,35 @@ const AddLiquidity = () => {
   const Add = useMemo(() => {
     return (
       <>
-        <CommonButton title="Add Liquidity" style={styles.buttonStyles} />
+        <CommonButton
+          title={i18n.t('swap.addLiquidity')}
+          style={styles.buttonStyles}
+        />
         <TextM style={styles.tipText}>
-          Don't see a pool you want to join?{' '}
+          {i18n.t('swap.notFound')}
           <TextM
             onPress={() => navigationService.navigate('CreatePool')}
             style={styles.themeColor}>
-            Create it.
+            {i18n.t('swap.createIt')}
           </TextM>
         </TextM>
       </>
     );
   }, []);
   const firstTip = useMemo(() => {
-    return (
-      <TextM style={styles.redColor}>
-        {`you are the first person to add liquidity! 
-The initial exchange rate will be set based on your deposits. Please make sure that the deposit transaction pair has a proper ratio`}
-      </TextM>
-    );
+    return <TextM style={styles.redColor}>{i18n.t('swap.addFirstTip')}</TextM>;
   }, []);
   const secondTip = useMemo(() => {
     return (
-      <TextM style={styles.grayColor}>
-        Output is estimated. If the price changes by more than 0.5% your
-        transaction will revert.
-      </TextM>
+      <TextM style={styles.grayColor}>{i18n.t('swap.addSecondTip')}</TextM>
     );
   }, []);
   const prices = useMemo(() => {
     return (
       <>
-        <TextL style={[styles.themeColor, styles.mrginText]}>Prices</TextL>
+        <TextL style={[styles.themeColor, styles.mrginText]}>
+          {i18n.t('swap.price')}
+        </TextL>
         <View style={[styles.splitLine]} />
         <ListItem
           disabled
@@ -175,12 +177,12 @@ The initial exchange rate will be set based on your deposits. Please make sure t
     return (
       <>
         <TextL style={[styles.themeColor, styles.mrginText]}>
-          I Will Receive
+          {i18n.t('swap.willReceive')}
         </TextL>
         <View style={[styles.splitLine]} />
         <ListItem
           disabled
-          title={'ELF-CPU Pool Tokens'}
+          title={`ELF-CPU ${i18n.t('swap.poolTokens')}`}
           style={styles.itemBox}
           subtitle="1,275.3624"
           rightElement={null}
@@ -188,9 +190,9 @@ The initial exchange rate will be set based on your deposits. Please make sure t
         />
         <ListItem
           disabled
-          title={'ELF-CPU Pool Tokens'}
+          title={i18n.t('swap.sharePool')}
           style={styles.itemBox}
-          subtitle="1,275.3624"
+          subtitle="0.3622%"
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
@@ -199,14 +201,14 @@ The initial exchange rate will be set based on your deposits. Please make sure t
   }, []);
   const myLiquidity = useMemo(() => {
     const List = [
-      {title: 'Pooled ELF:', subtitle: '0.948835'},
-      {title: 'Pooled AEETH:', subtitle: '0.948835'},
-      {title: 'My Pool Tokens:', subtitle: '0.948835'},
-      {title: 'My Pool Share:', subtitle: '0.2%'},
+      {title: `${i18n.t('swap.pooled')} ELF:`, subtitle: '0.948835'},
+      {title: `${i18n.t('swap.pooled')} AEETH:`, subtitle: '0.948835'},
+      {title: `${i18n.t('swap.myPoolTokens')}:`, subtitle: '0.948835'},
+      {title: `${i18n.t('swap.myPoolShare')}:`, subtitle: '0.2%'},
     ];
     return (
       <View style={styles.myLiquidity}>
-        <TextL style={styles.themeColor}>My Liquidity</TextL>
+        <TextL style={styles.themeColor}>{i18n.t('swap.myLiquidity')}</TextL>
         {List.map((item, index) => {
           return (
             <View key={index} style={styles.myLiquidityItemBox}>
@@ -220,7 +222,7 @@ The initial exchange rate will be set based on your deposits. Please make sure t
   }, []);
   return (
     <View style={GStyle.container}>
-      <CommonHeader title="Add Liquidity" canBack>
+      <CommonHeader title={i18n.t('swap.addLiquidity')} canBack>
         {/* <View style={styles.container}>
         {firstItem}
         {secondItem}
@@ -232,6 +234,7 @@ The initial exchange rate will be set based on your deposits. Please make sure t
           {secondItem}
           {prices}
           {willReceive}
+          {firstTip}
           {secondTip}
           {Add}
           {myLiquidity}

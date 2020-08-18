@@ -15,6 +15,7 @@ import {pTd} from '../../../../utils/common';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {bottomBarHeigth} from '../../../../utils/common/device';
 import navigationService from '../../../../utils/common/navigationService';
+import i18n from 'i18n-js';
 const tokenList = [
   {token: 'ELF', balance: '234.123'},
   {token: 'BLF', balance: '204.123'},
@@ -87,8 +88,10 @@ const RemoveLiquidity = () => {
     return (
       <View>
         <View style={styles.inputTitleBox}>
-          <TextM>Input</TextM>
-          <TextM>Balance: {inputToken?.balance}</TextM>
+          <TextM>{i18n.t('swap.input')}</TextM>
+          <TextM>
+            {i18n.t('mineModule.balance')}: {inputToken?.balance}
+          </TextM>
         </View>
         <Input
           keyboardType="numeric"
@@ -105,8 +108,10 @@ const RemoveLiquidity = () => {
     return (
       <View>
         <View style={styles.inputTitleBox}>
-          <TextM>Output</TextM>
-          <TextM>Balance: {firstToken?.balance}</TextM>
+          <TextM>{i18n.t('swap.output')}</TextM>
+          <TextM>
+            {i18n.t('mineModule.balance')}: {firstToken?.balance}
+          </TextM>
         </View>
         <Input
           keyboardType="numeric"
@@ -123,8 +128,10 @@ const RemoveLiquidity = () => {
     return (
       <View>
         <View style={styles.inputTitleBox}>
-          <TextM>Output</TextM>
-          <TextM>Balance: {secondToken?.balance}</TextM>
+          <TextM>{i18n.t('swap.output')}</TextM>
+          <TextM>
+            {i18n.t('mineModule.balance')}: {secondToken?.balance}
+          </TextM>
         </View>
         <Input
           keyboardType="numeric"
@@ -142,13 +149,16 @@ const RemoveLiquidity = () => {
   const remove = useMemo(() => {
     return (
       <>
-        <CommonButton title="Remove Liquidity" style={styles.buttonStyles} />
+        <CommonButton
+          title={i18n.t('swap.removeLiquidity')}
+          style={styles.buttonStyles}
+        />
         <TextM style={styles.tipText}>
-          Don't see a pool you want to join?{' '}
+          {i18n.t('swap.notFound')}
           <TextM
             onPress={() => navigationService.navigate('CreatePool')}
             style={styles.themeColor}>
-            Create it.
+            {i18n.t('swap.createIt')}
           </TextM>
         </TextM>
       </>
@@ -156,16 +166,15 @@ const RemoveLiquidity = () => {
   }, []);
   const secondTip = useMemo(() => {
     return (
-      <TextM style={styles.grayColor}>
-        Output is estimated. If the price changes by more than 0.5% your
-        transaction will revert.
-      </TextM>
+      <TextM style={styles.grayColor}>{i18n.t('swap.addSecondTip')}</TextM>
     );
   }, []);
   const prices = useMemo(() => {
     return (
       <>
-        <TextL style={[styles.themeColor, styles.mrginText]}>Prices</TextL>
+        <TextL style={[styles.themeColor, styles.mrginText]}>
+          {i18n.t('swap.price')}
+        </TextL>
         <View style={[styles.splitLine]} />
         <ListItem
           disabled
@@ -190,12 +199,12 @@ const RemoveLiquidity = () => {
     return (
       <>
         <TextL style={[styles.themeColor, styles.mrginText]}>
-          I Will Receive
+          {i18n.t('swap.willReceive')}
         </TextL>
         <View style={[styles.splitLine]} />
         <ListItem
           disabled
-          title={'ELF-CPU Pool Tokens'}
+          title={`ELF-CPU ${i18n.t('swap.poolTokens')}`}
           style={styles.itemBox}
           subtitle="1,275.3624"
           rightElement={null}
@@ -203,9 +212,9 @@ const RemoveLiquidity = () => {
         />
         <ListItem
           disabled
-          title={'ELF-CPU Pool Tokens'}
+          title={i18n.t('swap.sharePool')}
           style={styles.itemBox}
-          subtitle="1,275.3624"
+          subtitle="0.3622%"
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
@@ -214,14 +223,14 @@ const RemoveLiquidity = () => {
   }, []);
   const myLiquidity = useMemo(() => {
     const List = [
-      {title: 'Pooled ELF:', subtitle: '0.948835'},
-      {title: 'Pooled AEETH:', subtitle: '0.948835'},
-      {title: 'My Pool Tokens:', subtitle: '0.948835'},
-      {title: 'My Pool Share:', subtitle: '0.2%'},
+      {title: `${i18n.t('swap.pooled')} ELF:`, subtitle: '0.948835'},
+      {title: `${i18n.t('swap.pooled')} AEETH:`, subtitle: '0.948835'},
+      {title: `${i18n.t('swap.myPoolTokens')}:`, subtitle: '0.948835'},
+      {title: `${i18n.t('swap.myPoolShare')}:`, subtitle: '0.2%'},
     ];
     return (
       <View style={styles.myLiquidity}>
-        <TextL style={styles.themeColor}>My Liquidity</TextL>
+        <TextL style={styles.themeColor}>{i18n.t('swap.myLiquidity')}</TextL>
         {List.map((item, index) => {
           return (
             <View key={index} style={styles.myLiquidityItemBox}>
@@ -235,7 +244,7 @@ const RemoveLiquidity = () => {
   }, []);
   return (
     <View style={GStyle.container}>
-      <CommonHeader title="Remove Liquidity" canBack>
+      <CommonHeader title={i18n.t('swap.removeLiquidity')} canBack>
         <View style={styles.container}>
           {inputItem}
           {firstItem}

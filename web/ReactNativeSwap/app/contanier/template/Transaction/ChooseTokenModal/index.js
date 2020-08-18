@@ -8,6 +8,7 @@ import {TextL, TextM} from '../../../../components/template/CommonText';
 import {useSetState} from '../../../../utils/pages/hooks';
 import {ScrollView} from 'react-native-gesture-handler';
 const arrowSize = pTd(9);
+import i18n from 'i18n-js';
 const arrowStyle = {
   borderLeftColor: 'transparent',
   borderRightColor: 'transparent',
@@ -37,7 +38,7 @@ const Components = memo(props => {
   return (
     <View style={[GStyle.container, styles.chooseTokenModal]}>
       <View style={styles.titleBox}>
-        <TextL>Select a Token</TextL>
+        <TextL>{i18n.t('swap.select')} Token</TextL>
         <AntDesign
           color={Colors.fontGray}
           size={pTd(40)}
@@ -50,7 +51,9 @@ const Components = memo(props => {
         <Touchable
           onPress={() => setState({rise: !rise})}
           style={styles.balanceBox}>
-          <TextM style={{color: Colors.fontGray}}>Wallet Balance</TextM>
+          <TextM style={{color: Colors.fontGray}}>
+            {i18n.t('mineModule.balance')}
+          </TextM>
           <View style={styles.arrowBox}>
             <View
               style={[

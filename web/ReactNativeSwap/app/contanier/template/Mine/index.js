@@ -91,7 +91,7 @@ const Tool = () => {
                 size={30}
                 color={Colors.primaryColor}
               />
-              <TextL>{'Liquidity'}</TextL>
+              <TextL>{i18n.t('swap.liquidity')}</TextL>
             </Touchable>
           </View>
           {List.map((item, index) => (

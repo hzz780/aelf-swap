@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {memo, useMemo, useCallback} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
@@ -5,9 +6,10 @@ import {Input, CommonButton} from '../../../../components/template';
 import {TextM, TextL} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {useSetState} from '../../../../utils/pages/hooks';
+import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import ChooseTokenModal from '../ChooseTokenModal';
 import {MAXComponent, ChooseToken} from '../MAXComponent';
+import i18n from 'i18n-js';
 const tokenList = [
   {token: 'ELF', balance: '234.123'},
   {token: 'BLF', balance: '204.123'},
@@ -15,6 +17,12 @@ const tokenList = [
   {token: 'ALF', balance: '2341.123'},
 ];
 const Swap = () => {
+  const {language} = useStateToProps(base => {
+    const {settings} = base;
+    return {
+      language: settings.language,
+    };
+  });
   const [state, setState] = useSetState({
     swapToken: {
       input: '',
@@ -76,26 +84,29 @@ const Swap = () => {
     return (
       <View style={styles.descriptionBox}>
         <View style={styles.inputTitleBox}>
-          <TextM>Maximum Sold:</TextM>
+          <TextM>{i18n.t('swap.maximumSold')}</TextM>
           <TextM style={styles.rightText}>0.9488 ELF</TextM>
         </View>
         <View style={styles.inputTitleBox}>
-          <TextM>Price Impact:</TextM>
+          <TextM>{i18n.t('swap.priceImpact')}</TextM>
           <TextM style={[styles.rightText, {color}]}>0.01%</TextM>
         </View>
         <View style={styles.inputTitleBox}>
-          <TextM>Liquidity Provider Fee:</TextM>
+          <TextM>{i18n.t('swap.liquidityProviderFee')}</TextM>
           <TextM style={styles.rightText}>0.234 ELF</TextM>
         </View>
       </View>
     );
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]);
   const SwapItem = useMemo(() => {
     return (
       <View style={styles.inputItem}>
         <View style={styles.inputTitleBox}>
-          <TextM>Swap</TextM>
-          <TextM>Balance: {swapToken?.balance}</TextM>
+          <TextM>{i18n.t('swap.swap')}</TextM>
+          <TextM>
+            {i18n.t('mineModule.balance')}: {swapToken?.balance}
+          </TextM>
         </View>
         <Input
           keyboardType="numeric"
@@ -107,13 +118,15 @@ const Swap = () => {
         />
       </View>
     );
-  }, [rightElement, setState, swapToken]);
+  }, [rightElement, setState, swapToken, language]);
   const ToSwapItem = useMemo(() => {
     return (
       <View style={styles.inputItem}>
         <View style={styles.inputTitleBox}>
-          <TextM>For</TextM>
-          <TextM>Balance: {toSwapToken?.balance}</TextM>
+          <TextM>{i18n.t('swap.take')}</TextM>
+          <TextM>
+            {i18n.t('mineModule.balance')}: {toSwapToken?.balance}
+          </TextM>
         </View>
         <Input
           keyboardType="numeric"
@@ -126,20 +139,20 @@ const Swap = () => {
           placeholder="0.0"
         />
         <View style={styles.inputTitleBox}>
-          <TextM>Price</TextM>
+          <TextM>{i18n.t('swap.price')}</TextM>
           <TextM>
-            0.12 ELF per AEETH{' '}
+            0.12 ELF / AEETH{' '}
             <Entypo name="swap" size={pTd(30)} color={Colors.primaryColor} />
           </TextM>
         </View>
       </View>
     );
-  }, [rightElement, setState, toSwapToken]);
+  }, [rightElement, setState, toSwapToken, language]);
   return (
     <View style={GStyle.container}>
       {SwapItem}
       {ToSwapItem}
-      <CommonButton title="Swap" style={styles.buttonStyles} />
+      <CommonButton title={i18n.t('swap.swap')} style={styles.buttonStyles} />
       {Description}
     </View>
   );
