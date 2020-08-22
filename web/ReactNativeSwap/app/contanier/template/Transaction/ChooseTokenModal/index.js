@@ -1,5 +1,5 @@
 import React, {memo, useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Keyboard} from 'react-native';
 import {pTd} from '../../../../utils/common';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {GStyle, Colors} from '../../../../assets/theme';
@@ -92,6 +92,7 @@ const Components = memo(props => {
   );
 });
 const show = props => {
+  Keyboard.dismiss();
   OverlayModal.show(<Components {...props} />, {
     style: styles.bgStyle,
     containerStyle: styles.containerStyle,
@@ -137,8 +138,8 @@ const styles = StyleSheet.create({
     width: 0,
     height: 0,
     borderStyle: 'solid',
-    borderTopColor: 'transparent', //下箭头颜色
-    borderBottomColor: Colors.fontGray, //上箭头颜色
+    borderTopColor: 'transparent',
+    borderBottomColor: Colors.fontGray,
     marginBottom: pTd(5),
     borderBottomWidth: arrowSize,
     ...arrowStyle,
@@ -147,8 +148,8 @@ const styles = StyleSheet.create({
     width: 0,
     height: 0,
     borderStyle: 'solid',
-    borderTopColor: Colors.fontGray, //下箭头颜色
-    borderBottomColor: 'transparent', //上箭头颜色
+    borderTopColor: Colors.fontGray,
+    borderBottomColor: 'transparent',
     borderTopWidth: arrowSize,
     ...arrowStyle,
   },

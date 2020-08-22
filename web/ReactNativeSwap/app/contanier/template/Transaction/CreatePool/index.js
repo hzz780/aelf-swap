@@ -6,19 +6,30 @@ import {
   Touchable,
   ActionSheet,
   CommonButton,
+  CommonToast,
 } from '../../../../components/template';
 import {pTd} from '../../../../utils/common';
 import {TextL, TextM} from '../../../../components/template/CommonText';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {useSetState} from '../../../../utils/pages/hooks';
+import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import i18n from 'i18n-js';
-const tokenList = [
-  {token: 'ELF', balance: '234.123'},
-  {token: 'BLF', balance: '204.123'},
-  {token: 'CLF', balance: '2394.123'},
-  {token: 'ALF', balance: '2341.123'},
-];
+import swapActions from '../../../../redux/swapRedux';
+import {useDispatch} from 'react-redux';
+import TransactionVerification from '../../../../utils/pages/TransactionVerification';
 const CreatePool = () => {
+  const dispatch = useDispatch();
+  const {allTokens, userBalances, pairs} = useStateToProps(base => {
+    const {user, swap} = base;
+    return {
+      allTokens: user.allTokens,
+      userBalances: user.userBalances,
+      pairs: swap.pairs,
+    };
+  });
+  const createPair = useCallback(
+    symbolPair => dispatch(swapActions.createPair(symbolPair)),
+    [dispatch],
+  );
   const [state, setState] = useSetState({
     firstToken: '',
     secondToken: '',
@@ -26,18 +37,26 @@ const CreatePool = () => {
   const {firstToken, secondToken} = state;
   const onSelect = useCallback(
     item => {
-      setState({[item.type]: item.token});
+      setState({[item.type]: item});
     },
     [setState],
   );
   const selectToken = useCallback(
     (token, type) => {
-      const items = tokenList.map(item => ({
-        ...item,
-        type,
-        title: item.token,
-        onPress: onSelect,
-      }));
+      const items = Array.isArray(allTokens)
+        ? allTokens.map(item => {
+            return {
+              ...item,
+              type,
+              balance: userBalances[item.symbol] || '0',
+              title: item.symbol,
+              onPress: onSelect,
+              disabled:
+                firstToken?.symbol === item.symbol ||
+                secondToken?.symbol === item.symbol,
+            };
+          })
+        : [];
       let tokenName = i18n.t('swap.pleaseSelect');
       let color = Colors.fontGray;
       if (token) {
@@ -55,15 +74,18 @@ const CreatePool = () => {
         </Touchable>
       );
     },
-    [onSelect],
+    [allTokens, firstToken, onSelect, secondToken, userBalances],
   );
   const tokenDetails = useMemo(() => {
     const List = [
-      {title: i18n.t('swap.tokenName'), subtitle: firstToken},
-      {title: i18n.t('swap.totalSupply'), subtitle: `0.948835 ${firstToken}`},
+      {title: i18n.t('swap.tokenName'), subtitle: firstToken?.symbol},
+      {
+        title: i18n.t('swap.totalSupply'),
+        subtitle: `0.948835 ${firstToken?.symbol || ''}`,
+      },
       {
         title: i18n.t('swap.circulatingSupply'),
-        subtitle: `0.948835 ${firstToken}`,
+        subtitle: `0.948835 ${firstToken?.symbol || ''}`,
       },
     ];
     return (
@@ -79,14 +101,47 @@ const CreatePool = () => {
       </View>
     );
   }, [firstToken]);
+  const onCreatePair = useCallback(() => {
+    if (Array.isArray(pairs)) {
+      if (
+        pairs.find(item => {
+          return (
+            (item.symbolA === firstToken.symbol ||
+              item.symbolA === secondToken.symbol) &&
+            (item.symbolB === firstToken.symbol ||
+              item.symbolB === secondToken.symbol)
+          );
+        })
+      ) {
+        CommonToast.fail(i18n.t('swap.pairExists'));
+        return;
+      } else {
+        TransactionVerification.show(value => {
+          if (!value) {
+            return;
+          }
+          createPair(`${firstToken.symbol}-${secondToken.symbol}`);
+        });
+      }
+    } else {
+      TransactionVerification.show(value => {
+        if (!value) {
+          return;
+        }
+        createPair(`${firstToken.symbol}-${secondToken.symbol}`);
+      });
+    }
+  }, [createPair, firstToken.symbol, pairs, secondToken.symbol]);
   return (
     <View style={GStyle.container}>
       <CommonHeader title={i18n.t('swap.createPool')} canBack />
       <View style={styles.container}>
-        {selectToken(firstToken, 'firstToken')}
-        {tokenDetails}
-        {selectToken(secondToken, 'secondToken')}
+        {selectToken(firstToken?.symbol, 'firstToken')}
+        {/* {tokenDetails} */}
+        {selectToken(secondToken?.symbol, 'secondToken')}
         <CommonButton
+          disabled={!(firstToken?.symbol && secondToken?.symbol)}
+          onPress={onCreatePair}
           title={i18n.t('swap.create')}
           style={styles.buttonStyles}
         />

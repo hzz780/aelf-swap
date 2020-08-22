@@ -12,6 +12,10 @@ import {pTd} from '../../../../utils/common';
 import {bottomBarHeigth} from '../../../../utils/common/device';
 import navigationService from '../../../../utils/common/navigationService';
 import i18n from 'i18n-js';
+import swapActions from '../../../../redux/swapRedux';
+import {useDispatch} from 'react-redux';
+import swapUtils from '../../../../utils/pages/swapUtils';
+import {useStateToProps} from '../../../../utils/pages/hooks';
 let isActive = true;
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
@@ -47,12 +51,26 @@ const ToolBar = memo(props => {
     </>
   );
 });
-const PairDetails = () => {
+const PairDetails = props => {
+  const {tokenUSD} = useStateToProps(base => {
+    const {user} = base;
+    return {
+      tokenUSD: user.tokenUSD,
+    };
+  });
+  const dispatch = useDispatch();
+  const [pairData, setPairData] = useState(props.route.params?.pairData || {});
+  const getPairs = useCallback(
+    (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
+    [dispatch],
+  );
   const [index, setIndex] = useState(0);
-  const [data, setData] = useState([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+  const [data, setData] = useState([]);
   const [loadCompleted, setLoadCompleted] = useState(true);
   const list = useRef();
   const renderHeader = useMemo(() => {
+    const {symbolA, symbolB, reserveA, reserveB} = pairData || {};
+    const subtitle = swapUtils.getSwapUSD(pairData, tokenUSD);
     return (
       <View>
         <View style={styles.overviewBox}>
@@ -61,46 +79,61 @@ const PairDetails = () => {
           </TextL>
         </View>
         <ListItem
+          disabled
           title={i18n.t('swap.liquidity')}
-          subtitle="$ 234,123"
+          subtitle={subtitle}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
-        <ListItem
+        {/* <ListItem
           title={`${i18n.t('swap.fee')}(24h)`}
           subtitle="$ 234,123"
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
-        />
+        /> */}
         <ListItem
+          disabled
           title={i18n.t('swap.pooledTokens')}
-          subtitle="1,275,362 ELF"
-          subtitleDetails="1,873 AEETH"
+          subtitle={`${reserveA || '0'} ${symbolA || ''}`}
+          subtitleDetails={`${reserveB || '0'} ${symbolB || ''}`}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
           subtitleDetailsStyle={styles.subtitleStyle}
         />
-        <ListItem
-          style={styles.preBox}
-          title={'ELF'}
-          subtitle="1,275,362 ELF/AEETH ($ 125.24)"
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-        />
-        <ListItem
-          title={'AEETH'}
-          subtitle="1,275,362 AEETH/ELF ($ 125.24)"
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-        />
         <View style={styles.overviewBox}>
+          <TextL style={{color: Colors.primaryColor}}>
+            {i18n.t('swap.price')}
+          </TextL>
+        </View>
+        <ListItem
+          disabled
+          style={styles.preBox}
+          title={symbolA}
+          subtitle={`≈ ${swapUtils.detailsPrice(
+            reserveA,
+            reserveB,
+          )} ${symbolB} ($ ${swapUtils.getUSD(symbolA, tokenUSD)})`}
+          rightElement={null}
+          subtitleStyle={styles.subtitleStyle}
+        />
+        <ListItem
+          disabled
+          title={symbolB}
+          subtitle={`≈ ${swapUtils.detailsPrice(
+            reserveB,
+            reserveA,
+          )} ${symbolA} ($ ${swapUtils.getUSD(symbolB, tokenUSD)})`}
+          rightElement={null}
+          subtitleStyle={styles.subtitleStyle}
+        />
+        {/* <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.transactions')}
           </TextL>
-        </View>
+        </View> */}
       </View>
     );
-  }, []);
+  }, [pairData, tokenUSD]);
   const stickyHead = useCallback(() => {
     return (
       <ToolBar
@@ -143,25 +176,31 @@ const PairDetails = () => {
       setLoadCompleted(value);
     }
   }, []);
+  const {symbolPair} = pairData || {};
   const upPullRefresh = useCallback(() => {
-    onSetLoadCompleted(true);
-    list.current && list.current.endUpPullRefresh();
-    list.current && list.current.endBottomRefresh();
-  }, [onSetLoadCompleted]);
+    getPairs(symbolPair, (code, v) => {
+      if (code === 1) {
+        setPairData(v);
+      }
+      onSetLoadCompleted(true);
+      list.current && list.current.endUpPullRefresh();
+      list.current && list.current.endBottomRefresh();
+    });
+  }, [getPairs, onSetLoadCompleted, symbolPair]);
   const onEndReached = useCallback(() => {
     onSetLoadCompleted(true);
     list.current && list.current.endBottomRefresh();
   }, [onSetLoadCompleted]);
   return (
     <View style={GStyle.secondContainer}>
-      <CommonHeader title={`ELF-AEETH ${i18n.t('swap.pair')}`} canBack />
+      <CommonHeader title={`${symbolPair} ${i18n.t('swap.pair')}`} canBack />
       <SectionStickyList
         data={data}
         loadCompleted={loadCompleted}
         upPullRefresh={upPullRefresh}
-        onEndReached={onEndReached}
+        // onEndReached={onEndReached}
         renderHeader={renderHeader}
-        stickyHead={stickyHead}
+        // stickyHead={stickyHead}
         renderItem={renderItem}
         ref={list}
         showFooter
@@ -179,7 +218,7 @@ const PairDetails = () => {
           <TextL style={styles.whiteColor}>{i18n.t('swap.swap')}</TextL>
         </Touchable>
         <Touchable
-          onPress={() => navigationService.navigate('AddLiquidity')}
+          onPress={() => navigationService.navigate('AddLiquidity', {pairData})}
           style={[styles.toolBarItem, styles.bottomItem]}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.addLiquidity')}

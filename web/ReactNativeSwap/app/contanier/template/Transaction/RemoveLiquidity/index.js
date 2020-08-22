@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useMemo} from 'react';
+import React, {memo, useCallback, useMemo, useState} from 'react';
 import {GStyle, Colors} from '../../../../assets/theme';
 import {
   CommonHeader,
@@ -7,163 +7,195 @@ import {
   ListItem,
 } from '../../../../components/template';
 import {View, StyleSheet} from 'react-native';
-import {ChooseToken, MAXComponent} from '../MAXComponent';
-import {useSetState} from '../../../../utils/pages/hooks';
+import {ChooseToken} from '../MAXComponent';
+import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import {TextL, TextM} from '../../../../components/template/CommonText';
-import ChooseTokenModal from '../ChooseTokenModal';
 import {pTd} from '../../../../utils/common';
-import Entypo from 'react-native-vector-icons/Entypo';
 import {bottomBarHeigth} from '../../../../utils/common/device';
-import navigationService from '../../../../utils/common/navigationService';
 import i18n from 'i18n-js';
-const tokenList = [
-  {token: 'ELF', balance: '234.123'},
-  {token: 'BLF', balance: '204.123'},
-  {token: 'CLF', balance: '2394.123'},
-  {token: 'ALF', balance: '2341.123'},
-];
-const RemoveLiquidity = () => {
+import swapActions from '../../../../redux/swapRedux';
+import swapUtils from '../../../../utils/pages/swapUtils';
+import {useDispatch} from 'react-redux';
+import config from '../../../../config';
+import {useFocusEffect} from '@react-navigation/native';
+import reduxUtils from '../../../../utils/pages/reduxUtils';
+import unitConverter from '../../../../utils/pages/unitConverter';
+import TransactionVerification from '../../../../utils/pages/TransactionVerification';
+const RemoveLiquidity = props => {
+  const dispatch = useDispatch();
+  const [pairData, setPairData] = useState(props.route.params?.pairData || {});
+  console.log(pairData, '=====pairData');
+  const {
+    symbolPair,
+    balance,
+    reserveA,
+    reserveB,
+    symbolA,
+    symbolB,
+    totalSupply,
+  } = pairData;
   const [state, setState] = useSetState({
-    inputToken: {
-      input: '',
-      token: 'ELF-AEETH',
-      balance: '1000.3456',
-    },
-    firstToken: {
-      input: '',
-      token: 'ELF',
-      balance: '1000.3456',
-    },
-    secondToken: {
-      input: '',
-      token: '',
-      balance: '-',
-    },
+    inputS: '',
+    inputA: '',
+    inputB: '',
   });
-  const {firstToken, secondToken, inputToken} = state;
-  const showTokenModal = useCallback(
-    (list, type) => {
-      ChooseTokenModal.show({
-        tokenList: list,
-        onPress: item => {
-          setState({[type]: item});
-        },
-      });
-    },
-    [setState],
+  const getAccountAssets = useCallback(
+    (pair, callBack) => dispatch(swapActions.getAccountAssets(pair, callBack)),
+    [dispatch],
   );
-  const rightElement = useCallback(
-    (item, type, hideMax) => {
-      const {token} = item;
-      if (token) {
-        return (
-          <View style={styles.rightBox}>
-            {hideMax ? null : (
+  const removeLiquidity = useCallback(
+    data => dispatch(swapActions.removeLiquidity(data)),
+    [dispatch],
+  );
+  const {inputA, inputB, inputS} = state;
+  const {tokenUSD} = useStateToProps(base => {
+    const {user, swap} = base;
+    return {
+      tokenUSD: user.tokenUSD,
+    };
+  });
+  useFocusEffect(
+    useCallback(() => {
+      getAccountAssets(symbolPair, (code, v) => {
+        if (code === 1) {
+          setPairData(v);
+        }
+      });
+    }, [getAccountAssets, symbolPair]),
+  );
+  const rightElement = useCallback((item, type, hideMax) => {
+    const {token} = item;
+    if (token) {
+      return (
+        <View style={styles.rightBox}>
+          {/* {hideMax ? null : (
               <MAXComponent
                 onPress={() => {
                   setState({[type]: {...item, input: item.balance}});
                 }}
               />
-            )}
-            <TextL
-              onPress={() => {
-                showTokenModal(tokenList, type);
-              }}>
-              {token} <Entypo size={pTd(30)} name="chevron-thin-down" />
-            </TextL>
-          </View>
-        );
-      }
-      return (
-        <ChooseToken
-          onPress={() => {
-            showTokenModal(tokenList, type);
-          }}
-        />
+            )} */}
+          <TextL>
+            {token}
+            {/* <Entypo size={pTd(30)} name="chevron-thin-down" /> */}
+          </TextL>
+        </View>
       );
-    },
-    [setState, showTokenModal],
-  );
+    }
+    return <ChooseToken />;
+  }, []);
   const inputItem = useMemo(() => {
     return (
       <View>
         <View style={styles.inputTitleBox}>
           <TextM>{i18n.t('swap.input')}</TextM>
           <TextM>
-            {i18n.t('mineModule.balance')}: {inputToken?.balance}
+            {i18n.t('mineModule.balance')}: {balance}
           </TextM>
         </View>
         <Input
           keyboardType="numeric"
-          value={inputToken?.input}
-          onChangeText={v => setState({inputToken: {...inputToken, input: v}})}
+          value={inputS}
+          onChangeText={v => {
+            setState({
+              inputS: v,
+              inputA: swapUtils.getPoolToken(v, totalSupply, reserveA),
+              inputB: swapUtils.getPoolToken(v, totalSupply, reserveB),
+            });
+          }}
           style={styles.inputStyle}
-          rightElement={rightElement(inputToken, 'inputToken')}
+          rightElement={<TextL>{symbolPair}</TextL>}
           placeholder="0.0"
         />
       </View>
     );
-  }, [inputToken, rightElement, setState]);
+  }, [balance, inputS, reserveA, reserveB, setState, symbolPair, totalSupply]);
   const firstItem = useMemo(() => {
     return (
       <View>
         <View style={styles.inputTitleBox}>
           <TextM>{i18n.t('swap.output')}</TextM>
-          <TextM>
-            {i18n.t('mineModule.balance')}: {firstToken?.balance}
-          </TextM>
+          {/* <TextM>
+            {i18n.t('mineModule.balance')}: {reserveA}
+          </TextM> */}
         </View>
         <Input
           keyboardType="numeric"
-          value={firstToken?.input}
-          onChangeText={v => setState({firstToken: {...firstToken, input: v}})}
+          value={inputA}
+          onChangeText={v => {
+            setState({
+              inputA: v,
+              inputS: swapUtils.getPoolToken(v, reserveA, totalSupply),
+              inputB: swapUtils.getPoolToken(v, reserveA, reserveB),
+            });
+          }}
           style={styles.inputStyle}
-          rightElement={rightElement(firstToken, 'firstToken')}
+          rightElement={<TextL>{symbolA}</TextL>}
           placeholder="0.0"
         />
       </View>
     );
-  }, [firstToken, rightElement, setState]);
+  }, [inputA, reserveA, reserveB, setState, symbolA, totalSupply]);
   const secondItem = useMemo(() => {
     return (
       <View>
         <View style={styles.inputTitleBox}>
           <TextM>{i18n.t('swap.output')}</TextM>
-          <TextM>
-            {i18n.t('mineModule.balance')}: {secondToken?.balance}
-          </TextM>
+          {/* <TextM>
+            {i18n.t('mineModule.balance')}: {reserveB}
+          </TextM> */}
         </View>
         <Input
           keyboardType="numeric"
-          value={secondToken?.input}
-          onChangeText={v =>
-            setState({secondToken: {...secondToken, input: v}})
-          }
+          value={inputB}
+          onChangeText={v => {
+            setState({
+              inputB: v,
+              inputS: swapUtils.getPoolToken(v, reserveB, totalSupply),
+              inputA: swapUtils.getPoolToken(v, reserveB, reserveA),
+            });
+          }}
           style={styles.inputStyle}
-          rightElement={rightElement(secondToken, 'secondToken')}
+          rightElement={<TextL>{symbolB}</TextL>}
           placeholder="0.0"
         />
       </View>
     );
-  }, [secondToken, rightElement, setState]);
+  }, [inputB, symbolB, setState, reserveB, totalSupply, reserveA]);
+  const onRemove = useCallback(() => {
+    TransactionVerification.show(value => {
+      if (!value) {
+        return;
+      }
+      const amountAMin = reduxUtils.getDecimalTokenHigher(inputA, symbolA);
+      const amountBMin = reduxUtils.getDecimalTokenHigher(inputB, symbolB);
+      const data = {
+        symbolA,
+        symbolB,
+        liquidityRemove: unitConverter.toDecimalHigher(inputS),
+        amountAMin: swapUtils.getSwapMinFloat(amountAMin),
+        amountBMin: swapUtils.getSwapMinFloat(amountBMin),
+        deadline: swapUtils.getDeadline(),
+      };
+      removeLiquidity(data);
+    });
+  }, [inputA, inputB, inputS, removeLiquidity, symbolA, symbolB]);
   const remove = useMemo(() => {
+    let disabled = true;
+    if (inputS <= balance && inputA && inputB) {
+      disabled = false;
+    }
     return (
       <>
         <CommonButton
+          disabled={disabled}
+          onPress={onRemove}
           title={i18n.t('swap.removeLiquidity')}
           style={styles.buttonStyles}
         />
-        <TextM style={styles.tipText}>
-          {i18n.t('swap.notFound')}
-          <TextM
-            onPress={() => navigationService.navigate('CreatePool')}
-            style={styles.themeColor}>
-            {i18n.t('swap.createIt')}
-          </TextM>
-        </TextM>
       </>
     );
-  }, []);
+  }, [balance, inputA, inputB, inputS, onRemove]);
   const secondTip = useMemo(() => {
     return (
       <TextM style={styles.grayColor}>{i18n.t('swap.addSecondTip')}</TextM>
@@ -178,49 +210,47 @@ const RemoveLiquidity = () => {
         <View style={[styles.splitLine]} />
         <ListItem
           disabled
-          title={'ELF'}
+          title={symbolA}
           style={styles.itemBox}
-          subtitle="1,275,362 ELF/AEETH ($ 125.24)"
+          subtitle={`≈ ${swapUtils.detailsPrice(
+            reserveA,
+            reserveB,
+          )} ${symbolB} ($ ${swapUtils.getUSD(symbolA, tokenUSD)})`}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
         <ListItem
           disabled
-          title={'ELF'}
+          title={symbolB}
           style={styles.itemBox}
-          subtitle="1,275,362 ELF/AEETH ($ 125.24)"
+          subtitle={`≈ ${swapUtils.detailsPrice(
+            reserveB,
+            reserveA,
+          )} ${symbolA} ($ ${swapUtils.getUSD(symbolB, tokenUSD)})`}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
       </>
     );
-  }, []);
+  }, [reserveA, reserveB, symbolA, symbolB, tokenUSD]);
   const willReceive = useMemo(() => {
     return (
       <>
         <TextL style={[styles.themeColor, styles.mrginText]}>
-          {i18n.t('swap.willReceive')}
+          {i18n.t('swap.willRemove')}
         </TextL>
         <View style={[styles.splitLine]} />
         <ListItem
           disabled
-          title={`ELF-CPU ${i18n.t('swap.poolTokens')}`}
-          style={styles.itemBox}
-          subtitle="1,275.3624"
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-        />
-        <ListItem
-          disabled
           title={i18n.t('swap.sharePool')}
           style={styles.itemBox}
-          subtitle="0.3622%"
+          subtitle={swapUtils.getPoolShare(inputS, balance)}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
       </>
     );
-  }, []);
+  }, [balance, inputS]);
   const myLiquidity = useMemo(() => {
     const List = [
       {title: `${i18n.t('swap.pooled')} ELF:`, subtitle: '0.948835'},
@@ -242,9 +272,23 @@ const RemoveLiquidity = () => {
       </View>
     );
   }, []);
+  const upPullRefresh = useCallback(
+    callBack => {
+      getAccountAssets(symbolPair, (code, v) => {
+        if (code === 1) {
+          setPairData(v);
+        }
+        callBack && callBack();
+      });
+    },
+    [getAccountAssets, symbolPair],
+  );
   return (
     <View style={GStyle.container}>
-      <CommonHeader title={i18n.t('swap.removeLiquidity')} canBack>
+      <CommonHeader
+        scrollViewProps={{upPullRefresh}}
+        title={i18n.t('swap.removeLiquidity')}
+        canBack>
         <View style={styles.container}>
           {inputItem}
           {firstItem}
@@ -253,7 +297,7 @@ const RemoveLiquidity = () => {
           {willReceive}
           {secondTip}
           {remove}
-          {myLiquidity}
+          {/* {myLiquidity} */}
         </View>
       </CommonHeader>
     </View>

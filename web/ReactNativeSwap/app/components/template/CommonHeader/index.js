@@ -8,7 +8,7 @@ import {pTd} from '../../../utils/common';
 import {Colors} from '../../../assets/theme';
 import Touchable from '../Touchable';
 import {TextM} from '../CommonText';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import KeyboardScrollView from '../KeyboardScrollView';
 const styles = StyleSheet.create({
   statusBarStyle: {
     paddingTop: statusBarHeight,
@@ -131,17 +131,12 @@ const Header = props => {
   );
 };
 const CommonHeader = props => {
-  const {children} = props;
+  const {children, scrollViewProps} = props;
   if (children) {
     return (
       <>
         <Header {...props} />
-        <KeyboardAwareScrollView
-          keyboardShouldPersistTaps="handled"
-          keyboardOpeningTime={0}
-          extraHeight={50}>
-          {children}
-        </KeyboardAwareScrollView>
+        <KeyboardScrollView {...scrollViewProps}>{children}</KeyboardScrollView>
       </>
     );
   }

@@ -15,6 +15,7 @@ const TransactionManagement = () => {
   });
   const Components = useMemo(() => {
     const uri = aelfUtils.webURLAddress(address);
+    console.log(uri);
     return (
       <View style={GStyle.secondContainer}>
         <CommonHeader

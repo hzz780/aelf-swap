@@ -249,6 +249,8 @@
     "serviceAgreement": "《用户服务协议》"
   },
   "swap": {
+    "tryAgain": "操作失败，请刷新后重试",
+    "loadMore": "点击加载更多",
     "add": "添加",
     "remove": "移除",
     "transaction": "交易",
@@ -276,7 +278,8 @@
     "price": "价格",
     "max": "最大",
     "select": "选择",
-    "willReceive": "流动性变化",
+    "willReceive": "我将要接收",
+    "willRemove": "我将要移除",
     "sharePool": "流动性占比",
     "addFirstTip": "该流动性将首次添加流动性！\n交易对的初始汇率将根据存入的Token比例确定，请确保存入的交易对具有合适比例。",
     "addSecondTip": "所有输入数值仅为当前预估值，如果价格变动幅度超过0.5%，该交易将被取消。",
@@ -287,12 +290,20 @@
     "myPoolShare": "流动性占比",
     "more": "更多",
     "and": "和",
-    "poolTokens":"流动性Token",
+    "poolTokens": "流动性Token",
     "createPool": "创建流动池",
     "create": "创建",
     "tokenName": "Token名称:",
     "totalSupply": "总供应链:",
     "circulatingSupply": "总流通量:",
-    "pleaseSelect": "请选择"
+    "pleaseSelect": "请选择",
+    "pairExists": "交易对已存在",
+    "inputError": "输入有误",
+    "insufficientLiquidity": "流动资金不足",
+    "minimumReceived": "最低收到",
+    "createdSuccess": "创建成功",
+    "addSuccess": "添加成功",
+    "swapSuccess": "兑换成功",
+    "removeSuccess": "移除成功"
   }
 }

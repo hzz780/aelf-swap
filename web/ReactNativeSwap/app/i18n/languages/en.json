@@ -249,6 +249,8 @@
     "serviceAgreement": " Privacy Policy"
   },
   "swap": {
+    "tryAgain": "Operation failed, please refresh and try again",
+    "loadMore": "Click to load more",
     "add": "Add",
     "remove": "Remove",
     "transaction": "Transaction",
@@ -277,6 +279,7 @@
     "max": "MAX",
     "select": "select",
     "willReceive": "I Will Receive",
+    "willRemove": "I Will Remove",
     "sharePool": "Share of Pool",
     "addFirstTip": "you are the first person to add liquidity! \nThe initial exchange rate will be set based on your deposits. Please make sure that the deposit transaction pair has a proper ratio",
     "addSecondTip": "Output is estimated. If the price changes by more than 0.5% your transaction will revert.",
@@ -287,12 +290,20 @@
     "myPoolShare": "My Pool Share",
     "more": "More",
     "and": "and",
-    "poolTokens":"Pool Tokens",
+    "poolTokens": "Pool Tokens",
     "createPool": "Create Pool",
     "create": "Create",
     "tokenName": "Token Name:",
     "totalSupply": "Total Supply:",
     "circulatingSupply": "Circulating Supply:",
-    "pleaseSelect": "Please Select"
+    "pleaseSelect": "Please Select",
+    "pairExists": "The trading pair already exists",
+    "inputError": "Input error",
+    "insufficientLiquidity": "Insufficient liquidity",
+    "minimumReceived": "Minimum Received",
+    "createdSuccess": "Created successfully",
+    "addSuccess": "Add success",
+    "swapSuccess": "SwapSuccess",
+    "removeSuccess": "Remove successfully"
   }
 }

@@ -17,6 +17,16 @@ const {Types, Creators} = createActions({
   getAllowanceList: [],
   setAllowanceList: ['allowanceList'],
   onApprove: ['amount', 'appContractAddress'],
+  getAllTokens: [],
+  setAllTokens: ['allTokens'],
+
+  getUserBalances: ['address'],
+  setUserBalances: ['userBalances'],
+
+  getTokenUsd: [],
+  setTokenUsd: ['tokenUSD'],
+
+  approve: [],
 });
 
 export const userTypes = Types;
@@ -33,6 +43,9 @@ export const INITIAL_STATE = {
   keystore: {},
   allowanceList: [],
   privateKey: null,
+  allTokens: [],
+  userBalances: {},
+  tokenUSD: {},
 };
 
 /* ------------- Selectors ------------- */
@@ -74,6 +87,18 @@ export const userSelectors = {
   getBalance: createSelector(
     _baseSelector,
     base => base.balance,
+  ),
+  allTokens: createSelector(
+    _baseSelector,
+    base => base.allTokens,
+  ),
+  userBalances: createSelector(
+    _baseSelector,
+    base => base.userBalances,
+  ),
+  tokenUSD: createSelector(
+    _baseSelector,
+    base => base.tokenUSD,
   ),
 };
 
@@ -120,6 +145,28 @@ export const setAllowanceList = (state, {allowanceList}) => {
 export const onApprove = state => {
   return state;
 };
+export const getAllTokens = state => {
+  return state;
+};
+export const setAllTokens = (state, {allTokens}) => {
+  return Object.assign({}, state, {allTokens});
+};
+export const getUserBalances = state => {
+  return state;
+};
+export const setUserBalances = (state, {userBalances}) => {
+  return Object.assign({}, state, {userBalances});
+};
+export const getTokenUsd = state => {
+  return state;
+};
+export const setTokenUsd = (state, {tokenUSD}) => {
+  return Object.assign({}, state, {tokenUSD});
+};
+export const approve = state => {
+  return state;
+};
+
 /* ------------- Hookup Reducers To Types ------------- */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.ON_REGISTERED]: onRegistered,
@@ -138,4 +185,14 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_ALLOWANCE_LIST]: getAllowanceList,
   [Types.SET_ALLOWANCE_LIST]: setAllowanceList,
   [Types.ON_APPROVE]: onApprove,
+
+  //
+  [Types.GET_ALL_TOKENS]: getAllTokens,
+  [Types.SET_ALL_TOKENS]: setAllTokens,
+  [Types.GET_USER_BALANCES]: getUserBalances,
+  [Types.SET_USER_BALANCES]: setUserBalances,
+
+  [Types.GET_TOKEN_USD]: getTokenUsd,
+  [Types.SET_TOKEN_USD]: setTokenUsd,
+  [Types.APPROVE]: approve,
 });

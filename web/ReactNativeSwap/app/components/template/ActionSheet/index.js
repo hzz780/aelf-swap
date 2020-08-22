@@ -27,13 +27,20 @@ const show = (items, cancelItem) => {
               const {title, onPress} = item;
               return (
                 <Touchable
+                  disabled={item.disabled}
                   key={index}
                   style={styles.itemBox}
                   onPress={() => {
                     OverlayModal.hide();
                     onPress && onPress(item);
                   }}>
-                  <Text style={styles.itemText}>{title}</Text>
+                  <Text
+                    style={[
+                      styles.itemText,
+                      item.disabled && {color: Colors.fontGray},
+                    ]}>
+                    {title}
+                  </Text>
                 </Touchable>
               );
             })}

@@ -10,43 +10,70 @@ import {useStateToProps} from '../../../utils/pages/hooks';
 import {GStyle, Colors} from '../../../assets/theme';
 import {pTd} from '../../../utils/common';
 import navigationService from '../../../utils/common/navigationService';
+import swapActions from '../../../redux/swapRedux';
+import {useDispatch} from 'react-redux';
+import swapUtils from '../../../utils/pages/swapUtils';
+import {useFocusEffect} from '@react-navigation/native';
 let isActive = true;
 
 const Home = () => {
+  const dispatch = useDispatch();
   const list = useRef();
   const [loadCompleted, setLoadCompleted] = useState(true);
-  useStateToProps(base => {
-    const {settings} = base;
+  const getPairs = useCallback(
+    (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
+    [dispatch],
+  );
+  const {pairs, tokenUSD} = useStateToProps(base => {
+    const {settings, swap, user} = base;
     return {
       language: settings.language,
+      pairs: swap.pairs,
+      tokenUSD: user.tokenUSD,
     };
   });
+  useFocusEffect(
+    useCallback(() => {
+      getPairs();
+    }, [getPairs]),
+  );
   const onSetLoadCompleted = useCallback(value => {
     if (isActive) {
       setLoadCompleted(value);
     }
   }, []);
   const upPullRefresh = useCallback(() => {
+    getPairs(undefined, () => {
+      list.current && list.current.endUpPullRefresh();
+      list.current && list.current.endBottomRefresh();
+    });
     onSetLoadCompleted(true);
-    list.current && list.current.endUpPullRefresh();
-    list.current && list.current.endBottomRefresh();
-  }, [onSetLoadCompleted]);
+  }, [getPairs, onSetLoadCompleted]);
   const onEndReached = useCallback(() => {
     onSetLoadCompleted(true);
     list.current && list.current.endBottomRefresh();
   }, [onSetLoadCompleted]);
-  const renderItem = useCallback(() => {
-    return (
-      <ListItem
-        title={'ELF-AEETH'}
-        subtitle="$ 234,123"
-        rightElement={null}
-        titleStyle={{color: Colors.primaryColor}}
-        subtitleStyle={styles.subtitleStyle}
-        onPress={() => navigationService.navigate('PairDetails')}
-      />
-    );
-  }, []);
+  const renderItem = useCallback(
+    ({item}) => {
+      if (!item) {
+        return null;
+      }
+      const subtitle = swapUtils.getSwapUSD(item, tokenUSD);
+      return (
+        <ListItem
+          title={item.symbolPair}
+          subtitle={subtitle}
+          rightElement={null}
+          titleStyle={{color: Colors.primaryColor}}
+          subtitleStyle={styles.subtitleStyle}
+          onPress={() =>
+            navigationService.navigate('PairDetails', {pairData: item})
+          }
+        />
+      );
+    },
+    [tokenUSD],
+  );
   return (
     <View style={GStyle.container}>
       <CommonHeader title={i18n.t('swap.market')} />
@@ -62,8 +89,8 @@ const Home = () => {
       <ListComponent
         ref={list}
         whetherAutomatic
-        data={[1, 2]}
-        bottomLoadTip={i18n.t('lottery.loadMore')}
+        data={pairs}
+        bottomLoadTip={i18n.t('swap.loadMore')}
         message=" "
         showFooter={!loadCompleted}
         loadCompleted={loadCompleted}

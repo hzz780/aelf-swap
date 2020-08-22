@@ -9,7 +9,7 @@ import navigationService from '../../../../utils/common/navigationService';
 import i18n from 'i18n-js';
 import {useStateToProps} from '../../../../utils/pages/hooks';
 const LiquidityList = () => {
-  useStateToProps(base => {
+  const {language} = useStateToProps(base => {
     const {settings} = base;
     return {
       language: settings.language,
@@ -25,7 +25,7 @@ const LiquidityList = () => {
       <View style={styles.titleBox}>
         <TextL>{i18n.t('swap.myLiquidity')}</TextL>
       </View>
-      <MeLiquidity />
+      <MeLiquidity language={language} />
     </View>
   );
 };

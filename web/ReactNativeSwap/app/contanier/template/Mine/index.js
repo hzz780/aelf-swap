@@ -29,10 +29,10 @@ const Tool = () => {
         title: i18n.t('mineModule.transactionManagementT'),
         onPress: () => navigationService.navigate('TransactionManagement'),
       },
-      {
-        title: i18n.t('mineModule.authorizeManagementT'),
-        onPress: () => navigationService.navigate('AuthorizeManagement'),
-      },
+      // {
+      //   title: i18n.t('mineModule.authorizeManagementT'),
+      //   onPress: () => navigationService.navigate('AuthorizeManagement'),
+      // },
       {
         title: i18n.t('mineModule.securityCenterT'),
         onPress: () => navigationService.navigate('SecurityCenter'),
