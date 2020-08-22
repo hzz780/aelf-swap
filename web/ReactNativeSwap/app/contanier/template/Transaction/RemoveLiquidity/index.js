@@ -16,7 +16,6 @@ import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
 import swapUtils from '../../../../utils/pages/swapUtils';
 import {useDispatch} from 'react-redux';
-import config from '../../../../config';
 import {useFocusEffect} from '@react-navigation/native';
 import reduxUtils from '../../../../utils/pages/reduxUtils';
 import unitConverter from '../../../../utils/pages/unitConverter';
@@ -49,7 +48,7 @@ const RemoveLiquidity = props => {
   );
   const {inputA, inputB, inputS} = state;
   const {tokenUSD} = useStateToProps(base => {
-    const {user, swap} = base;
+    const {user} = base;
     return {
       tokenUSD: user.tokenUSD,
     };
