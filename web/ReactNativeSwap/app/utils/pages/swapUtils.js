@@ -34,7 +34,6 @@ const getSwapUSD = (item, USDS) => {
   let text = '$ 0';
   const USDA = getUSD(item.symbolA, USDS);
   const USDB = getUSD(item.symbolB, USDS);
-  console.log(USDA, USDB);
   if (USDB || USDA) {
     let number = 0;
     if (USDA && USDB) {
@@ -49,7 +48,6 @@ const getSwapUSD = (item, USDS) => {
     }
     text = `$ ${number || '0'}`;
   }
-  console.log(text, '====text');
   return text;
 };
 const getPairUSD = (item, USDS) => {

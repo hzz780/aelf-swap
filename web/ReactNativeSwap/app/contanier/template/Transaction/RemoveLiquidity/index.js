@@ -20,10 +20,10 @@ import {useFocusEffect} from '@react-navigation/native';
 import reduxUtils from '../../../../utils/pages/reduxUtils';
 import unitConverter from '../../../../utils/pages/unitConverter';
 import TransactionVerification from '../../../../utils/pages/TransactionVerification';
+import MySingleLiquidity from '../MySingleLiquidity';
 const RemoveLiquidity = props => {
   const dispatch = useDispatch();
   const [pairData, setPairData] = useState(props.route.params?.pairData || {});
-  console.log(pairData, '=====pairData');
   const {
     symbolPair,
     balance,
@@ -251,26 +251,8 @@ const RemoveLiquidity = props => {
     );
   }, [balance, inputS]);
   const myLiquidity = useMemo(() => {
-    const List = [
-      {title: `${i18n.t('swap.pooled')} ELF:`, subtitle: '0.948835'},
-      {title: `${i18n.t('swap.pooled')} AEETH:`, subtitle: '0.948835'},
-      {title: `${i18n.t('swap.myPoolTokens')}:`, subtitle: '0.948835'},
-      {title: `${i18n.t('swap.myPoolShare')}:`, subtitle: '0.2%'},
-    ];
-    return (
-      <View style={styles.myLiquidity}>
-        <TextL style={styles.themeColor}>{i18n.t('swap.myLiquidity')}</TextL>
-        {List.map((item, index) => {
-          return (
-            <View key={index} style={styles.myLiquidityItemBox}>
-              <TextM>{item.title}</TextM>
-              <TextM style={styles.rightText}>{item.subtitle}</TextM>
-            </View>
-          );
-        })}
-      </View>
-    );
-  }, []);
+    return <MySingleLiquidity pair={pairData} />;
+  }, [pairData]);
   const upPullRefresh = useCallback(
     callBack => {
       getAccountAssets(symbolPair, (code, v) => {
@@ -296,7 +278,7 @@ const RemoveLiquidity = props => {
           {willReceive}
           {secondTip}
           {remove}
-          {/* {myLiquidity} */}
+          {myLiquidity}
         </View>
       </CommonHeader>
     </View>

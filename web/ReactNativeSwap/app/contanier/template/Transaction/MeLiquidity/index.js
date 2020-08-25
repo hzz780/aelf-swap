@@ -1,11 +1,10 @@
 import React, {memo, useCallback, useRef, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
 import {
   ListComponent,
   ListItem,
   Touchable,
 } from '../../../../components/template';
-import {pTd} from '../../../../utils/common';
+import {View} from 'react-native';
 import {Colors} from '../../../../assets/theme';
 import {TextL} from '../../../../components/template/CommonText';
 import navigationService from '../../../../utils/common/navigationService';
@@ -15,6 +14,7 @@ import swapUtils from '../../../../utils/pages/swapUtils';
 import {useDispatch} from 'react-redux';
 import swapActions from '../../../../redux/swapRedux';
 import {useFocusEffect} from '@react-navigation/native';
+import styles from './styles';
 const MeLiquidity = () => {
   const dispatch = useDispatch();
   const list = useRef();
@@ -116,42 +116,3 @@ const MeLiquidity = () => {
 };
 
 export default memo(MeLiquidity);
-
-const styles = StyleSheet.create({
-  itemBox: {
-    paddingVertical: pTd(20),
-    width: '100%',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderColor,
-  },
-  listItemBox: {
-    minHeight: 0,
-    paddingVertical: pTd(10),
-    borderBottomWidth: 0,
-  },
-  itemTitleStyle: {
-    color: Colors.primaryColor,
-    fontWeight: 'bold',
-  },
-  itemSubtitleStyle: {
-    color: Colors.primaryColor,
-  },
-  toolBox: {
-    marginTop: pTd(10),
-    flexDirection: 'row',
-  },
-  addTool: {
-    flex: 1,
-    marginHorizontal: pTd(30),
-    paddingVertical: pTd(15),
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: Colors.primaryColor,
-    borderRadius: pTd(10),
-  },
-  whiteText: {
-    color: 'white',
-  },
-});

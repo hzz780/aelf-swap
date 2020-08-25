@@ -186,7 +186,6 @@ export const smsWithoutEncoding = function(phoneNumber = null, body = null) {
 };
 
 export const web = (address = null) => {
-  console.log(address, '=====address');
   if (!address) {
     console.log('Missing address argument');
     return;

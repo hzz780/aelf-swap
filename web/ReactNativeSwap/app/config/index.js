@@ -17,21 +17,21 @@ const keystoreOptions = {
   },
 };
 
-// const explorerURL = 'https://explorer-test-side01.aelf.io';
-// const walletURL = 'https://tdvv-wallet-test.aelf.io';
+const explorerURL = 'https://explorer-test-side01.aelf.io';
+const walletURL = 'https://tdvv-wallet-test.aelf.io';
 
 // test environment
-const explorerURL = 'http://1.119.195.50:11109';
-const walletURL = 'http://1.119.195.50:11107';
+// const explorerURL = 'http://1.119.195.50:11109';
+// const walletURL = 'http://1.119.195.50:11107';
 export default {
   commonPrivateKey:
     'b7a6b643f2a66848cb2229bf26c8330d5384e0eac325709a66f4baacc89d3108',
   // You can change the params for keyStore here
   keystoreOptions,
-  httpProvider: `${explorerURL}/chain`,
+  httpProvider: `${walletURL}/chain`,
   explorerURL,
   walletURL,
-  webURL: walletURL,
+  webURL: explorerURL,
   // contractNames & contractAddresses will be init by appInit of `/common/utils/aelfProvider`;
   contractNames: {
     consensusContract: 'AElf.ContractNames.Consensus',
@@ -44,30 +44,25 @@ export default {
       contractAdress: '2wRDbyVF28VBQoSPgdSEFaL4x7CaXz8TCBujYhgWc9qTMxBE3n',
       contractName: 'bingoGameContract',
     },
-    {
-      name: 'lottery',
-      contractAdress: '2onFLTnPEiZrXGomzJ8g74cBre2cJuHrn1yBJF3P6Xu9K5Gbth',
-      contractName: 'lotteryContract',
-    },
   ],
   contractNameAddressSets: {
     consensusContract: 'BNPFPPwQ3DE9rwxzdY61Q2utU9FZx9KYUnrYHQqCR6N4LLhUE',
     tokenContract: '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX',
-    swapContract: '2LsUPSKq6A2GqKQoncWTqfNSsM14dGSkKsYoSy2u8go8ZdohCx',
+    swapContract: '2YkKkNZKCcsfUsGwCfJ6wyTx5NYLgpCg1stBuRT4z5ep3psXNG',
   },
   address: {
     prefix: 'ELF',
     suffix: 'tDVV',
   },
 
-  // tokenSymbol: 'AEUSD',
-  // tokenDecimal: 3,
-  // tokenDecimalFormat: 10 ** 3,
+  tokenSymbol: 'AEUSD',
+  tokenDecimal: 3,
+  tokenDecimalFormat: 10 ** 3,
 
   // test environment
-  tokenSymbol: 'ELF',
-  tokenDecimal: 8,
-  tokenDecimalFormat: 10 ** 8,
+  // tokenSymbol: 'ELF',
+  // tokenDecimal: 8,
+  // tokenDecimalFormat: 10 ** 8,
 
   fetchTimeout: 10000,
   /**

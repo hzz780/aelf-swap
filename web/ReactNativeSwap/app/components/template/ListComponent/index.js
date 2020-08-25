@@ -19,7 +19,6 @@ export default class ListComponent extends Component {
   static propTypes = {
     whetherAutomatic: PropTypes.bool, //Whether to automatically load more, if there is a ceiling, you can not set this property to true
     upPullRefresh: PropTypes.func, //Pull-down refresh callback
-    data: PropTypes.array.isRequired, //Data source array
     onEndReached: PropTypes.func, //Pull-refresh callback,
     loadCompleted: PropTypes.bool, //Whether all data has been loaded and the tail component is hidden
     noPositionTips: PropTypes.string,

@@ -13,7 +13,6 @@ const getDecimalTokenHigher = (token, symbol) => {
       if (decimals) {
         a = unitConverter.toDecimalHigher(token, decimals);
       }
-      console.log(tokenUSD);
     }
   }
   return a;

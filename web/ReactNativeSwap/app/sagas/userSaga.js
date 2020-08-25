@@ -27,7 +27,7 @@ import {Alert} from 'react-native';
 import swapActions from '../redux/swapRedux';
 import {getFetchRequest} from '../utils/common/networkRequest';
 const {
-  walletURL,
+  explorerURL,
   tokenSymbol,
   contractAddresses,
   keystoreOptions,
@@ -302,9 +302,8 @@ function* getAllTokensSaga() {
   try {
     yield put(userActions.getTokenUsd());
     const result = yield getFetchRequest(
-      `${walletURL}/api/viewer/getAllTokens?total=0&pageSize=100&pageNum=1`,
+      `${explorerURL}/api/viewer/getAllTokens?total=0&pageSize=100&pageNum=1`,
     );
-
     const {
       msg,
       data: {list},
@@ -326,7 +325,7 @@ function* getUserBalancesSaga({address}) {
   try {
     let obj = {};
     const result = yield getFetchRequest(
-      `${walletURL}/api/viewer/balances?address=${aelfUtils.formatRestoreAddress(
+      `${explorerURL}/api/viewer/balances?address=${aelfUtils.formatRestoreAddress(
         address,
       )}`,
     );
@@ -377,7 +376,10 @@ const getApprove = (userBalances, tokenContract, address, allTokens) => {
         const token = allTokens.find(item => {
           return item.symbol === symbol;
         });
+        const dBalance = unitConverter.toDecimalHigher(balance, token.decimals);
         if (
+          allowance !== undefined &&
+          allowance !== null &&
           allowance !== -1 &&
           unitConverter.toDecimalLower(allowance, token.decimals) <
             Number(balance)
@@ -385,7 +387,7 @@ const getApprove = (userBalances, tokenContract, address, allTokens) => {
           await tokenContract.Approve({
             symbol,
             spender: contractNameAddressSets.swapContract,
-            amount: unitConverter.toDecimalHigher(balance, token.decimals),
+            amount: dBalance,
           });
         }
       }

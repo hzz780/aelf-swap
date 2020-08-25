@@ -23,6 +23,7 @@ import swapActions from '../../../../redux/swapRedux';
 import TransactionVerification from '../../../../utils/pages/TransactionVerification';
 import reduxUtils from '../../../../utils/pages/reduxUtils';
 const defaultState = {
+  conversion: false,
   tType: '',
   swapToken: {
     input: '',
@@ -55,36 +56,64 @@ const Swap = () => {
     };
   });
   const [state, setState] = useSetState(defaultState);
-  const {swapToken, toSwapToken, tType} = state;
+  const {swapToken, toSwapToken, tType, conversion} = state;
   const onModal = useCallback(
     (item, type) => {
       let obj = {[type]: item};
       if (type === 'swapToken' && toSwapToken?.token) {
-        const {rA, rB} = swapUtils.getReserve(item, toSwapToken, pairs);
-        obj = {
-          ...obj,
-          swapToken: {
-            ...item,
-            reserve: rA,
-          },
-          toSwapToken: {
-            ...toSwapToken,
-            reserve: rB,
-          },
-        };
+        if (toSwapToken.token === item.token) {
+          obj = {
+            ...obj,
+            swapToken: {
+              ...item,
+            },
+            toSwapToken: {
+              input: '',
+              token: '',
+              balance: '0',
+            },
+          };
+        } else {
+          const {rA, rB} = swapUtils.getReserve(item, toSwapToken, pairs);
+          obj = {
+            ...obj,
+            swapToken: {
+              ...item,
+              reserve: rA,
+            },
+            toSwapToken: {
+              ...toSwapToken,
+              reserve: rB,
+            },
+          };
+        }
       } else if (swapToken?.token) {
-        const {rA, rB} = swapUtils.getReserve(item, swapToken, pairs);
-        obj = {
-          ...obj,
-          toSwapToken: {
-            ...item,
-            reserve: rA,
-          },
-          swapToken: {
-            ...swapToken,
-            reserve: rB,
-          },
-        };
+        if (swapToken.token === item.token) {
+          obj = {
+            ...obj,
+            toSwapToken: {
+              ...item,
+            },
+            swapToken: {
+              input: '',
+              token: '',
+              balance: '0',
+            },
+          };
+        } else {
+          const {rA, rB} = swapUtils.getReserve(item, swapToken, pairs);
+          obj = {
+            ...obj,
+            toSwapToken: {
+              ...item,
+              reserve: rA,
+            },
+            swapToken: {
+              ...swapToken,
+              reserve: rB,
+            },
+          };
+        }
       }
       setState(obj);
     },
@@ -92,18 +121,13 @@ const Swap = () => {
   );
   const showTokenModal = useCallback(
     type => {
-      const tokenList = swapUtils.getTokenList(
-        pairs,
-        userBalances,
-        type,
-        type === 'swapToken' ? toSwapToken : swapToken,
-      );
+      const tokenList = swapUtils.getTokenList(pairs, userBalances);
       ChooseTokenModal.show({
         tokenList,
         onPress: item => onModal(item, type),
       });
     },
-    [pairs, userBalances, toSwapToken, swapToken, onModal],
+    [pairs, userBalances, onModal],
   );
   const NonInitial = swapToken?.reserve && toSwapToken?.reserve;
   const rightElement = useCallback(
@@ -248,6 +272,70 @@ const Swap = () => {
       </View>
     );
   }, [language, swapToken, rightElement, NonInitial, setState, toSwapToken]);
+  const onChangeToSwap = useCallback(
+    v => {
+      let obj = {};
+      if (v > toSwapToken?.reserve) {
+        obj = {
+          ...obj,
+          toSwapToken: {
+            ...toSwapToken,
+            input: v,
+          },
+          swapToken: {
+            ...swapToken,
+            input: '',
+          },
+        };
+      } else {
+        if (NonInitial) {
+          obj = {
+            ...obj,
+            toSwapToken: {...toSwapToken, input: v},
+            swapToken: {
+              ...swapToken,
+              input: swapUtils.getInInput(
+                swapToken?.reserve,
+                toSwapToken?.reserve,
+                v,
+              ),
+            },
+          };
+        } else {
+          obj = {toSwapToken: {...toSwapToken, input: v}};
+        }
+      }
+      obj = {
+        ...obj,
+        tType: 'toSwapToken',
+      };
+      setState(obj);
+    },
+    [NonInitial, setState, swapToken, toSwapToken],
+  );
+  const PriceMemo = useMemo(() => {
+    let f = swapToken,
+      s = toSwapToken;
+    if (conversion) {
+      f = toSwapToken;
+      s = swapToken;
+    }
+    console.log(f, s);
+    return (
+      <View style={styles.inputTitleBox}>
+        <TextM>{i18n.t('swap.price')}</TextM>
+        <TextM
+          onPress={() => {
+            console.log(conversion, '=====conversion');
+            setState({conversion: !conversion});
+          }}>
+          {swapUtils.getAmoun(f?.reserve, s?.reserve)}
+          {f?.token} / {s?.token}{' '}
+          <Entypo name="swap" size={pTd(30)} color={Colors.primaryColor} />
+        </TextM>
+      </View>
+    );
+  }, [language, conversion, setState, swapToken, toSwapToken]);
   const ToSwapItem = useMemo(() => {
     return (
       <View style={styles.inputItem}>
@@ -260,70 +348,15 @@ const Swap = () => {
         <Input
           keyboardType="numeric"
           value={toSwapToken?.input}
-          onChangeText={v => {
-            console.log(NonInitial, v, 'onChangeText');
-            let obj = {};
-            if (v > toSwapToken?.reserve) {
-              obj = {
-                ...obj,
-                toSwapToken: {
-                  ...toSwapToken,
-                  input: v,
-                },
-                swapToken: {
-                  ...swapToken,
-                  input: '',
-                },
-              };
-            } else {
-              if (NonInitial) {
-                obj = {
-                  ...obj,
-                  toSwapToken: {...toSwapToken, input: v},
-                  swapToken: {
-                    ...swapToken,
-                    input: swapUtils.getInInput(
-                      swapToken?.reserve,
-                      toSwapToken?.reserve,
-                      v,
-                    ),
-                  },
-                };
-              } else {
-                obj = {toSwapToken: {...toSwapToken, input: v}};
-              }
-            }
-            obj = {
-              ...obj,
-              tType: 'toSwapToken',
-            };
-            setState(obj);
-          }}
+          onChangeText={onChangeToSwap}
           style={styles.inputStyle}
           rightElement={rightElement(toSwapToken, 'toSwapToken', true)}
           placeholder="0.0"
         />
-        <View style={styles.inputTitleBox}>
-          <TextM>{i18n.t('swap.price')}</TextM>
-          <TextM>
-            {swapUtils.getAmoun(swapToken?.input, toSwapToken?.input)}
-            {swapToken?.token} / {toSwapToken?.token}{' '}
-            <Entypo
-              onPress={() => {
-                setState({
-                  swapToken: {...toSwapToken, input: ''},
-                  toSwapToken: {...swapToken, input: ''},
-                });
-              }}
-              name="swap"
-              size={pTd(30)}
-              color={Colors.primaryColor}
-            />
-          </TextM>
-        </View>
+        {PriceMemo}
       </View>
     );
-  }, [language, toSwapToken, rightElement, swapToken, NonInitial, setState]);
+  }, [language, toSwapToken, onChangeToSwap, rightElement, PriceMemo]);
   let disabled = true;
   if (swapUtils.judgmentToken(swapToken) && toSwapToken?.input) {
     disabled = false;
@@ -359,7 +392,7 @@ const Swap = () => {
             toSwapToken?.token,
           );
           const amountInMax = reduxUtils.getDecimalTokenHigher(
-            swapUtils.getSold(swapToken?.input, 1 - swapFloat),
+            swapUtils.getSold(swapToken?.input, 1 + swapFloat),
             swapToken?.token,
           );
           obj = {

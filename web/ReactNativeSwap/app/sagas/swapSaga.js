@@ -56,7 +56,6 @@ function* getPairsSaga({pair, callBack}) {
               return i.symbol === item.symbolB;
             });
           }
-          console.log(supplyResults[index]);
           return {
             ...item,
             totalSupply: unitConverter.toDecimalLower(
@@ -149,6 +148,7 @@ function* getAccountAssetsSaga({pair, callBack}) {
       pairs = yield swapContract.GetAccountAssets.call();
       if (pairs === null) {
         yield put(swapActions.setMyLiquidity([]));
+        return;
       }
     }
     console.log(pairs, '=====symbolPair');

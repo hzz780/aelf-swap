@@ -1,5 +1,4 @@
 import React, {memo, useCallback, useMemo} from 'react';
-import {GStyle, Colors} from '../../../../assets/theme';
 import {
   CommonHeader,
   Input,
@@ -7,23 +6,24 @@ import {
   ListItem,
   CommonToast,
 } from '../../../../components/template';
-import {View, StyleSheet} from 'react-native';
+import {View} from 'react-native';
+import {GStyle} from '../../../../assets/theme';
 import {ChooseToken, MAXComponent} from '../MAXComponent';
 import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import {TextL, TextM} from '../../../../components/template/CommonText';
 import ChooseTokenModal from '../ChooseTokenModal';
 import {pTd} from '../../../../utils/common';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {bottomBarHeigth} from '../../../../utils/common/device';
 import navigationService from '../../../../utils/common/navigationService';
 import i18n from 'i18n-js';
 import {useFocusEffect} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import swapActions from '../../../../redux/swapRedux';
 import swapUtils from '../../../../utils/pages/swapUtils';
-import config from '../../../../config';
 import reduxUtils from '../../../../utils/pages/reduxUtils';
 import TransactionVerification from '../../../../utils/pages/TransactionVerification';
+import styles from './styles';
+import MySingleLiquidity from '../MySingleLiquidity';
 const defaultState = {
   firstToken: {
     input: '',
@@ -36,7 +36,6 @@ const defaultState = {
     balance: '',
   },
 };
-const {swapFloat} = config;
 const AddLiquidity = props => {
   const {pairData} = props.route.params || {};
   const dispatch = useDispatch();
@@ -68,7 +67,6 @@ const AddLiquidity = props => {
     [dispatch],
   );
   const pair = swapUtils.getPair(firstToken, secondToken, pairs);
-  console.log(pair, '=====pair');
   const addLiquidity = useCallback(
     data => dispatch(swapActions.addLiquidity(data)),
     [dispatch],
@@ -113,11 +111,9 @@ const AddLiquidity = props => {
     },
     [firstToken, pairs, secondToken, setState],
   );
-  console.log(firstToken, secondToken);
   const NonInitial = firstToken?.reserve && secondToken?.reserve;
   const showTokenModal = useCallback(
     type => {
-      console.log(type);
       const tokenList = swapUtils.getTokenList(
         pairs,
         userBalances,
@@ -131,6 +127,40 @@ const AddLiquidity = props => {
     },
     [firstToken, onModal, pairs, secondToken, userBalances],
   );
+  const onMAX = useCallback(
+    (type, item) => {
+      let obj = {[type]: {...item, input: item.balance}};
+      if (NonInitial) {
+        if (type === 'firstToken') {
+          obj = {
+            [type]: {...item, input: item.balance},
+            secondToken: {
+              ...secondToken,
+              input: swapUtils.getAmounB(
+                item.balance,
+                item?.reserve,
+                secondToken?.reserve,
+              ),
+            },
+          };
+        } else {
+          obj = {
+            [type]: {...item, input: item.balance},
+            firstToken: {
+              ...firstToken,
+              input: swapUtils.getAmounB(
+                item.balance,
+                item?.reserve,
+                firstToken?.reserve,
+              ),
+            },
+          };
+        }
+      }
+      setState(obj);
+    },
+    [NonInitial, firstToken, secondToken, setState],
+  );
   const rightElement = useCallback(
     (item, type, hideMax) => {
       const {token} = item;
@@ -138,16 +168,9 @@ const AddLiquidity = props => {
         return (
           <View style={styles.rightBox}>
             {hideMax ? null : (
-              <MAXComponent
-                onPress={() => {
-                  setState({[type]: {...item, input: item.balance}});
-                }}
-              />
+              <MAXComponent onPress={() => onMAX(type, item)} />
             )}
-            <TextL
-              onPress={() => {
-                showTokenModal(type);
-              }}>
+            <TextL onPress={() => showTokenModal(type)}>
               {token} <Entypo size={pTd(30)} name="chevron-thin-down" />
             </TextL>
           </View>
@@ -161,7 +184,29 @@ const AddLiquidity = props => {
         />
       );
     },
-    [setState, showTokenModal],
+    [onMAX, showTokenModal],
+  );
+  const onChangeFirst = useCallback(
+    v => {
+      if (NonInitial) {
+        setState({
+          firstToken: {...firstToken, input: v},
+          secondToken: {
+            ...secondToken,
+            input: swapUtils.getAmounB(
+              v,
+              firstToken?.reserve,
+              secondToken?.reserve,
+            ),
+          },
+        });
+      } else {
+        setState({
+          firstToken: {...firstToken, input: v},
+        });
+      }
+    },
+    [NonInitial, firstToken, secondToken, setState],
   );
   const firstItem = useMemo(() => {
     return (
@@ -175,32 +220,34 @@ const AddLiquidity = props => {
         <Input
           keyboardType="numeric"
           value={firstToken?.input}
-          onChangeText={v => {
-            if (NonInitial) {
-              setState({
-                firstToken: {...firstToken, input: v},
-                secondToken: {
-                  ...secondToken,
-                  input: swapUtils.getAmounB(
-                    v,
-                    firstToken?.reserve,
-                    secondToken?.reserve,
-                  ),
-                },
-              });
-            } else {
-              setState({
-                firstToken: {...firstToken, input: v},
-              });
-            }
-          }}
+          onChangeText={onChangeFirst}
           style={styles.inputStyle}
           rightElement={rightElement(firstToken, 'firstToken')}
           placeholder="0.0"
         />
       </View>
     );
-  }, [NonInitial, firstToken, rightElement, secondToken, setState]);
+  }, [firstToken, onChangeFirst, rightElement]);
+  const onChangeSecond = useCallback(
+    v => {
+      if (NonInitial) {
+        setState({
+          secondToken: {...secondToken, input: v},
+          firstToken: {
+            ...firstToken,
+            input: swapUtils.getAmounB(
+              v,
+              secondToken?.reserve,
+              firstToken?.reserve,
+            ),
+          },
+        });
+      } else {
+        setState({secondToken: {...secondToken, input: v}});
+      }
+    },
+    [NonInitial, firstToken, secondToken, setState],
+  );
   const secondItem = useMemo(() => {
     return (
       <View>
@@ -213,30 +260,14 @@ const AddLiquidity = props => {
         <Input
           keyboardType="numeric"
           value={secondToken?.input}
-          onChangeText={v => {
-            if (NonInitial) {
-              setState({
-                secondToken: {...secondToken, input: v},
-                firstToken: {
-                  ...firstToken,
-                  input: swapUtils.getAmounB(
-                    v,
-                    secondToken?.reserve,
-                    firstToken?.reserve,
-                  ),
-                },
-              });
-            } else {
-              setState({secondToken: {...secondToken, input: v}});
-            }
-          }}
+          onChangeText={onChangeSecond}
           style={styles.inputStyle}
           rightElement={rightElement(secondToken, 'secondToken')}
           placeholder="0.0"
         />
       </View>
     );
-  }, [secondToken, rightElement, NonInitial, setState, firstToken]);
+  }, [secondToken, onChangeSecond, rightElement]);
   const judgmentToken = useCallback(token => {
     if (
       token &&
@@ -377,27 +408,9 @@ const AddLiquidity = props => {
       </>
     );
   }, [firstToken, pair, secondToken]);
-  const myLiquidity = useMemo(() => {
-    const List = [
-      {title: `${i18n.t('swap.pooled')} ELF:`, subtitle: '0.948835'},
-      {title: `${i18n.t('swap.pooled')} AEETH:`, subtitle: '0.948835'},
-      {title: `${i18n.t('swap.myPoolTokens')}:`, subtitle: '0.948835'},
-      {title: `${i18n.t('swap.myPoolShare')}:`, subtitle: '0.2%'},
-    ];
-    return (
-      <View style={styles.myLiquidity}>
-        <TextL style={styles.themeColor}>{i18n.t('swap.myLiquidity')}</TextL>
-        {List.map((item, index) => {
-          return (
-            <View key={index} style={styles.myLiquidityItemBox}>
-              <TextM>{item.title}</TextM>
-              <TextM style={styles.rightText}>{item.subtitle}</TextM>
-            </View>
-          );
-        })}
-      </View>
-    );
-  }, []);
+  const MyLiquidity = useMemo(() => {
+    return <MySingleLiquidity pair={pair} />;
+  }, [pair]);
   const upPullRefresh = useCallback(
     callBack => {
       getPairs(undefined, () => {
@@ -421,7 +434,7 @@ const AddLiquidity = props => {
             {willReceive}
             {secondTip}
             {Add}
-            {/* {myLiquidity} */}
+            {MyLiquidity}
           </View>
         ) : (
           <View style={styles.container}>
@@ -437,71 +450,3 @@ const AddLiquidity = props => {
 };
 
 export default memo(AddLiquidity);
-
-const styles = StyleSheet.create({
-  inputStyle: {
-    paddingHorizontal: 0,
-  },
-  rightBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: pTd(50),
-  },
-  inputTitleBox: {
-    marginTop: pTd(30),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  buttonStyles: {
-    marginTop: pTd(30),
-  },
-  tipText: {
-    marginTop: pTd(10),
-    alignSelf: 'center',
-  },
-  themeColor: {
-    color: Colors.primaryColor,
-  },
-  redColor: {
-    marginTop: pTd(30),
-    color: 'red',
-  },
-  mrginText: {
-    marginVertical: pTd(15),
-  },
-  splitLine: {
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderColor,
-  },
-  subtitleStyle: {
-    fontSize: pTd(28),
-    fontWeight: 'bold',
-    color: Colors.fontBlack,
-  },
-  itemBox: {
-    paddingHorizontal: 0,
-  },
-  grayColor: {
-    color: Colors.fontGray,
-    paddingTop: pTd(30),
-  },
-  myLiquidity: {
-    marginTop: pTd(20),
-    backgroundColor: '#e5e5e5',
-    padding: pTd(20),
-    borderRadius: pTd(15),
-    marginBottom: pTd(30) + bottomBarHeigth,
-  },
-  myLiquidityItemBox: {
-    marginTop: pTd(30),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  rightText: {
-    flex: 1,
-    textAlign: 'right',
-  },
-});
