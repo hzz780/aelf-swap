@@ -49,7 +49,7 @@ platform :android do
     # update to fir.im
     fir_cli(
       api_token: "",
-      short: "anaelfmarketmaker",
+      short: "anaelfMarketMaker",
       changelog: "Hello aelf",
       dingtalk_access_token: "",
     )
@@ -63,7 +63,7 @@ platform :android do
     telegram(
       token: "",
       chat_id: "",
-      text: "http://d.firim.vip/anaelfaccount " + "AELF Market-" + version_name + " Android Build" + version,
+      text: "http://d.firim.vip/anaelfMarketMaker " + "AELF Market-" + version_name + " Android Build" + version,
       proxy: "http://127.0.0.1:1087"
     )
   end

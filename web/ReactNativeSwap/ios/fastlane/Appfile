@@ -1,4 +1,4 @@
-app_identifier("com.aelf.aelfAccount") # The bundle identifier of your app
+app_identifier("com.aelf.aelfMarketMaker") # The bundle identifier of your app
 apple_id("") # Your Apple email address
 
 itc_team_id("") # App Store Connect Team ID

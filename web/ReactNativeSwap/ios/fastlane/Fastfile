@@ -29,18 +29,19 @@ platform :ios do
       type: "adhoc",
       # readonly: true,
       force_for_new_devices: true,
-      app_identifier: ["com.aelf.aelfAccount"],
+      app_identifier: ["com.aelf.aelfMarketMaker"],
     )
     gym(
       scheme: "aelfAccount",
       export_method: "ad-hoc",
+      export_xcargs: "-allowProvisioningUpdates",
       silent: true,  # 隐藏没有必要的信息
       clean: true,  # 在构建前先clean
     )
     # update to fir.im
     fir_cli(
       api_token: "",
-      short: "iosaelfAccount",
+      short: "iosaelfMarketMaker",
       changelog: "Hello aelf",
       dingtalk_access_token: "",
     )
