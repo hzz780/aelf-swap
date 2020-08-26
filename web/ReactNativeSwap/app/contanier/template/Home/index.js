@@ -14,6 +14,7 @@ import swapActions from '../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import swapUtils from '../../../utils/pages/swapUtils';
 import {useFocusEffect} from '@react-navigation/native';
+import WebChart from '../../../components/template/WebChart';
 let isActive = true;
 
 const Home = () => {
@@ -77,7 +78,9 @@ const Home = () => {
   return (
     <View style={GStyle.container}>
       <CommonHeader title={i18n.t('swap.market')} />
-      <ListItem
+      <WebChart />
+      <View style={{height: 100, width: '100%', backgroundColor: 'red'}} />
+      {/* <ListItem
         style={styles.topBox}
         titleStyle={styles.topTitle}
         subtitleStyle={styles.topSubtitle}
@@ -97,7 +100,7 @@ const Home = () => {
         renderItem={renderItem}
         upPullRefresh={upPullRefresh}
         onEndReached={onEndReached}
-      />
+      /> */}
     </View>
   );
 };

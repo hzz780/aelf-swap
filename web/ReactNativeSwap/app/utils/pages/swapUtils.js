@@ -264,6 +264,9 @@ const getSharePool = (willPoolToken, totalSupply) => {
     return getPoolShare(willPoolToken, willPoolToken + totalSupply);
   }
 };
+const getUTCOffset = () => {
+  return 0 - new Date().getTimezoneOffset() / 60;
+};
 export default {
   detailsPrice,
   getUSD,
@@ -287,4 +290,5 @@ export default {
   getPair,
   willPoolTokens,
   getSharePool,
+  getUTCOffset,
 };

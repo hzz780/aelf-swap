@@ -19,6 +19,10 @@ import {CommonToast, Loading} from '../components/template';
 import navigationService from '../utils/common/navigationService';
 import unitConverter from '../utils/pages/unitConverter';
 import {userSelectors} from '../redux/userRedux';
+import {getFetchRequest} from '../utils/common/networkRequest';
+import config from '../config';
+import swapUtils from '../utils/pages/swapUtils';
+const {explorerURL} = config;
 const Success = result => {
   if (result.Status === 'PENDING' || result.Status === 'MINED') {
     return true;
@@ -261,6 +265,17 @@ function* removeLiquiditySaga({data}) {
     console.log(error, '======removeLiquiditySaga');
   }
 }
+function* getPairCandleStickSaga({symbolPair, range}) {
+  try {
+    const utcOffset = swapUtils.getUTCOffset();
+    const result = yield getFetchRequest(
+      `${explorerURL}/api/swap/pairCandleStick?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
+    );
+    console.log(result, '====result');
+  } catch (error) {
+    console.log(error, '======getPairCandleStickSaga');
+  }
+}
 export default function* SwapSaga() {
   yield all([
     yield takeLatest(swapTypes.GET_PAIRS, getPairsSaga),
@@ -269,5 +284,6 @@ export default function* SwapSaga() {
     yield takeLatest(swapTypes.GET_ACCOUNT_ASSETS, getAccountAssetsSaga),
     yield takeLatest(swapTypes.SWAP_TOKEN, swapTokenSaga),
     yield takeLatest(swapTypes.REMOVE_LIQUIDITY, removeLiquiditySaga),
+    yield takeLatest(swapTypes.GET_PAIR_CANDLE_STICK, getPairCandleStickSaga),
   ]);
 }

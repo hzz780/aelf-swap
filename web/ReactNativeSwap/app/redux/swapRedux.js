@@ -13,6 +13,7 @@ const {Types, Creators} = createActions({
   setMyLiquidity: ['myLiquidity'],
   removeLiquidity: ['data'],
   reSwap: [],
+  getPairCandleStick: ['symbolPair', 'range'],
 });
 
 export const swapTypes = Types;
@@ -66,6 +67,9 @@ export const reSwap = state => {
     myLiquidity: [],
   });
 };
+export const getPairCandleStick = state => {
+  return state.merge();
+};
 /* ------------- Hookup Reducers To Types ------------- */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_PAIRS]: getPairs,
@@ -77,4 +81,5 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_MY_LIQUIDITY]: setMyLiquidity,
   [Types.REMOVE_LIQUIDITY]: removeLiquidity,
   [Types.RE_SWAP]: reSwap,
+  [Types.GET_PAIR_CANDLE_STICK]: getPairCandleStick,
 });
