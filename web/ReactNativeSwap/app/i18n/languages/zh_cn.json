@@ -249,6 +249,7 @@
     "serviceAgreement": "《用户服务协议》"
   },
   "swap": {
+    "allMarkets": "市场",
     "tryAgain": "操作失败，请刷新后重试",
     "loadMore": "点击加载更多",
     "add": "添加",
@@ -304,6 +305,10 @@
     "createdSuccess": "创建成功",
     "addSuccess": "添加成功",
     "swapSuccess": "兑换成功",
-    "removeSuccess": "移除成功"
+    "removeSuccess": "移除成功",
+    "open": "开",
+    "close": "收",
+    "lowest": "低",
+    "highest": "高"
   }
 }

@@ -8,7 +8,7 @@ import axios from 'axios';
  */
 function getFetchRequest(url, config = {}) {
   if (!config.timeout) {
-    config.timeout = 20000;
+    config.timeout = 30000;
   }
   return new Promise((resolve, reject) => {
     axios

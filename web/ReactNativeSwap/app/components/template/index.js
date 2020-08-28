@@ -18,6 +18,11 @@ import Communication from './Communication';
 import VerifyPassword from './VerifyPassword';
 import SectionStickyList from './SectionStickyList';
 import KeyboardScrollView from './KeyboardScrollView';
+import Candlestick from './Charts/Candlestick';
+import Areachart from './Charts/Areachart';
+import BarChart from './Charts/BarChart';
+import Echarts from './Echarts';
+import Charts from './Charts';
 export {
   Input,
   Loading,
@@ -38,4 +43,9 @@ export {
   VerifyPassword,
   SectionStickyList,
   KeyboardScrollView,
+  Candlestick,
+  Areachart,
+  BarChart,
+  Echarts,
+  Charts,
 };

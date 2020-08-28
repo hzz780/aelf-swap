@@ -11,7 +11,7 @@
  *************************************************************/
 
 import {all, takeLatest, put, delay, select} from 'redux-saga/effects';
-import swapActions, {swapTypes} from '../redux/swapRedux';
+import swapActions, {swapTypes, swapSelectors} from '../redux/swapRedux';
 import {contractsSelectors} from '../redux/contractsRedux';
 import i18n from 'i18n-js';
 import aelfUtils from '../utils/pages/aelfUtils';
@@ -23,6 +23,7 @@ import {getFetchRequest} from '../utils/common/networkRequest';
 import config from '../config';
 import swapUtils from '../utils/pages/swapUtils';
 const {explorerURL} = config;
+const TestUri = 'http://192.168.197.55:7300';
 const Success = result => {
   if (result.Status === 'PENDING' || result.Status === 'MINED') {
     return true;
@@ -30,6 +31,7 @@ const Success = result => {
 };
 function* getPairsSaga({pair, callBack}) {
   try {
+    yield put(swapActions.getOverviewChart());
     yield put(swapActions.getAccountAssets());
     const contracts = yield select(contractsSelectors.getContracts);
     const {swapContract} = contracts || {};
@@ -144,7 +146,9 @@ function* getAccountAssetsSaga({pair, callBack}) {
   try {
     const contracts = yield select(contractsSelectors.getContracts);
     const {swapContract} = contracts || {};
-    console.log(swapContract, '=====swapContract');
+    if (!swapContract) {
+      return;
+    }
     let pairs;
     if (pair) {
       pairs = {symbolPair: [pair]};
@@ -269,11 +273,74 @@ function* getPairCandleStickSaga({symbolPair, range}) {
   try {
     const utcOffset = swapUtils.getUTCOffset();
     const result = yield getFetchRequest(
-      `${explorerURL}/api/swap/pairCandleStick?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
+      `${TestUri}/api/swap/pairCandleStick?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
     );
-    console.log(result, '====result');
+    console.log('resultresultresultresultresult', result);
+    if (result.msg === 'success') {
+      let obj;
+      const candleStick = yield select(swapSelectors.pairCandleStick);
+      let pairCandleStick;
+      if (candleStick) {
+        pairCandleStick = candleStick[symbolPair];
+      }
+      obj = {
+        [symbolPair]: {...(pairCandleStick || {}), [range]: result.data},
+      };
+      console.log(obj, '=======obj');
+      yield put(swapActions.setPairCandleStick(obj));
+    }
   } catch (error) {
     console.log(error, '======getPairCandleStickSaga');
+  }
+}
+function* getPairChartsSaga({symbolPair, range}) {
+  try {
+    const utcOffset = swapUtils.getUTCOffset();
+    const result = yield getFetchRequest(
+      `${TestUri}/api/swap/pairChart?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
+    );
+    console.log(result, '======result');
+    if (result.msg === 'success') {
+      let obj;
+      const pairCharts = yield select(swapSelectors.pairCharts);
+      let charts;
+      if (pairCharts) {
+        charts = pairCharts[symbolPair];
+      }
+      obj = {
+        [symbolPair]: {...(charts || {}), [range]: result.data},
+      };
+      console.log(obj, '=======onGetPairCharts');
+      yield put(swapActions.setPairCharts(obj));
+    }
+  } catch (error) {
+    console.log(error, '======getPairChartsSaga');
+  }
+}
+function* getPairInfoSaga({symbolPair}) {
+  try {
+    console.log(`${TestUri}/api/swap/pairInfo?symbolPair=${symbolPair}`);
+    const result = yield getFetchRequest(
+      `${TestUri}/api/swap/pairInfo?symbolPair=${symbolPair}`,
+    );
+    console.log(result, '======result');
+  } catch (error) {
+    console.log(error, '=getPairInfoSagagetPairInfoSaga');
+  }
+}
+function* getOverviewChartSaga() {
+  try {
+    const utcOffset = swapUtils.getUTCOffset();
+    console.log(`${TestUri}/api/swap/overviewChart?utcOffset=${utcOffset}`);
+    const result = yield getFetchRequest(
+      `${TestUri}/api/swap/overviewChart?utcOffset=${utcOffset}`,
+    );
+    if (result.msg === 'success') {
+      yield put(swapActions.setOverviewChart(result.data));
+    }
+    console.log(result, '======result');
+  } catch (error) {
+    console.log(error, '=getOverviewChartSaga');
   }
 }
 export default function* SwapSaga() {
@@ -285,5 +352,8 @@ export default function* SwapSaga() {
     yield takeLatest(swapTypes.SWAP_TOKEN, swapTokenSaga),
     yield takeLatest(swapTypes.REMOVE_LIQUIDITY, removeLiquiditySaga),
     yield takeLatest(swapTypes.GET_PAIR_CANDLE_STICK, getPairCandleStickSaga),
+    yield takeLatest(swapTypes.GET_PAIR_CHARTS, getPairChartsSaga),
+    yield takeLatest(swapTypes.GET_PAIR_INFO, getPairInfoSaga),
+    yield takeLatest(swapTypes.GET_OVERVIEW_CHART, getOverviewChartSaga),
   ]);
 }

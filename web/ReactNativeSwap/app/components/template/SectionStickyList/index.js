@@ -60,22 +60,6 @@ export default class SectionStickyList extends Component {
       SecondComponent = null;
     if (listFooterHight) {
       let height = listFooterHight;
-      // switch (data.length) {
-      //   case 1:
-      //     height = (height * 4) / 5;
-      //     break;
-      //   case 2:
-      //     height = (height * 3) / 5;
-      //     break;
-      //   case 3:
-      //     height = (height * 2) / 5;
-      //     break;
-      //   case 4:
-      //     height = (height * 1) / 5;
-      //     break;
-      //   default:
-      //     break;
-      // }
       SecondComponent = <View style={{height: height}} />;
     }
     if (loadCompleted) {

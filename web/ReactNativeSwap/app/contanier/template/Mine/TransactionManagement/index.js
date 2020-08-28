@@ -30,6 +30,9 @@ const TransactionManagement = () => {
               <BounceSpinner type="Wave" />
             </View>
           )}
+          onNavigationStateChange={navState => {
+            console.log(navState.url, '======navState');
+          }}
         />
       </View>
     );

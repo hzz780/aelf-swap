@@ -66,10 +66,18 @@ const webURLTx = addressInput => {
   addressInput = formatRestoreAddress(addressInput);
   return `${webURL}/tx/${addressInput}`;
 };
-const timeConversion = time => {
+const getMillisecond = time => {
+  const {seconds} = time || {};
+  let tim = seconds || time;
+  if (String(tim).length <= 10) {
+    return tim * 1000;
+  }
+  return tim;
+};
+const timeConversion = (time, format) => {
   let showTime = '';
   if (time) {
-    showTime = moment(time).format(TIME_FORMAT);
+    showTime = moment(getMillisecond(time)).format(format || TIME_FORMAT);
   }
   return showTime;
 };

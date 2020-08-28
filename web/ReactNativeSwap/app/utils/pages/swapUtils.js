@@ -1,5 +1,7 @@
 import config from '../../config';
+import aelfUtils from './aelfUtils';
 const {swapFee, swapDeadline, swapFloat} = config;
+const swapFormat = 'YYYY-MM-DD HH:mm';
 const digits = count => {
   const floatPart = String(count).split('.')[1];
   if (count && floatPart && floatPart.length > 8) {
@@ -265,7 +267,31 @@ const getSharePool = (willPoolToken, totalSupply) => {
   }
 };
 const getUTCOffset = () => {
-  return 0 - new Date().getTimezoneOffset() / 60;
+  const utcOffset = 0 - new Date().getTimezoneOffset() / 60;
+  return utcOffset;
+};
+const getChartsStart = l => {
+  let start = 80;
+  if (l < 50) {
+    start = 0;
+  } else if (l > 500) {
+    start = 90;
+  }
+  return start;
+};
+const arrayMap = (arr, type, format) => {
+  let dates = [],
+    data = [];
+  if (Array.isArray(arr)) {
+    for (let i = 0, j = arr.length; i < j; i++) {
+      const element = arr[i];
+      dates.push(
+        aelfUtils.timeConversion(element.timestamp, format || swapFormat),
+      );
+      data.push(element[type]);
+    }
+  }
+  return {data, dates};
 };
 export default {
   detailsPrice,
@@ -291,4 +317,6 @@ export default {
   willPoolTokens,
   getSharePool,
   getUTCOffset,
+  getChartsStart,
+  arrayMap,
 };

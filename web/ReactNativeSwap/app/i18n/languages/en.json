@@ -249,6 +249,7 @@
     "serviceAgreement": " Privacy Policy"
   },
   "swap": {
+    "allMarkets": "All Markets",
     "tryAgain": "Operation failed, please refresh and try again",
     "loadMore": "Click to load more",
     "add": "Add",
@@ -304,6 +305,10 @@
     "createdSuccess": "Created successfully",
     "addSuccess": "Add success",
     "swapSuccess": "SwapSuccess",
-    "removeSuccess": "Remove successfully"
+    "removeSuccess": "Remove successfully",
+    "open": "open",
+    "close": "close",
+    "lowest": "lowest",
+    "highest": "highest"
   }
 }

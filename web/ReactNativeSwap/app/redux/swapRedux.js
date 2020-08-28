@@ -2,7 +2,6 @@ import {createReducer, createActions} from 'reduxsauce';
 import {createSelector} from 'reselect';
 import Immutable from 'seamless-immutable';
 /* ------------- Types and Action Creators ------------- */
-
 const {Types, Creators} = createActions({
   getPairs: ['pair', 'callBack'],
   createPair: ['symbolPair'],
@@ -13,7 +12,16 @@ const {Types, Creators} = createActions({
   setMyLiquidity: ['myLiquidity'],
   removeLiquidity: ['data'],
   reSwap: [],
+
   getPairCandleStick: ['symbolPair', 'range'],
+  setPairCandleStick: ['pairCandleStick'],
+
+  getPairCharts: ['symbolPair', 'range'],
+  setPairCharts: ['pairCharts'],
+
+  getPairInfo: ['symbolPair'],
+  getOverviewChart: [],
+  setOverviewChart: ['overviewChart'],
 });
 
 export const swapTypes = Types;
@@ -24,6 +32,9 @@ export default Creators;
 export const INITIAL_STATE = Immutable({
   pairs: null,
   myLiquidity: [],
+  pairCandleStick: {},
+  pairCharts: {},
+  overviewChart: [],
 });
 
 /* ------------- Selectors ------------- */
@@ -31,9 +42,13 @@ export const INITIAL_STATE = Immutable({
 const _baseSelector = state => state.swap;
 
 export const swapSelectors = {
-  getContracts: createSelector(
+  pairCandleStick: createSelector(
     _baseSelector,
-    base => base.contracts,
+    base => base.pairCandleStick,
+  ),
+  pairCharts: createSelector(
+    _baseSelector,
+    base => base.pairCharts,
   ),
 };
 
@@ -67,8 +82,38 @@ export const reSwap = state => {
     myLiquidity: [],
   });
 };
+
 export const getPairCandleStick = state => {
   return state.merge();
+};
+export const setPairCandleStick = (state, {pairCandleStick}) => {
+  const {pairCandleStick: candleStick} = state;
+  return state.merge({
+    pairCandleStick: Object.assign(
+      {},
+      candleStick || {},
+      pairCandleStick || {},
+    ),
+  });
+};
+
+export const getPairCharts = state => {
+  return state.merge();
+};
+export const setPairCharts = (state, {pairCharts}) => {
+  const {pairCandleStick: charts} = state;
+  return state.merge({
+    pairCharts: Object.assign({}, charts || {}, pairCharts || {}),
+  });
+};
+export const getPairInfo = state => {
+  return state.merge();
+};
+export const getOverviewChart = state => {
+  return state.merge();
+};
+export const setOverviewChart = (state, {overviewChart}) => {
+  return state.merge({overviewChart});
 };
 /* ------------- Hookup Reducers To Types ------------- */
 export const reducer = createReducer(INITIAL_STATE, {
@@ -81,5 +126,14 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_MY_LIQUIDITY]: setMyLiquidity,
   [Types.REMOVE_LIQUIDITY]: removeLiquidity,
   [Types.RE_SWAP]: reSwap,
+
   [Types.GET_PAIR_CANDLE_STICK]: getPairCandleStick,
+  [Types.SET_PAIR_CANDLE_STICK]: setPairCandleStick,
+
+  [Types.GET_PAIR_CHARTS]: getPairCharts,
+  [Types.SET_PAIR_CHARTS]: setPairCharts,
+
+  [Types.GET_PAIR_INFO]: getPairInfo,
+  [Types.GET_OVERVIEW_CHART]: getOverviewChart,
+  [Types.SET_OVERVIEW_CHART]: setOverviewChart,
 });

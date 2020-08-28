@@ -16,6 +16,8 @@ import swapActions from '../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import swapUtils from '../../../../utils/pages/swapUtils';
 import {useStateToProps} from '../../../../utils/pages/hooks';
+import PairCharts from '../PairCharts';
+import {useFocusEffect} from '@react-navigation/native';
 let isActive = true;
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
@@ -64,8 +66,17 @@ const PairDetails = props => {
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
     [dispatch],
   );
+  const getPairInfo = useCallback(
+    symbolPair => dispatch(swapActions.getPairInfo(symbolPair)),
+    [dispatch],
+  );
+  useFocusEffect(
+    useCallback(() => {
+      getPairInfo(pairData.symbolPair);
+    }, [getPairInfo, pairData.symbolPair]),
+  );
   const [index, setIndex] = useState(0);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
   const [loadCompleted, setLoadCompleted] = useState(true);
   const list = useRef();
   const renderHeader = useMemo(() => {
@@ -126,11 +137,12 @@ const PairDetails = props => {
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
-        {/* <View style={styles.overviewBox}>
+        <PairCharts {...pairData} />
+        <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.transactions')}
           </TextL>
-        </View> */}
+        </View>
       </View>
     );
   }, [pairData, tokenUSD]);
@@ -200,7 +212,7 @@ const PairDetails = props => {
         upPullRefresh={upPullRefresh}
         // onEndReached={onEndReached}
         renderHeader={renderHeader}
-        // stickyHead={stickyHead}
+        stickyHead={stickyHead}
         renderItem={renderItem}
         ref={list}
         showFooter

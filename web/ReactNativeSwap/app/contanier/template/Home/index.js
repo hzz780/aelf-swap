@@ -1,9 +1,9 @@
 import i18n from 'i18n-js';
-import React, {memo, useRef, useCallback, useState} from 'react';
+import React, {memo, useRef, useCallback, useState, useMemo} from 'react';
 import {
   CommonHeader,
-  ListComponent,
   ListItem,
+  SectionStickyList,
 } from '../../../components/template';
 import {View, StyleSheet} from 'react-native';
 import {useStateToProps} from '../../../utils/pages/hooks';
@@ -14,7 +14,8 @@ import swapActions from '../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import swapUtils from '../../../utils/pages/swapUtils';
 import {useFocusEffect} from '@react-navigation/native';
-import WebChart from '../../../components/template/WebChart';
+import OverviewCharts from './OverviewCharts';
+import {TextL} from '../../../components/template/CommonText';
 let isActive = true;
 
 const Home = () => {
@@ -75,12 +76,26 @@ const Home = () => {
     },
     [tokenUSD],
   );
-  return (
-    <View style={GStyle.container}>
-      <CommonHeader title={i18n.t('swap.market')} />
-      <WebChart />
-      <View style={{height: 100, width: '100%', backgroundColor: 'red'}} />
-      {/* <ListItem
+  const renderHeader = useMemo(() => {
+    return (
+      <View>
+        <View style={styles.overviewBox}>
+          <TextL style={{color: Colors.primaryColor}}>
+            {i18n.t('swap.overview')}
+          </TextL>
+        </View>
+        <OverviewCharts />
+        <View style={styles.overviewBox}>
+          <TextL style={{color: Colors.primaryColor}}>
+            {i18n.t('swap.allMarkets')}
+          </TextL>
+        </View>
+      </View>
+    );
+  }, []);
+  const stickyHead = useCallback(() => {
+    return (
+      <ListItem
         style={styles.topBox}
         titleStyle={styles.topTitle}
         subtitleStyle={styles.topSubtitle}
@@ -89,18 +104,25 @@ const Home = () => {
         rightElement={null}
         disabled
       />
-      <ListComponent
-        ref={list}
+    );
+  }, []);
+  return (
+    <View style={GStyle.secondContainer}>
+      <CommonHeader title={i18n.t('swap.market')} />
+      <SectionStickyList
         whetherAutomatic
         data={pairs}
-        bottomLoadTip={i18n.t('swap.loadMore')}
-        message=" "
-        showFooter={!loadCompleted}
         loadCompleted={loadCompleted}
-        renderItem={renderItem}
         upPullRefresh={upPullRefresh}
-        onEndReached={onEndReached}
-      /> */}
+        // onEndReached={onEndReached}
+        bottomLoadTip={i18n.t('swap.loadMore')}
+        renderHeader={renderHeader}
+        stickyHead={stickyHead}
+        renderItem={renderItem}
+        ref={list}
+        showFooter
+        allLoadedTips=" "
+      />
     </View>
   );
 };
@@ -130,5 +152,10 @@ const styles = StyleSheet.create({
   },
   subtitleStyle: {
     color: Colors.fontBlack,
+  },
+  overviewBox: {
+    paddingTop: pTd(15),
+    paddingBottom: pTd(10),
+    paddingLeft: pTd(30),
   },
 });
