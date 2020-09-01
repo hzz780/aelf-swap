@@ -21,13 +21,20 @@ const stringify = obj => {
 //   myChart.setOption(option);
 // });
 const renderChart = props => {
-  const height = `${props.height || 400}px`;
+  const height = `${props.height || 500}px`;
   const width = props.width ? `${props.width}px` : 'auto';
   let typeName = `var typeName = ${JSON.stringify(D)};`;
   if (props.typeName) {
     typeName = `var typeName = ${JSON.stringify(props.typeName)};`;
   }
   return `
+    var aelfDigits = count => {
+    const floatPart = String(count).split('.')[1];
+    if (count && floatPart && floatPart.length > 5) {
+      count = count.toFixed(5);
+    }
+      return count;
+    };
     ${typeName}
     document.getElementById('main').style.height = "${height}";
     document.getElementById('main').style.width = "${width}";

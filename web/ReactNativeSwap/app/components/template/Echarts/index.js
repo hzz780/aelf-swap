@@ -16,7 +16,6 @@ export default class Echarts extends Component {
   static defaultProps = {
     height: defaultHeight,
   };
-
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.option !== this.props.option && this.lodEnd) {
       let fun = setOpctios;
@@ -51,7 +50,6 @@ export default class Echarts extends Component {
     );
   };
   onMessage = event => {
-    console.log(event, '============event');
     this.props.onMessage
       ? this.props.onMessage(JSON.parse(event.nativeEvent.data))
       : null;
@@ -89,12 +87,10 @@ export default class Echarts extends Component {
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
-    height: defaultHeight,
   },
   loadView: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    height: defaultHeight,
   },
 });

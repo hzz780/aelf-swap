@@ -9,16 +9,17 @@ import swapActions from '../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import {useFocusEffect} from '@react-navigation/native';
 import {useStateToProps} from '../../../../utils/pages/hooks';
-import {TextM, TextL} from '../../../../components/template/CommonText';
+import {TextM, TextS} from '../../../../components/template/CommonText';
 import {Colors} from '../../../../assets/theme';
 import {pixelSize} from '../../../../utils/common/device';
 import {pTd} from '../../../../utils/common';
 import config from '../../../../components/template/Charts/config';
-import aelfUtils from '../../../../utils/pages/aelfUtils';
 import swapUtils from '../../../../utils/pages/swapUtils';
 const {chartsHeigth, candlestickItemStyle} = config;
-const defaultPeriod = 'week';
 const periodConfig = ['week', 'month', 'all'];
+const defaultPeriod = periodConfig[0];
+const kPeriodConfig = [900, 3600, 14400, 86400];
+const defaultKPeriod = kPeriodConfig[kPeriodConfig.length - 1];
 const PairCharts = props => {
   const dispatch = useDispatch();
   const {pairCandleStick, pairCharts} = useStateToProps(base => {
@@ -29,8 +30,8 @@ const PairCharts = props => {
     };
   });
   const getPairCandleStick = useCallback(
-    (symbolPair, range) =>
-      dispatch(swapActions.getPairCandleStick(symbolPair, range)),
+    (symbolPair, interval) =>
+      dispatch(swapActions.getPairCandleStick(symbolPair, interval)),
     [dispatch],
   );
   const getPairCharts = useCallback(
@@ -46,11 +47,13 @@ const PairCharts = props => {
     `${symbolB}/${symbolA}`,
   ];
   const periodList = ['1W', '1M', 'All'];
+  const kPeriodList = ['15min', '1hour', '4hour', '1day'];
   const [toolIndex, setToolIndex] = useState(0);
   const [period, setPeriod] = useState(0);
+  const [kPeriod, setKPeriod] = useState(kPeriodConfig.length - 1);
   const onGetPairCandleStick = useCallback(
-    range => {
-      getPairCandleStick(symbolPair, range);
+    interval => {
+      getPairCandleStick(symbolPair, interval);
     },
     [getPairCandleStick, symbolPair],
   );
@@ -62,14 +65,15 @@ const PairCharts = props => {
   );
   useFocusEffect(
     useCallback(() => {
-      onGetPairCandleStick(defaultPeriod);
+      onGetPairCandleStick(defaultKPeriod);
       onGetPairCharts(defaultPeriod);
     }, [onGetPairCandleStick, onGetPairCharts]),
   );
   const candleStickData =
     pairCandleStick && pairCandleStick[symbolPair]
-      ? pairCandleStick[symbolPair][periodConfig[period]]
+      ? pairCandleStick[symbolPair][kPeriodConfig[kPeriod]]
       : undefined;
+
   const chartsData =
     pairCharts && pairCharts[symbolPair]
       ? pairCharts[symbolPair][periodConfig[period]]
@@ -79,11 +83,11 @@ const PairCharts = props => {
       if (index === 0 || index === 1) {
         onGetPairCharts(periodConfig[period]);
       } else {
-        onGetPairCandleStick(periodConfig[period]);
+        onGetPairCandleStick(kPeriodConfig[kPeriod]);
       }
       setToolIndex(index);
     },
-    [onGetPairCandleStick, onGetPairCharts, period],
+    [kPeriod, onGetPairCandleStick, onGetPairCharts, period],
   );
   const ToolMemo = useMemo(() => {
     const toolListLength = list.length;
@@ -115,40 +119,69 @@ const PairCharts = props => {
   }, [list, onSetToolIndex, toolIndex]);
   const onSetPeriod = useCallback(
     index => {
-      if (toolIndex === 0 || toolIndex === 1) {
-        onGetPairCharts(periodConfig[index]);
-      } else {
-        onGetPairCandleStick(periodConfig[index]);
-      }
+      onGetPairCharts(periodConfig[index]);
       setPeriod(index);
     },
-    [onGetPairCandleStick, onGetPairCharts, toolIndex],
+    [onGetPairCharts],
+  );
+  const onSetKPeriod = useCallback(
+    index => {
+      onGetPairCandleStick(kPeriodConfig[index]);
+      setKPeriod(index);
+    },
+    [onGetPairCandleStick],
   );
   const PeriodMemo = useMemo(() => {
     return (
       <View style={styles.toolBox}>
-        {periodList.map((item, index) => {
-          let periodItem = [styles.periodItem];
-          let textStyles = styles.grayColor;
-          if (index === period) {
-            periodItem.push(styles.borderColor);
-            textStyles = styles.primaryColor;
-          }
-          return (
-            <Touchable
-              onPress={() => onSetPeriod(index)}
-              key={index}
-              style={periodItem}>
-              <TextL style={textStyles}>{item}</TextL>
-            </Touchable>
-          );
-        })}
+        {toolIndex > 1
+          ? kPeriodList.map((item, index) => {
+              let periodItem = [styles.periodItem];
+              let textStyles = styles.grayColor;
+              if (index === kPeriod) {
+                periodItem.push(styles.borderColor);
+                textStyles = styles.primaryColor;
+              }
+              return (
+                <Touchable
+                  onPress={() => onSetKPeriod(index)}
+                  key={index}
+                  style={periodItem}>
+                  <TextS style={textStyles}>{item}</TextS>
+                </Touchable>
+              );
+            })
+          : periodList.map((item, index) => {
+              let periodItem = [styles.periodItem];
+              let textStyles = styles.grayColor;
+              if (index === period) {
+                periodItem.push(styles.borderColor);
+                textStyles = styles.primaryColor;
+              }
+              return (
+                <Touchable
+                  onPress={() => onSetPeriod(index)}
+                  key={index}
+                  style={periodItem}>
+                  <TextS style={textStyles}>{item}</TextS>
+                </Touchable>
+              );
+            })}
       </View>
     );
-  }, [onSetPeriod, period, periodList]);
+  }, [
+    kPeriod,
+    kPeriodList,
+    onSetKPeriod,
+    onSetPeriod,
+    period,
+    periodList,
+    toolIndex,
+  ]);
   const BodyMemo = useMemo(() => {
-    let format;
-    if (period === 2 || toolIndex < 2) {
+    let format,
+      boundaryGap = false;
+    if (kPeriod > 2 || toolIndex < 2) {
       format = 'YYYY-MM-DD';
     }
     let loading = true;
@@ -172,6 +205,7 @@ const PairCharts = props => {
         showSymbol: false,
       };
     } else if (toolIndex === 1) {
+      boundaryGap = true;
       const {data, dates} = swapUtils.arrayMap(chartsData, 'volume', format);
       timeDates = dates;
       chartData = data;
@@ -198,12 +232,48 @@ const PairCharts = props => {
         timeDates = dates;
         chartData = data;
       }
-      series = {
-        type: 'candlestick',
-        name: list[toolIndex],
-        data: chartData,
-        itemStyle: candlestickItemStyle,
-      };
+      const dataMA5 = swapUtils.calculateMA(5, chartData);
+      const dataMA10 = swapUtils.calculateMA(10, chartData);
+      const dataMA15 = swapUtils.calculateMA(15, chartData);
+
+      series = [
+        {
+          type: 'candlestick',
+          name: list[toolIndex],
+          data: chartData,
+          itemStyle: candlestickItemStyle,
+        },
+        {
+          name: 'MA5',
+          type: 'line',
+          data: dataMA5,
+          smooth: true,
+          showSymbol: false,
+          lineStyle: {
+            width: 1,
+          },
+        },
+        {
+          name: 'MA10',
+          type: 'line',
+          data: dataMA10,
+          smooth: true,
+          showSymbol: false,
+          lineStyle: {
+            width: 1,
+          },
+        },
+        {
+          name: 'MA15',
+          type: 'line',
+          data: dataMA15,
+          smooth: true,
+          showSymbol: false,
+          lineStyle: {
+            width: 1,
+          },
+        },
+      ];
     }
     return (
       <View>
@@ -212,10 +282,10 @@ const PairCharts = props => {
             <BounceSpinner type="Wave" />
           </View>
         )}
-        <Charts series={series} dates={timeDates} />
+        <Charts series={series} dates={timeDates} boundaryGap={boundaryGap} />
       </View>
     );
-  }, [candleStickData, chartsData, list, period, toolIndex]);
+  }, [candleStickData, chartsData, kPeriod, list, toolIndex]);
   return (
     <View style={styles.container}>
       {ToolMemo}
@@ -237,7 +307,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   periodItem: {
-    paddingVertical: 5,
+    paddingVertical: 8,
     paddingHorizontal: 15,
   },
   leftBorder: {

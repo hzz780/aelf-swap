@@ -55,7 +55,7 @@ const OverviewCharts = () => {
     );
   }, [list, onSetToolIndex, toolIndex]);
   const BodyMemo = useMemo(() => {
-    let series;
+    let series, boundaryGap;
     let loading = true;
     if (overviewChart) {
       loading = false;
@@ -77,6 +77,7 @@ const OverviewCharts = () => {
         showSymbol: false,
         name: list[toolIndex],
       };
+      boundaryGap = false;
     } else if (toolIndex === 1) {
       const {data, dates} = swapUtils.arrayMap(
         overviewChart,
@@ -90,6 +91,7 @@ const OverviewCharts = () => {
         type: 'bar',
         name: list[toolIndex],
       };
+      boundaryGap = true;
     }
     return (
       <View>
@@ -98,7 +100,7 @@ const OverviewCharts = () => {
             <BounceSpinner type="Wave" />
           </View>
         )}
-        <Charts series={series} dates={timeDates} />
+        <Charts series={series} dates={timeDates} boundaryGap={boundaryGap} />
       </View>
     );
   }, [list, overviewChart, toolIndex]);

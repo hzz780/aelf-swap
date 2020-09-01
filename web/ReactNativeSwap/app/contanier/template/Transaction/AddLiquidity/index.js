@@ -24,20 +24,7 @@ import reduxUtils from '../../../../utils/pages/reduxUtils';
 import TransactionVerification from '../../../../utils/pages/TransactionVerification';
 import styles from './styles';
 import MySingleLiquidity from '../MySingleLiquidity';
-const defaultState = {
-  firstToken: {
-    input: '',
-    token: '',
-    balance: '',
-  },
-  secondToken: {
-    input: '',
-    token: '',
-    balance: '',
-  },
-};
 const AddLiquidity = props => {
-  const {pairData} = props.route.params || {};
   const dispatch = useDispatch();
   const {userBalances, pairs, tokenUSD} = useStateToProps(base => {
     const {user, swap} = base;
@@ -47,26 +34,25 @@ const AddLiquidity = props => {
       tokenUSD: user.tokenUSD,
     };
   });
+  const {pairData} = props.route.params || {};
   const [state, setState] = useSetState({
     firstToken: {
       input: '',
       token: pairData?.symbolA,
-      balance: userBalances[(pairData?.symbolA)] || '',
-      reserve: pairData?.reserveA,
     },
     secondToken: {
       input: '',
       token: pairData?.symbolB,
-      balance: userBalances[(pairData?.symbolB)] || '',
-      reserve: pairData?.reserveB,
     },
   });
-  const {firstToken, secondToken} = state;
   const getPairs = useCallback(
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
     [dispatch],
   );
-  const pair = swapUtils.getPair(firstToken, secondToken, pairs);
+  const {firstToken, secondToken} = state;
+  const firstBalance = userBalances[(firstToken?.token)] || 0;
+  const secondBalance = userBalances[(secondToken?.token)] || 0;
+  const currentPair = swapUtils.getPair(firstToken, secondToken, pairs);
   const addLiquidity = useCallback(
     data => dispatch(swapActions.addLiquidity(data)),
     [dispatch],
@@ -79,39 +65,10 @@ const AddLiquidity = props => {
   );
   const onModal = useCallback(
     (item, type) => {
-      let obj = {[type]: item};
-      if (type === 'firstToken' && secondToken?.token) {
-        const {rA, rB} = swapUtils.getReserve(item, secondToken, pairs);
-        obj = {
-          ...obj,
-          firstToken: {
-            ...item,
-            reserve: rA,
-          },
-          secondToken: {
-            ...secondToken,
-            reserve: rB,
-          },
-        };
-      } else if (firstToken?.token) {
-        const {rA, rB} = swapUtils.getReserve(item, firstToken, pairs);
-        obj = {
-          ...obj,
-          secondToken: {
-            ...item,
-            reserve: rA,
-          },
-          firstToken: {
-            ...firstToken,
-            reserve: rB,
-          },
-        };
-      }
-      setState(obj);
+      setState({[type]: item});
     },
-    [firstToken, pairs, secondToken, setState],
+    [setState],
   );
-  const NonInitial = firstToken?.reserve && secondToken?.reserve;
   const showTokenModal = useCallback(
     type => {
       const tokenList = swapUtils.getTokenList(
@@ -130,16 +87,17 @@ const AddLiquidity = props => {
   const onMAX = useCallback(
     (type, item) => {
       let obj = {[type]: {...item, input: item.balance}};
-      if (NonInitial) {
+      if (currentPair) {
         if (type === 'firstToken') {
           obj = {
             [type]: {...item, input: item.balance},
             secondToken: {
               ...secondToken,
               input: swapUtils.getAmounB(
-                item.balance,
-                item?.reserve,
-                secondToken?.reserve,
+                firstBalance,
+                swapUtils.getCurrentReserve(firstToken.token, currentPair),
+                swapUtils.getCurrentReserve(secondToken.token, currentPair),
+                tokenUSD[(secondToken?.token)]?.decimals,
               ),
             },
           };
@@ -149,9 +107,10 @@ const AddLiquidity = props => {
             firstToken: {
               ...firstToken,
               input: swapUtils.getAmounB(
-                item.balance,
-                item?.reserve,
-                firstToken?.reserve,
+                secondBalance,
+                swapUtils.getCurrentReserve(secondToken.token, currentPair),
+                swapUtils.getCurrentReserve(firstToken.token, currentPair),
+                tokenUSD[(firstToken?.token)]?.decimals,
               ),
             },
           };
@@ -159,7 +118,15 @@ const AddLiquidity = props => {
       }
       setState(obj);
     },
-    [NonInitial, firstToken, secondToken, setState],
+    [
+      currentPair,
+      firstBalance,
+      firstToken,
+      secondBalance,
+      secondToken,
+      setState,
+      tokenUSD,
+    ],
   );
   const rightElement = useCallback(
     (item, type, hideMax) => {
@@ -188,15 +155,16 @@ const AddLiquidity = props => {
   );
   const onChangeFirst = useCallback(
     v => {
-      if (NonInitial) {
+      if (currentPair) {
         setState({
           firstToken: {...firstToken, input: v},
           secondToken: {
             ...secondToken,
             input: swapUtils.getAmounB(
               v,
-              firstToken?.reserve,
-              secondToken?.reserve,
+              swapUtils.getCurrentReserve(firstToken?.token, currentPair),
+              swapUtils.getCurrentReserve(secondToken?.token, currentPair),
+              tokenUSD[(secondToken?.token)]?.decimals,
             ),
           },
         });
@@ -206,7 +174,7 @@ const AddLiquidity = props => {
         });
       }
     },
-    [NonInitial, firstToken, secondToken, setState],
+    [currentPair, firstToken, secondToken, setState, tokenUSD],
   );
   const firstItem = useMemo(() => {
     return (
@@ -214,7 +182,7 @@ const AddLiquidity = props => {
         <View style={styles.inputTitleBox}>
           <TextM>{i18n.t('swap.input')}</TextM>
           <TextM>
-            {i18n.t('mineModule.balance')}: {firstToken?.balance}
+            {i18n.t('mineModule.balance')}: {firstBalance}
           </TextM>
         </View>
         <Input
@@ -222,23 +190,27 @@ const AddLiquidity = props => {
           value={firstToken?.input}
           onChangeText={onChangeFirst}
           style={styles.inputStyle}
-          rightElement={rightElement(firstToken, 'firstToken')}
+          rightElement={rightElement(
+            {...firstToken, balance: String(firstBalance)},
+            'firstToken',
+          )}
           placeholder="0.0"
         />
       </View>
     );
-  }, [firstToken, onChangeFirst, rightElement]);
+  }, [firstBalance, firstToken, onChangeFirst, rightElement]);
   const onChangeSecond = useCallback(
     v => {
-      if (NonInitial) {
+      if (currentPair) {
         setState({
           secondToken: {...secondToken, input: v},
           firstToken: {
             ...firstToken,
             input: swapUtils.getAmounB(
               v,
-              secondToken?.reserve,
-              firstToken?.reserve,
+              swapUtils.getCurrentReserve(secondToken?.token, currentPair),
+              swapUtils.getCurrentReserve(firstToken?.token, currentPair),
+              tokenUSD[(firstToken?.token)]?.decimals,
             ),
           },
         });
@@ -246,7 +218,7 @@ const AddLiquidity = props => {
         setState({secondToken: {...secondToken, input: v}});
       }
     },
-    [NonInitial, firstToken, secondToken, setState],
+    [currentPair, firstToken, secondToken, setState, tokenUSD],
   );
   const secondItem = useMemo(() => {
     return (
@@ -254,7 +226,7 @@ const AddLiquidity = props => {
         <View style={styles.inputTitleBox}>
           <TextM>{i18n.t('swap.input')}</TextM>
           <TextM>
-            {i18n.t('mineModule.balance')}: {secondToken?.balance}
+            {i18n.t('mineModule.balance')}: {secondBalance}
           </TextM>
         </View>
         <Input
@@ -262,38 +234,33 @@ const AddLiquidity = props => {
           value={secondToken?.input}
           onChangeText={onChangeSecond}
           style={styles.inputStyle}
-          rightElement={rightElement(secondToken, 'secondToken')}
+          rightElement={rightElement(
+            {...secondToken, balance: String(secondBalance)},
+            'secondToken',
+          )}
           placeholder="0.0"
         />
       </View>
     );
-  }, [secondToken, onChangeSecond, rightElement]);
-  const judgmentToken = useCallback(token => {
-    if (
-      token &&
-      Number(token.input) > 0 &&
-      Number(token.balance) >= Number(token.input)
-    ) {
-      return true;
-    }
-  }, []);
+  }, [secondBalance, secondToken, onChangeSecond, rightElement]);
   const onAddLiquidit = useCallback(() => {
-    if (judgmentToken(firstToken) && judgmentToken(secondToken)) {
+    if (
+      swapUtils.judgmentToken({...firstToken, balance: firstBalance}) &&
+      swapUtils.judgmentToken({...secondToken, balance: secondBalance})
+    ) {
       TransactionVerification.show(value => {
         if (!value) {
           return;
         }
-        const amountADesired = reduxUtils.getDecimalTokenHigher(
-          firstToken.input,
-          firstToken.token,
-        );
-        const amountBDesired = reduxUtils.getDecimalTokenHigher(
-          secondToken.input,
-          secondToken.token,
-        );
+        const {
+          symbolA,
+          symbolB,
+          amountADesired,
+          amountBDesired,
+        } = reduxUtils.getAddData(firstToken, secondToken, currentPair);
         addLiquidity({
-          symbolA: firstToken.token,
-          symbolB: secondToken.token,
+          symbolA,
+          symbolB,
           amountADesired,
           amountBDesired,
           amountAMin: swapUtils.getSwapMinFloat(amountADesired),
@@ -304,10 +271,20 @@ const AddLiquidity = props => {
     } else {
       CommonToast.fail(i18n.t('swap.inputError'));
     }
-  }, [addLiquidity, firstToken, judgmentToken, secondToken]);
+  }, [
+    addLiquidity,
+    currentPair,
+    firstBalance,
+    firstToken,
+    secondBalance,
+    secondToken,
+  ]);
   const Add = useMemo(() => {
     let disabled = true;
-    if (judgmentToken(firstToken) && judgmentToken(secondToken)) {
+    if (
+      swapUtils.judgmentToken({...firstToken, balance: firstBalance}) &&
+      swapUtils.judgmentToken({...secondToken, balance: secondBalance})
+    ) {
       disabled = false;
     }
     return (
@@ -328,7 +305,7 @@ const AddLiquidity = props => {
         </TextM>
       </>
     );
-  }, [firstToken, judgmentToken, onAddLiquidit, secondToken]);
+  }, [firstBalance, firstToken, onAddLiquidit, secondBalance, secondToken]);
   const firstTip = useMemo(() => {
     if (firstToken?.token && secondToken?.token) {
       return (
@@ -353,8 +330,8 @@ const AddLiquidity = props => {
           style={styles.itemBox}
           title={firstToken?.token}
           subtitle={`≈ ${swapUtils.detailsPrice(
-            firstToken?.reserve,
-            secondToken?.reserve,
+            swapUtils.getCurrentReserve(firstToken?.token, currentPair),
+            swapUtils.getCurrentReserve(secondToken?.token, currentPair),
           )} ${secondToken?.token} ($ ${swapUtils.getUSD(
             firstToken?.token,
             tokenUSD,
@@ -367,8 +344,8 @@ const AddLiquidity = props => {
           title={secondToken?.token}
           style={styles.itemBox}
           subtitle={`≈ ${swapUtils.detailsPrice(
-            secondToken?.reserve,
-            firstToken?.reserve,
+            swapUtils.getCurrentReserve(secondToken?.token, currentPair),
+            swapUtils.getCurrentReserve(firstToken?.token, currentPair),
           )} ${firstToken?.token} ($ ${swapUtils.getUSD(
             secondToken?.token,
             tokenUSD,
@@ -378,9 +355,13 @@ const AddLiquidity = props => {
         />
       </>
     );
-  }, [firstToken, secondToken, tokenUSD]);
+  }, [currentPair, firstToken, secondToken, tokenUSD]);
   const willReceive = useMemo(() => {
-    const poolToken = swapUtils.willPoolTokens(firstToken, secondToken, pair);
+    const poolToken = swapUtils.willPoolTokens(
+      firstToken,
+      secondToken,
+      currentPair,
+    );
     return (
       <>
         <TextL style={[styles.themeColor, styles.mrginText]}>
@@ -401,24 +382,25 @@ const AddLiquidity = props => {
           disabled
           title={i18n.t('swap.sharePool')}
           style={styles.itemBox}
-          subtitle={swapUtils.getSharePool(poolToken, pair?.totalSupply) || '-'}
+          subtitle={
+            swapUtils.getSharePool(poolToken, currentPair?.totalSupply) || '-'
+          }
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
       </>
     );
-  }, [firstToken, pair, secondToken]);
+  }, [firstToken, currentPair, secondToken]);
   const MyLiquidity = useMemo(() => {
-    return <MySingleLiquidity pair={pair} />;
-  }, [pair]);
+    return <MySingleLiquidity pair={currentPair} />;
+  }, [currentPair]);
   const upPullRefresh = useCallback(
     callBack => {
       getPairs(undefined, () => {
-        setState(defaultState);
         callBack && callBack();
       });
     },
-    [getPairs, setState],
+    [getPairs],
   );
   return (
     <View style={GStyle.container}>
@@ -426,7 +408,7 @@ const AddLiquidity = props => {
         title={i18n.t('swap.addLiquidity')}
         canBack
         scrollViewProps={{upPullRefresh}}>
-        {NonInitial ? (
+        {currentPair ? (
           <View style={styles.container}>
             {firstItem}
             {secondItem}

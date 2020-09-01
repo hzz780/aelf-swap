@@ -7,7 +7,7 @@ import {
   ListItem,
 } from '../../../../components/template';
 import {View, StyleSheet} from 'react-native';
-import {ChooseToken} from '../MAXComponent';
+import {MAXComponent} from '../MAXComponent';
 import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import {TextL, TextM} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
@@ -62,27 +62,36 @@ const RemoveLiquidity = props => {
       });
     }, [getAccountAssets, symbolPair]),
   );
-  const rightElement = useCallback((item, type, hideMax) => {
-    const {token} = item;
-    if (token) {
+  const rightElement = useCallback(
+    symbol => {
+      const sBalance = String(balance);
       return (
         <View style={styles.rightBox}>
-          {/* {hideMax ? null : (
-              <MAXComponent
-                onPress={() => {
-                  setState({[type]: {...item, input: item.balance}});
-                }}
-              />
-            )} */}
-          <TextL>
-            {token}
-            {/* <Entypo size={pTd(30)} name="chevron-thin-down" /> */}
-          </TextL>
+          {inputS === sBalance ? null : (
+            <MAXComponent
+              onPress={() => {
+                setState({
+                  inputS: sBalance,
+                  inputA: swapUtils.getPoolToken(
+                    balance,
+                    totalSupply,
+                    reserveA,
+                  ),
+                  inputB: swapUtils.getPoolToken(
+                    balance,
+                    totalSupply,
+                    reserveB,
+                  ),
+                });
+              }}
+            />
+          )}
+          <TextL>{symbol}</TextL>
         </View>
       );
-    }
-    return <ChooseToken />;
-  }, []);
+    },
+    [balance, inputS, reserveA, reserveB, setState, totalSupply],
+  );
   const inputItem = useMemo(() => {
     return (
       <View>
@@ -103,12 +112,21 @@ const RemoveLiquidity = props => {
             });
           }}
           style={styles.inputStyle}
-          rightElement={<TextL>{symbolPair}</TextL>}
+          rightElement={rightElement(symbolPair)}
           placeholder="0.0"
         />
       </View>
     );
-  }, [balance, inputS, reserveA, reserveB, setState, symbolPair, totalSupply]);
+  }, [
+    balance,
+    inputS,
+    reserveA,
+    reserveB,
+    rightElement,
+    setState,
+    symbolPair,
+    totalSupply,
+  ]);
   const firstItem = useMemo(() => {
     return (
       <View>
@@ -129,12 +147,20 @@ const RemoveLiquidity = props => {
             });
           }}
           style={styles.inputStyle}
-          rightElement={<TextL>{symbolA}</TextL>}
+          rightElement={rightElement(symbolA)}
           placeholder="0.0"
         />
       </View>
     );
-  }, [inputA, reserveA, reserveB, setState, symbolA, totalSupply]);
+  }, [
+    inputA,
+    reserveA,
+    reserveB,
+    rightElement,
+    setState,
+    symbolA,
+    totalSupply,
+  ]);
   const secondItem = useMemo(() => {
     return (
       <View>
@@ -155,12 +181,20 @@ const RemoveLiquidity = props => {
             });
           }}
           style={styles.inputStyle}
-          rightElement={<TextL>{symbolB}</TextL>}
+          rightElement={rightElement(symbolB)}
           placeholder="0.0"
         />
       </View>
     );
-  }, [inputB, symbolB, setState, reserveB, totalSupply, reserveA]);
+  }, [
+    inputB,
+    rightElement,
+    symbolB,
+    setState,
+    reserveB,
+    totalSupply,
+    reserveA,
+  ]);
   const onRemove = useCallback(() => {
     TransactionVerification.show(value => {
       if (!value) {
@@ -243,13 +277,13 @@ const RemoveLiquidity = props => {
           disabled
           title={i18n.t('swap.sharePool')}
           style={styles.itemBox}
-          subtitle={swapUtils.getPoolShare(inputS, balance)}
+          subtitle={swapUtils.getPoolShare(inputS, totalSupply)}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
       </>
     );
-  }, [balance, inputS]);
+  }, [inputS, totalSupply]);
   const myLiquidity = useMemo(() => {
     return <MySingleLiquidity pair={pairData} />;
   }, [pairData]);

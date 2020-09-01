@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {memo, useMemo, useCallback} from 'react';
-import {View, StyleSheet, Keyboard} from 'react-native';
+import React, {memo, useMemo, useCallback, useEffect} from 'react';
+import {View, StyleSheet, Keyboard, DeviceEventEmitter} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
 import {
   Input,
@@ -28,16 +28,14 @@ const defaultState = {
   swapToken: {
     input: '',
     token: '',
-    balance: '0',
   },
   toSwapToken: {
     input: '',
     token: '',
-    balance: '0',
   },
 };
 const {swapFloat} = config;
-const Swap = () => {
+const Swap = props => {
   const dispatch = useDispatch();
   const dispatchSwapToken = useCallback(
     (data, callBack) => dispatch(swapActions.swapToken(data, callBack)),
@@ -47,16 +45,40 @@ const Swap = () => {
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
     [dispatch],
   );
-  const {language, pairs, userBalances} = useStateToProps(base => {
+  useEffect(() => {
+    const subscription = DeviceEventEmitter.addListener('SWAP_DATA', pair => {
+      getPItem(pair);
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, [getPItem]);
+  const {language, pairs, userBalances, tokenUSD} = useStateToProps(base => {
     const {settings, swap, user} = base;
     return {
       language: settings.language,
       pairs: swap.pairs,
       userBalances: user.userBalances,
+      tokenUSD: user.tokenUSD,
     };
   });
-  const [state, setState] = useSetState(defaultState);
+  const {pairData} = props.route.params || {};
+  const [state, setState] = useSetState({
+    conversion: false,
+    tType: '',
+    swapToken: {
+      input: '',
+      token: pairData?.symbolA,
+    },
+    toSwapToken: {
+      input: '',
+      token: pairData?.symbolB,
+    },
+  });
   const {swapToken, toSwapToken, tType, conversion} = state;
+  const swapBalance = userBalances[(swapToken?.token)] || 0;
+  const toSwapBalance = userBalances[(toSwapToken?.token)] || 0;
+  const currentPair = swapUtils.getPair(swapToken, toSwapToken, pairs);
   const onModal = useCallback(
     (item, type) => {
       let obj = {[type]: item};
@@ -64,26 +86,9 @@ const Swap = () => {
         if (toSwapToken.token === item.token) {
           obj = {
             ...obj,
-            swapToken: {
-              ...item,
-            },
             toSwapToken: {
               input: '',
               token: '',
-              balance: '0',
-            },
-          };
-        } else {
-          const {rA, rB} = swapUtils.getReserve(item, toSwapToken, pairs);
-          obj = {
-            ...obj,
-            swapToken: {
-              ...item,
-              reserve: rA,
-            },
-            toSwapToken: {
-              ...toSwapToken,
-              reserve: rB,
             },
           };
         }
@@ -91,33 +96,16 @@ const Swap = () => {
         if (swapToken.token === item.token) {
           obj = {
             ...obj,
-            toSwapToken: {
-              ...item,
-            },
             swapToken: {
               input: '',
               token: '',
-              balance: '0',
-            },
-          };
-        } else {
-          const {rA, rB} = swapUtils.getReserve(item, swapToken, pairs);
-          obj = {
-            ...obj,
-            toSwapToken: {
-              ...item,
-              reserve: rA,
-            },
-            swapToken: {
-              ...swapToken,
-              reserve: rB,
             },
           };
         }
       }
       setState(obj);
     },
-    [pairs, setState, swapToken, toSwapToken],
+    [setState, swapToken, toSwapToken],
   );
   const showTokenModal = useCallback(
     type => {
@@ -129,7 +117,23 @@ const Swap = () => {
     },
     [pairs, userBalances, onModal],
   );
-  const NonInitial = swapToken?.reserve && toSwapToken?.reserve;
+  const getPItem = useCallback(
+    pair => {
+      if (pair) {
+        setState({
+          swapToken: {
+            input: '',
+            token: pair.symbolA,
+          },
+          toSwapToken: {
+            input: '',
+            token: pair.symbolB,
+          },
+        });
+      }
+    },
+    [setState],
+  );
   const rightElement = useCallback(
     (item, type, hideMax) => {
       const {token} = item;
@@ -141,11 +145,13 @@ const Swap = () => {
                 onPress={() => {
                   let obj = {};
                   let t;
-                  if (NonInitial) {
+                  if (currentPair) {
                     t = swapUtils.getOutInput(
-                      swapToken?.reserve,
-                      toSwapToken?.reserve,
+                      swapToken?.token,
+                      toSwapToken?.token,
+                      currentPair,
                       item.balance,
+                      tokenUSD[(toSwapToken?.token)]?.decimals,
                     );
                     obj = {
                       ...obj,
@@ -183,7 +189,7 @@ const Swap = () => {
         />
       );
     },
-    [NonInitial, setState, showTokenModal, swapToken, toSwapToken],
+    [currentPair, setState, showTokenModal, swapToken, toSwapToken, tokenUSD],
   );
   const Description = useMemo(() => {
     let color = 'green';
@@ -227,55 +233,64 @@ const Swap = () => {
       </View>
     );
   }, [language, swapToken, tType, toSwapToken]);
+  const onChangeSwap = useCallback(
+    v => {
+      let obj = {};
+      let t;
+      if (currentPair) {
+        t = swapUtils.getOutInput(
+          swapToken?.token,
+          toSwapToken?.token,
+          currentPair,
+          v,
+          tokenUSD[(toSwapToken?.token)]?.decimals,
+        );
+        obj = {
+          ...obj,
+          swapToken: {...swapToken, input: v},
+          toSwapToken: {
+            ...toSwapToken,
+            input: t,
+          },
+        };
+      } else {
+        obj = {...obj, swapToken: {...swapToken, input: v}};
+      }
+      obj = {
+        ...obj,
+        tType: 'swapToken',
+      };
+      setState(obj);
+    },
+    [currentPair, setState, swapToken, toSwapToken, tokenUSD],
+  );
   const SwapItem = useMemo(() => {
     return (
       <View style={styles.inputItem}>
         <View style={styles.inputTitleBox}>
           <TextM>{i18n.t('swap.swap')}</TextM>
           <TextM>
-            {i18n.t('mineModule.balance')}: {swapToken?.balance}
+            {i18n.t('mineModule.balance')}: {swapBalance}
           </TextM>
         </View>
         <Input
           keyboardType="numeric"
           value={swapToken?.input}
-          onChangeText={v => {
-            let obj = {};
-            let t;
-            if (NonInitial) {
-              t = swapUtils.getOutInput(
-                swapToken?.reserve,
-                toSwapToken?.reserve,
-                v,
-              );
-              obj = {
-                ...obj,
-                swapToken: {...swapToken, input: v},
-                toSwapToken: {
-                  ...toSwapToken,
-                  input: t,
-                },
-              };
-            } else {
-              obj = {...obj, swapToken: {...swapToken, input: v}};
-            }
-            obj = {
-              ...obj,
-              tType: 'swapToken',
-            };
-            setState(obj);
-          }}
+          onChangeText={onChangeSwap}
           style={styles.inputStyle}
-          rightElement={rightElement(swapToken, 'swapToken')}
+          rightElement={rightElement(
+            {...swapToken, balance: String(swapBalance)},
+            'swapToken',
+          )}
           placeholder="0.0"
         />
       </View>
     );
-  }, [language, swapToken, rightElement, NonInitial, setState, toSwapToken]);
+  }, [language, swapBalance, swapToken, onChangeSwap, rightElement]);
   const onChangeToSwap = useCallback(
     v => {
       let obj = {};
-      if (v > toSwapToken?.reserve) {
+      if (v > swapUtils.getCurrentReserve(toSwapToken?.token, currentPair)) {
         obj = {
           ...obj,
           toSwapToken: {
@@ -288,16 +303,18 @@ const Swap = () => {
           },
         };
       } else {
-        if (NonInitial) {
+        if (currentPair) {
           obj = {
             ...obj,
             toSwapToken: {...toSwapToken, input: v},
             swapToken: {
               ...swapToken,
               input: swapUtils.getInInput(
-                swapToken?.reserve,
-                toSwapToken?.reserve,
+                swapToken?.token,
+                toSwapToken?.token,
+                currentPair,
                 v,
+                tokenUSD[(swapToken?.token)]?.decimals,
               ),
             },
           };
@@ -311,7 +328,7 @@ const Swap = () => {
       };
       setState(obj);
     },
-    [NonInitial, setState, swapToken, toSwapToken],
+    [currentPair, setState, swapToken, toSwapToken, tokenUSD],
   );
   const PriceMemo = useMemo(() => {
     let f = swapToken,
@@ -320,29 +337,30 @@ const Swap = () => {
       f = toSwapToken;
       s = swapToken;
     }
-    console.log(f, s);
     return (
       <View style={styles.inputTitleBox}>
         <TextM>{i18n.t('swap.price')}</TextM>
         <TextM
           onPress={() => {
-            console.log(conversion, '=====conversion');
             setState({conversion: !conversion});
           }}>
-          {swapUtils.getAmoun(f?.reserve, s?.reserve)}
+          {swapUtils.getAmoun(
+            swapUtils.getCurrentReserve(f?.token, currentPair),
+            swapUtils.getCurrentReserve(s?.token, currentPair),
+          )}
           {f?.token} / {s?.token}{' '}
           <Entypo name="swap" size={pTd(30)} color={Colors.primaryColor} />
         </TextM>
       </View>
     );
-  }, [language, conversion, setState, swapToken, toSwapToken]);
+  }, [language, swapToken, toSwapToken, conversion, currentPair, setState]);
   const ToSwapItem = useMemo(() => {
     return (
       <View style={styles.inputItem}>
         <View style={styles.inputTitleBox}>
           <TextM>{i18n.t('swap.take')}</TextM>
           <TextM>
-            {i18n.t('mineModule.balance')}: {toSwapToken?.balance}
+            {i18n.t('mineModule.balance')}: {toSwapBalance}
           </TextM>
         </View>
         <Input
@@ -350,19 +368,41 @@ const Swap = () => {
           value={toSwapToken?.input}
           onChangeText={onChangeToSwap}
           style={styles.inputStyle}
-          rightElement={rightElement(toSwapToken, 'toSwapToken', true)}
+          rightElement={rightElement(
+            {...toSwapToken, balance: String(toSwapBalance)},
+            'toSwapToken',
+            true,
+          )}
           placeholder="0.0"
         />
         {PriceMemo}
       </View>
     );
-  }, [language, toSwapToken, onChangeToSwap, rightElement, PriceMemo]);
+  }, [
+    language,
+    toSwapBalance,
+    toSwapToken,
+    onChangeToSwap,
+    rightElement,
+    PriceMemo,
+  ]);
   let disabled = true;
-  if (swapUtils.judgmentToken(swapToken) && toSwapToken?.input) {
+  if (
+    swapUtils.judgmentToken({
+      ...swapToken,
+      balance: swapBalance,
+    }) &&
+    toSwapToken?.input
+  ) {
     disabled = false;
   }
   const onSwap = useCallback(() => {
-    if (swapUtils.judgmentToken(swapToken)) {
+    if (
+      swapUtils.judgmentToken({
+        ...swapToken,
+        balance: swapBalance,
+      })
+    ) {
       TransactionVerification.show(value => {
         if (!value) {
           return;
@@ -408,15 +448,14 @@ const Swap = () => {
     } else {
       CommonToast.fail(i18n.t('swap.inputError'));
     }
-  }, [dispatchSwapToken, setState, swapToken, tType, toSwapToken]);
+  }, [dispatchSwapToken, setState, swapBalance, swapToken, tType, toSwapToken]);
   const upPullRefresh = useCallback(
     callBack => {
       getPairs(undefined, () => {
-        setState(defaultState);
         callBack && callBack();
       });
     },
-    [getPairs, setState],
+    [getPairs],
   );
   return (
     <View style={GStyle.container}>
@@ -431,7 +470,11 @@ const Swap = () => {
             disabled={disabled}
             onPress={onSwap}
             title={
-              Number(toSwapToken?.input) > Number(toSwapToken.reserve)
+              currentPair &&
+              Number(toSwapToken?.input) >
+                Number(
+                  swapUtils.getCurrentReserve(toSwapToken?.token, currentPair),
+                )
                 ? i18n.t('swap.insufficientLiquidity')
                 : i18n.t('swap.swap')
             }

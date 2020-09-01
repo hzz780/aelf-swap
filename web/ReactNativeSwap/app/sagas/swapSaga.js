@@ -22,8 +22,7 @@ import {userSelectors} from '../redux/userRedux';
 import {getFetchRequest} from '../utils/common/networkRequest';
 import config from '../config';
 import swapUtils from '../utils/pages/swapUtils';
-const {explorerURL} = config;
-const TestUri = 'http://192.168.197.55:7300';
+const {swapURL} = config;
 const Success = result => {
   if (result.Status === 'PENDING' || result.Status === 'MINED') {
     return true;
@@ -269,13 +268,12 @@ function* removeLiquiditySaga({data}) {
     console.log(error, '======removeLiquiditySaga');
   }
 }
-function* getPairCandleStickSaga({symbolPair, range}) {
+function* getPairCandleStickSaga({symbolPair, interval}) {
   try {
     const utcOffset = swapUtils.getUTCOffset();
     const result = yield getFetchRequest(
-      `${TestUri}/api/swap/pairCandleStick?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
+      `${swapURL}/api/swap/pairCandleStick?symbolPair=${symbolPair}&interval=${interval}&utcOffset=${utcOffset}`,
     );
-    console.log('resultresultresultresultresult', result);
     if (result.msg === 'success') {
       let obj;
       const candleStick = yield select(swapSelectors.pairCandleStick);
@@ -284,7 +282,7 @@ function* getPairCandleStickSaga({symbolPair, range}) {
         pairCandleStick = candleStick[symbolPair];
       }
       obj = {
-        [symbolPair]: {...(pairCandleStick || {}), [range]: result.data},
+        [symbolPair]: {...(pairCandleStick || {}), [interval]: result.data},
       };
       console.log(obj, '=======obj');
       yield put(swapActions.setPairCandleStick(obj));
@@ -297,7 +295,10 @@ function* getPairChartsSaga({symbolPair, range}) {
   try {
     const utcOffset = swapUtils.getUTCOffset();
     const result = yield getFetchRequest(
-      `${TestUri}/api/swap/pairChart?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
+      `${swapURL}/api/swap/pairChart?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
+    );
+    console.log(
+      `${swapURL}/api/swap/pairChart?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
     );
     console.log(result, '======result');
     if (result.msg === 'success') {
@@ -319,9 +320,9 @@ function* getPairChartsSaga({symbolPair, range}) {
 }
 function* getPairInfoSaga({symbolPair}) {
   try {
-    console.log(`${TestUri}/api/swap/pairInfo?symbolPair=${symbolPair}`);
+    console.log(`${swapURL}/api/swap/pairInfo?symbolPair=${symbolPair}`);
     const result = yield getFetchRequest(
-      `${TestUri}/api/swap/pairInfo?symbolPair=${symbolPair}`,
+      `${swapURL}/api/swap/pairInfo?symbolPair=${symbolPair}`,
     );
     console.log(result, '======result');
   } catch (error) {
@@ -331,14 +332,14 @@ function* getPairInfoSaga({symbolPair}) {
 function* getOverviewChartSaga() {
   try {
     const utcOffset = swapUtils.getUTCOffset();
-    console.log(`${TestUri}/api/swap/overviewChart?utcOffset=${utcOffset}`);
+    console.log(`${swapURL}/api/swap/overviewChart?utcOffset=${utcOffset}`);
     const result = yield getFetchRequest(
-      `${TestUri}/api/swap/overviewChart?utcOffset=${utcOffset}`,
+      `${swapURL}/api/swap/overviewChart?utcOffset=${utcOffset}`,
     );
     if (result.msg === 'success') {
       yield put(swapActions.setOverviewChart(result.data));
     }
-    console.log(result, '======result');
+    console.log(result, '======getOverviewChartSaga');
   } catch (error) {
     console.log(error, '=getOverviewChartSaga');
   }

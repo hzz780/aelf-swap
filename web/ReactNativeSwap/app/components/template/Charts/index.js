@@ -1,21 +1,40 @@
 import React, {memo} from 'react';
 import Echarts from '../Echarts';
 import config from './config';
-const {dataZoom, grid, chartsHeigth, colorList, tooltip, xAxis, yAxis} = config;
+const showNumber = 30;
+const {
+  dataZoom,
+  grid,
+  chartsHeigth,
+  colorList,
+  tooltip,
+  xAxis,
+  yAxis,
+  legend,
+} = config;
 const Areachart = props => {
-  const {series, dates, coverTooltip} = props;
+  const {series, dates, coverTooltip, boundaryGap} = props;
+  let start = 0;
+  const KLine = Array.isArray(series) && series[0]?.type === 'candlestick';
+  if (KLine) {
+    const length = series[0].data.length;
+    if (length > showNumber) {
+      start = 100 - parseInt((100 / length) * showNumber, 10);
+    }
+  }
   const option = {
     color: colorList,
     tooltip: Object.assign(tooltip, coverTooltip || {}),
     xAxis: {
       ...xAxis,
-      boundaryGap: true,
+      boundaryGap,
       data: dates,
     },
-    dataZoom,
+    dataZoom: [{...dataZoom[0], start}, {...dataZoom[1], start}],
     yAxis,
     grid,
     series,
+    ...(KLine ? {legend} : {}),
   };
   return <Echarts height={chartsHeigth} option={option} />;
 };

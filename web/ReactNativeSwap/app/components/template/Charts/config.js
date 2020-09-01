@@ -1,13 +1,64 @@
+/* eslint-disable no-undef */
 import {Colors} from '../../../assets/theme';
-
-const top = 10;
-const heigth = 180;
+const formatter = params => {
+  const param = params[0];
+  if (param.componentSubType === 'bar') {
+    return (
+      param.name +
+      ' <br/>' +
+      param.marker +
+      param.seriesName +
+      ': ' +
+      aelfDigits(param.value)
+    );
+  } else if (param.componentSubType === 'candlestick') {
+    let text = param.name + '<br/>';
+    for (let i = 0; i < params.length; i++) {
+      const element = params[i];
+      const data = element.data;
+      if (i === 0) {
+        for (let ei = 0; ei < data.length; ei++) {
+          const item = data[ei];
+          if (ei > 0) {
+            text =
+              text +
+              element.marker +
+              typeName[ei] +
+              ': ' +
+              aelfDigits(item) +
+              '<br/>';
+          }
+        }
+      } else {
+        text =
+          text +
+          element.marker +
+          element.seriesName +
+          ': ' +
+          aelfDigits(data) +
+          '<br/>';
+      }
+    }
+    return text;
+  } else {
+    return (
+      param.name +
+      ' <br/>' +
+      param.marker +
+      param.seriesName +
+      ': ' +
+      aelfDigits(param.value)
+    );
+  }
+};
+const top = 30;
+const heigth = 200;
 const chartsHeigth = top + heigth + 30 + 30;
 const candlestickItemStyle = {
-  color: Colors.kRed,
-  color0: Colors.kGreen,
-  borderColor: Colors.kRed,
-  borderColor0: Colors.kGreen,
+  color: Colors.kGreen,
+  color0: Colors.kRed,
+  borderColor: Colors.kGreen,
+  borderColor0: Colors.kRed,
 };
 const areaStyle = {
   color: Colors.primaryColor,
@@ -15,8 +66,8 @@ const areaStyle = {
 const colorList = [
   'rgba(92, 40, 169, 0.7)',
   '#2f4554',
-  '#D34A64',
   '#d48265',
+  '#d34A64',
   '#91c7ae',
   '#749f83',
   '#ca8622',
@@ -36,6 +87,12 @@ const yAxis = {
     inside: true,
     formatter: '{value}\n',
   },
+  axisPointer: {
+    show: true,
+    label: {
+      fontSize: 9,
+    },
+  },
 };
 const tooltip = {
   trigger: 'axis',
@@ -52,75 +109,7 @@ const tooltip = {
     fontSize: 12,
     color: Colors.primaryColor,
   },
-  formatter: function(params) {
-    const param = params[0];
-    if (param.componentSubType !== 'candlestick') {
-      return (
-        param.name +
-        ' <br/>' +
-        param.marker +
-        param.seriesName +
-        ': $' +
-        param.value
-      );
-    } else {
-      let text = param.name + '<br/>';
-      const data = param.data;
-      for (let i = 0; i < data.length; i++) {
-        const element = data[i];
-        if (i > 0) {
-          // eslint-disable-next-line no-undef
-          text = text + param.marker + typeName[i] + ': ' + element + '<br/>';
-        }
-      }
-      return text;
-    }
-  },
-  // formatter: function(params) {
-  //   var result = '时间：' + params[0].name + '<br/>';
-  //   params.forEach(function(item) {
-  //     if (item.seriesName == '日K') {
-  //       result += item.marker + ' ' + item.seriesName + '</br>';
-
-  //     } else {
-  //       result +=
-  //         item.marker +
-  //         ' ' +
-  //         item.seriesName +
-  //         ' : ' +
-  //         item.value.toString().substring(0, 7) +
-  //         '</br>';
-  //     }
-  //   });
-  //   return result;
-  // },
-  // formatter: function(params) {
-  //   const param = params[0];
-  //   const open = param.data[1];
-  //   const close = param.data[2];
-  //   const lowest = param.data[3];
-  //   const highest = param.data[4];
-  //   const volume = param.data[5];
-  //   return (
-  //     param.name +
-  //     '<br/>' +
-  //     'Volume:' +
-  //     volume +
-  //     '<br/>' +
-  //     'Open: ' +
-  //     open +
-  //     '<br/>' +
-  //     'Close: ' +
-  //     close +
-  //     '<br/>' +
-  //     'Lowest: ' +
-  //     lowest +
-  //     '<br/>' +
-  //     'Highest: ' +
-  //     highest +
-  //     '<br/>'
-  //   );
-  // },
+  formatter,
   position: function(pos, params, el, elRect, size) {
     let obj = {
       top: 30,
@@ -132,21 +121,22 @@ const tooltip = {
 const xAxis = {
   type: 'category',
   boundaryGap: false,
-  axisLine: {lineStyle: {color: '#777'}},
+  axisLine: {lineStyle: {color: '#777', fonSize: 8}},
   min: 'dataMin',
   max: 'dataMax',
   axisPointer: {
     show: true,
+    label: {
+      padding: [5, 8],
+      fontSize: 9,
+    },
   },
   axisLabel: {
-    formatter: function(value) {
-      // eslint-disable-next-line no-undef
-      return echarts.format.formatTime('MM-dd', value);
-    },
+    fontSize: 9,
   },
 };
 const grid = {
-  left: 20,
+  left: 18,
   right: 20,
   top: top,
   height: heigth,
@@ -171,6 +161,10 @@ const dataZoom = [
     textStyle: {fontSize: 0.1},
   },
 ];
+const legend = {
+  top: 5,
+  data: ['MA5', 'MA10', 'MA15'],
+};
 export default {
   grid,
   top,
@@ -183,4 +177,5 @@ export default {
   tooltip,
   xAxis,
   dataZoom,
+  legend,
 };

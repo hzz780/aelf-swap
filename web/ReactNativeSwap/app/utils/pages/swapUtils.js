@@ -2,12 +2,27 @@ import config from '../../config';
 import aelfUtils from './aelfUtils';
 const {swapFee, swapDeadline, swapFloat} = config;
 const swapFormat = 'YYYY-MM-DD HH:mm';
-const digits = count => {
+const digits = (count, num = 8) => {
   const floatPart = String(count).split('.')[1];
-  if (count && floatPart && floatPart.length > 8) {
-    count = count.toFixed(8);
+  if (count && floatPart && floatPart.length > num) {
+    count = Math.floor(count * 10 ** num) / 10 ** num;
   }
   return count;
+};
+const calculateMA = (dayCount, data) => {
+  let result = [];
+  for (var i = 0, len = data.length; i < len; i++) {
+    if (i < dayCount) {
+      result.push('-');
+      continue;
+    }
+    var sum = 0;
+    for (var j = 0; j < dayCount; j++) {
+      sum += data[i - j][1];
+    }
+    result.push(Number(digits(sum / dayCount, 5)));
+  }
+  return result;
 };
 const detailsPrice = (reserveA, reserveB) => {
   if (reserveA && reserveB) {
@@ -127,28 +142,31 @@ const judgmentNaN = s => {
   }
   return s;
 };
-const getAmounB = (amountA, reserveA, reserveB) => {
+const getAmounB = (amountA, reserveA, reserveB, decimals) => {
+  console.log(decimals);
   if (!amountA) {
     return '';
   }
   const a = (amountA * reserveB) / reserveA;
-  let s = String(digits(a));
+  let s = String(digits(a, decimals));
   return judgmentNaN(s);
 };
-const getOutInput = (rA, rB, aA) => {
-  rA = Number(rA);
-  rB = Number(rB);
+const getOutInput = (sA, sB, currentPair, aA, decimals) => {
+  const {symbolA, reserveA, reserveB} = currentPair;
+  let rA = symbolA === sA ? reserveA : reserveB;
+  let rB = symbolA === sB ? reserveA : reserveB;
   aA = Number(aA);
   if (!aA) {
     return '';
   }
   const a = rB - (rA * rB) / (rA + aA * (1 - swapFee));
-  let s = String(digits(a));
+  let s = String(digits(a, decimals));
   return judgmentNaN(s);
 };
-const getInInput = (rA, rB, aB) => {
-  rA = Number(rA);
-  rB = Number(rB);
+const getInInput = (sA, sB, currentPair, aB, decimals) => {
+  const {symbolA, reserveA, reserveB} = currentPair;
+  let rA = symbolA === sA ? reserveA : reserveB;
+  let rB = symbolA === sB ? reserveA : reserveB;
   aB = Number(aB);
   if (!aB) {
     return '';
@@ -156,7 +174,7 @@ const getInInput = (rA, rB, aB) => {
   const k = rA * rB;
   const kb = rB - aB;
   const a = (k / kb - rA) / (1 - swapFee);
-  let s = String(digits(a));
+  let s = String(digits(a, decimals));
 
   return judgmentNaN(s);
 };
@@ -196,6 +214,9 @@ const getDeadline = () => {
 };
 const getPoolToken = (balance, totalSupply, reserve) => {
   let s = String(digits((balance / totalSupply) * reserve));
+  if (s === '0') {
+    return '';
+  }
   return judgmentNaN(s);
 };
 const getPoolShare = (balance, totalSupply) => {
@@ -293,6 +314,13 @@ const arrayMap = (arr, type, format) => {
   }
   return {data, dates};
 };
+const getCurrentReserve = (s, currentPair) => {
+  if (!currentPair) {
+    return 0;
+  }
+  const {symbolA, reserveA, reserveB} = currentPair;
+  return s === symbolA ? reserveA : reserveB;
+};
 export default {
   detailsPrice,
   getUSD,
@@ -319,4 +347,6 @@ export default {
   getUTCOffset,
   getChartsStart,
   arrayMap,
+  calculateMA,
+  getCurrentReserve,
 };

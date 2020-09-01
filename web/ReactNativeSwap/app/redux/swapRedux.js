@@ -13,7 +13,7 @@ const {Types, Creators} = createActions({
   removeLiquidity: ['data'],
   reSwap: [],
 
-  getPairCandleStick: ['symbolPair', 'range'],
+  getPairCandleStick: ['symbolPair', 'interval'],
   setPairCandleStick: ['pairCandleStick'],
 
   getPairCharts: ['symbolPair', 'range'],

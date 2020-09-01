@@ -29,6 +29,7 @@ import {getFetchRequest} from '../utils/common/networkRequest';
 const {
   explorerURL,
   tokenSymbol,
+  walletURL,
   contractAddresses,
   keystoreOptions,
   contractNameAddressSets,
@@ -262,6 +263,7 @@ function* onApproveSaga({amount, appContractAddress}) {
       amount: unitConverter.toHigher(amount),
     });
     const result = yield aelfInstance.chain.getTxResult(approve.TransactionId);
+    console.log(result, '=======result');
     yield delay(2000);
     Loading.hide();
     CommonToast.success(i18n.t('userSaga.authorizationSucceeded'));
@@ -325,14 +327,16 @@ function* getUserBalancesSaga({address}) {
   try {
     let obj = {};
     const result = yield getFetchRequest(
-      `${explorerURL}/api/viewer/balances?address=${aelfUtils.formatRestoreAddress(
+      `${walletURL}/address/api/tokens?address=${aelfUtils.formatRestoreAddress(
         address,
-      )}`,
+      )}&limit=100&all=true`,
     );
-    const {data, msg} = result;
-    if (msg === 'success' && Array.isArray(data)) {
-      data.forEach(item => {
-        obj[item.symbol] = item.balance;
+    if (Array.isArray(result)) {
+      result.forEach(item => {
+        obj[item.symbol] = unitConverter.toDecimalLower(
+          item.balance,
+          item.decimals,
+        );
       });
       const userBalances = yield select(userSelectors.userBalances);
       if (JSON.stringify(userBalances) !== JSON.stringify(obj)) {
@@ -356,7 +360,6 @@ function* getTokenUsdSaga() {
         });
       const tokenUSD = yield select(userSelectors.tokenUSD);
       if (JSON.stringify(tokenUSD) !== JSON.stringify(obj)) {
-        console.log(obj, '=====tokenUSD');
         yield put(userActions.setTokenUsd(obj));
       }
     }

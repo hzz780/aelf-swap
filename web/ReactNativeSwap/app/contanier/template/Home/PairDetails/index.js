@@ -17,7 +17,6 @@ import {useDispatch} from 'react-redux';
 import swapUtils from '../../../../utils/pages/swapUtils';
 import {useStateToProps} from '../../../../utils/pages/hooks';
 import PairCharts from '../PairCharts';
-import {useFocusEffect} from '@react-navigation/native';
 let isActive = true;
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
@@ -66,15 +65,15 @@ const PairDetails = props => {
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
     [dispatch],
   );
-  const getPairInfo = useCallback(
-    symbolPair => dispatch(swapActions.getPairInfo(symbolPair)),
-    [dispatch],
-  );
-  useFocusEffect(
-    useCallback(() => {
-      getPairInfo(pairData.symbolPair);
-    }, [getPairInfo, pairData.symbolPair]),
-  );
+  // const getPairInfo = useCallback(
+  //   symbolPair => dispatch(swapActions.getPairInfo(symbolPair)),
+  //   [dispatch],
+  // );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     getPairInfo(pairData.symbolPair);
+  //   }, [getPairInfo, pairData.symbolPair]),
+  // );
   const [index, setIndex] = useState(0);
   const [data, setData] = useState([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
   const [loadCompleted, setLoadCompleted] = useState(true);
@@ -138,11 +137,11 @@ const PairDetails = props => {
           subtitleStyle={styles.subtitleStyle}
         />
         <PairCharts {...pairData} />
-        <View style={styles.overviewBox}>
+        {/* <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.transactions')}
           </TextL>
-        </View>
+        </View> */}
       </View>
     );
   }, [pairData, tokenUSD]);
@@ -207,12 +206,12 @@ const PairDetails = props => {
     <View style={GStyle.secondContainer}>
       <CommonHeader title={`${symbolPair} ${i18n.t('swap.pair')}`} canBack />
       <SectionStickyList
-        data={data}
+        data={[]}
         loadCompleted={loadCompleted}
         upPullRefresh={upPullRefresh}
         // onEndReached={onEndReached}
         renderHeader={renderHeader}
-        stickyHead={stickyHead}
+        // stickyHead={stickyHead}
         renderItem={renderItem}
         ref={list}
         showFooter
@@ -221,7 +220,10 @@ const PairDetails = props => {
       />
       <View style={styles.bottomBox}>
         <Touchable
-          onPress={() => navigationService.navigate('Swap')}
+          onPress={() => {
+            // DeviceEventEmitter.emit('SWAP_DATA', pairData);
+            navigationService.navigate('DefaultSwap', {pairData});
+          }}
           style={[
             styles.toolBarItem,
             styles.bottomItem,
