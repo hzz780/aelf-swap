@@ -26,6 +26,7 @@ const SecurityLock = () => {
     return () => {
       backHandler.remove();
       timer && clearTimeout(timer);
+      timer = null;
     };
   }, [verification]);
   const verification = useCallback(() => {
