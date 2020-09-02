@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "cd ios && pod install --repo-update && cd ..",
+    "postinstall": "cd ios && pod update Firebase/CoreOnly && cd ..",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
