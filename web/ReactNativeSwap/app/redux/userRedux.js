@@ -17,7 +17,7 @@ const {Types, Creators} = createActions({
   getAllowanceList: [],
   setAllowanceList: ['allowanceList'],
   onApprove: ['amount', 'appContractAddress'],
-  getAllTokens: [],
+  getAllTokens: ['num'],
   setAllTokens: ['allTokens'],
 
   getUserBalances: ['address'],
@@ -44,6 +44,7 @@ export const INITIAL_STATE = {
   allowanceList: [],
   privateKey: null,
   allTokens: [],
+  allTokenObj: {},
   userBalances: {},
   tokenUSD: {},
 };
@@ -100,6 +101,10 @@ export const userSelectors = {
     _baseSelector,
     base => base.tokenUSD,
   ),
+  allTokenObj: createSelector(
+    _baseSelector,
+    base => base.allTokenObj,
+  ),
 };
 
 /* ------------- Reducers ------------- */
@@ -149,7 +154,14 @@ export const getAllTokens = state => {
   return state;
 };
 export const setAllTokens = (state, {allTokens}) => {
-  return Object.assign({}, state, {allTokens});
+  let obj = {};
+  if (Array.isArray(allTokens)) {
+    for (let i = 0, j = allTokens.length; i < j; i++) {
+      const element = allTokens[i];
+      obj[element.symbol] = element;
+    }
+  }
+  return Object.assign({}, state, {allTokens, allTokenObj: obj});
 };
 export const getUserBalances = state => {
   return state;

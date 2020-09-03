@@ -10,7 +10,6 @@ import {pixelSize} from '../../../../utils/common/device';
 import {Colors} from '../../../../assets/theme';
 import {TextM} from '../../../../components/template/CommonText';
 import config from '../../../../components/template/Charts/config';
-import aelfUtils from '../../../../utils/pages/aelfUtils';
 import {pTd} from '../../../../utils/common';
 import swapUtils from '../../../../utils/pages/swapUtils';
 const {chartsHeigth} = config;

@@ -22,6 +22,7 @@ import {userSelectors} from '../redux/userRedux';
 import {getFetchRequest} from '../utils/common/networkRequest';
 import config from '../config';
 import swapUtils from '../utils/pages/swapUtils';
+import SwapTransactionPopup from '../contanier/template/Transaction/SwapTransactionPopup';
 const {swapURL} = config;
 const Success = result => {
   if (result.Status === 'PENDING' || result.Status === 'MINED') {
@@ -46,8 +47,6 @@ function* getPairsSaga({pair, callBack}) {
       const {results: supplyResults} = yield swapContract.GetTotalSupply.call(
         pairs,
       );
-      console.log(supplyResults, '=====supply');
-      console.log(reserves, '======GetReserves');
       const {results} = reserves;
       if (Array.isArray(results)) {
         const allTokens = yield select(userSelectors.allTokens);
@@ -106,7 +105,7 @@ function* createPairSaga({symbolPair}) {
     console.log(result, '=======result');
     Loading.destroy();
     if (Success(result)) {
-      CommonToast.success(i18n.t('swap.createdSuccess'));
+      SwapTransactionPopup.show({txId: createPair.TransactionId});
     } else {
       CommonToast.fail(i18n.t('swap.tryAgain'));
     }
@@ -129,7 +128,7 @@ function* addLiquiditySaga({data}) {
     console.log(result, '=======result');
     Loading.destroy();
     if (Success(result)) {
-      CommonToast.success(i18n.t('swap.addSuccess'));
+      SwapTransactionPopup.show({txId: add.TransactionId});
     } else {
       CommonToast.fail(i18n.t('swap.tryAgain'));
     }
@@ -230,7 +229,7 @@ function* swapTokenSaga({data, callBack}) {
     const result = yield aelfUtils.getTxResult(swap.TransactionId);
     console.log(result, '=======result');
     if (Success(result)) {
-      CommonToast.success(i18n.t('swap.swapSuccess'));
+      SwapTransactionPopup.show({txId: swap.TransactionId});
     } else {
       CommonToast.fail(i18n.t('swap.tryAgain'));
     }
@@ -250,13 +249,13 @@ function* removeLiquiditySaga({data}) {
     console.log(data, '======data');
     const contracts = yield select(contractsSelectors.getContracts);
     const {swapContract} = contracts || {};
-    const add = yield swapContract.RemoveLiquidity({...data});
+    const remove = yield swapContract.RemoveLiquidity({...data});
     yield delay(3000);
-    const result = yield aelfUtils.getTxResult(add.TransactionId);
+    const result = yield aelfUtils.getTxResult(remove.TransactionId);
     console.log(result, '=======result');
     Loading.destroy();
     if (Success(result)) {
-      CommonToast.success(i18n.t('swap.removeSuccess'));
+      SwapTransactionPopup.show({txId: remove.TransactionId});
     } else {
       CommonToast.fail(i18n.t('swap.tryAgain'));
     }

@@ -1,4 +1,3 @@
-import {Colors} from '../../../../assets/theme';
 import config from '../config';
 const {
   top,

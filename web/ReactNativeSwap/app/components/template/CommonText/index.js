@@ -75,7 +75,7 @@ export const CopyText = props => {
       {...props}
       style={[styles.copyText, props.style]}>
       {props.children}
-      <AntDesign name="copy1" />
+      <AntDesign name="copy1" color={props.iconColor} />
     </Text>
   );
 };

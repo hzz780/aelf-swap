@@ -309,6 +309,7 @@
     "open": "开",
     "close": "收",
     "lowest": "低",
-    "highest": "高"
+    "highest": "高",
+    "volume": "交易量"
   }
 }

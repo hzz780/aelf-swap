@@ -53,13 +53,12 @@ const Swap = props => {
       subscription.remove();
     };
   }, [getPItem]);
-  const {language, pairs, userBalances, tokenUSD} = useStateToProps(base => {
+  const {language, pairs, userBalances} = useStateToProps(base => {
     const {settings, swap, user} = base;
     return {
       language: settings.language,
       pairs: swap.pairs,
       userBalances: user.userBalances,
-      tokenUSD: user.tokenUSD,
     };
   });
   const {pairData} = props.route.params || {};
@@ -151,7 +150,7 @@ const Swap = props => {
                       toSwapToken?.token,
                       currentPair,
                       item.balance,
-                      tokenUSD[(toSwapToken?.token)]?.decimals,
+                      reduxUtils.getTokenDecimals(toSwapToken?.token),
                     );
                     obj = {
                       ...obj,
@@ -189,7 +188,7 @@ const Swap = props => {
         />
       );
     },
-    [currentPair, setState, showTokenModal, swapToken, toSwapToken, tokenUSD],
+    [currentPair, setState, showTokenModal, swapToken, toSwapToken],
   );
   const Description = useMemo(() => {
     let color = 'green';
@@ -243,7 +242,7 @@ const Swap = props => {
           toSwapToken?.token,
           currentPair,
           v,
-          tokenUSD[(toSwapToken?.token)]?.decimals,
+          reduxUtils.getTokenDecimals(toSwapToken?.token),
         );
         obj = {
           ...obj,
@@ -262,7 +261,7 @@ const Swap = props => {
       };
       setState(obj);
     },
-    [currentPair, setState, swapToken, toSwapToken, tokenUSD],
+    [currentPair, setState, swapToken, toSwapToken],
   );
   const SwapItem = useMemo(() => {
     return (
@@ -314,7 +313,7 @@ const Swap = props => {
                 toSwapToken?.token,
                 currentPair,
                 v,
-                tokenUSD[(swapToken?.token)]?.decimals,
+                reduxUtils.getTokenDecimals(swapToken?.token),
               ),
             },
           };
@@ -328,7 +327,7 @@ const Swap = props => {
       };
       setState(obj);
     },
-    [currentPair, setState, swapToken, toSwapToken, tokenUSD],
+    [currentPair, setState, swapToken, toSwapToken],
   );
   const PriceMemo = useMemo(() => {
     let f = swapToken,

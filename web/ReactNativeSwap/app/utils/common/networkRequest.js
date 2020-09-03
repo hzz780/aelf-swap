@@ -17,5 +17,22 @@ function getFetchRequest(url, config = {}) {
       .catch(error => reject(error));
   });
 }
-
-export {getFetchRequest};
+function postFetchRequest(url, params, config = {}) {
+  const Param = params && params._parts.length ? params : '';
+  if (!config.timeout) {
+    config.timeout = 30000;
+    // config.headers = {
+    //   'Content-Type': 'application/json',
+    // };
+  }
+  console.log(Param, '=====Param');
+  return new Promise((resolve, reject) => {
+    axios
+      .post(url, Param, config)
+      .then(res => {
+        resolve(res.data);
+      })
+      .catch(error => reject(error));
+  });
+}
+export {getFetchRequest, postFetchRequest};

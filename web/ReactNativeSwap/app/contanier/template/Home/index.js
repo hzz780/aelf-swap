@@ -4,8 +4,9 @@ import {
   CommonHeader,
   ListItem,
   SectionStickyList,
+  Touchable,
 } from '../../../components/template';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, LayoutAnimation} from 'react-native';
 import {useStateToProps} from '../../../utils/pages/hooks';
 import {GStyle, Colors} from '../../../assets/theme';
 import {pTd} from '../../../utils/common';
@@ -16,12 +17,51 @@ import swapUtils from '../../../utils/pages/swapUtils';
 import {useFocusEffect} from '@react-navigation/native';
 import OverviewCharts from './OverviewCharts';
 import {TextL} from '../../../components/template/CommonText';
+const ToolBar = memo(props => {
+  const {index, setIndex} = props;
+  const toolList = ['Tokens', 'Pairs', 'Accounts'];
+  return (
+    <>
+      <View style={styles.toolBarBox}>
+        {toolList.map((item, j) => {
+          const current = j === index;
+          return (
+            <Touchable
+              highlight
+              underlayColor={Colors.bottonPressColor}
+              onPress={() => {
+                LayoutAnimation.easeInEaseOut();
+                setIndex && setIndex(j);
+              }}
+              key={j}
+              style={[
+                styles.toolBarItem,
+                current && {backgroundColor: Colors.primaryColor},
+              ]}>
+              <TextL style={[current && styles.whiteColor]}>{item}</TextL>
+            </Touchable>
+          );
+        })}
+      </View>
+      <ListItem
+        style={styles.topBox}
+        titleStyle={styles.topTitle}
+        subtitleStyle={styles.topSubtitle}
+        title={i18n.t('swap.pair')}
+        subtitle={i18n.t('swap.liquidity')}
+        rightElement={null}
+        disabled
+      />
+    </>
+  );
+});
 let isActive = true;
 
 const Home = () => {
   const dispatch = useDispatch();
   const list = useRef();
   const [loadCompleted, setLoadCompleted] = useState(true);
+  const [index, setIndex] = useState(1);
   const getPairs = useCallback(
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
     [dispatch],
@@ -94,18 +134,8 @@ const Home = () => {
     );
   }, []);
   const stickyHead = useCallback(() => {
-    return (
-      <ListItem
-        style={styles.topBox}
-        titleStyle={styles.topTitle}
-        subtitleStyle={styles.topSubtitle}
-        title={i18n.t('swap.pair')}
-        subtitle={i18n.t('swap.liquidity')}
-        rightElement={null}
-        disabled
-      />
-    );
-  }, []);
+    return <ToolBar index={index} setIndex={setIndex} />;
+  }, [index]);
   return (
     <View style={GStyle.secondContainer}>
       <CommonHeader title={i18n.t('swap.market')} />
@@ -157,5 +187,27 @@ const styles = StyleSheet.create({
     paddingTop: pTd(15),
     paddingBottom: pTd(10),
     paddingLeft: pTd(30),
+  },
+  toolBarItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: pTd(20),
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: Colors.primaryColor,
+  },
+  whiteColor: {
+    color: 'white',
+  },
+  toolListTitile: {
+    paddingTop: pTd(15),
+    paddingBottom: pTd(10),
+    paddingLeft: pTd(30),
+    backgroundColor: '#f5f5f5',
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderColor,
+  },
+  toolBarBox: {
+    flexDirection: 'row',
   },
 });

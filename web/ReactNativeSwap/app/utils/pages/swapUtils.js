@@ -61,7 +61,7 @@ const getSwapUSD = (item, USDS) => {
       } else if (USDB) {
         number = USDB * item.reserveB * 2;
       }
-      number = digits(number);
+      number = digits(number, 2);
     }
     text = `$ ${number || '0'}`;
   }

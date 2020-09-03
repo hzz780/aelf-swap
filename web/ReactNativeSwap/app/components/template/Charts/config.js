@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import {Colors} from '../../../assets/theme';
+import {isIos} from '../../../utils/common/device';
 const formatter = params => {
   const param = params[0];
   if (param.componentSubType === 'bar') {
@@ -136,7 +137,7 @@ const xAxis = {
   },
 };
 const grid = {
-  left: 18,
+  left: isIos ? 20 : 18,
   right: 20,
   top: top,
   height: heigth,

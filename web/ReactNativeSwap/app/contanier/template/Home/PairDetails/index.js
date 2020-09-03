@@ -32,6 +32,8 @@ const ToolBar = memo(props => {
           const current = j === index;
           return (
             <Touchable
+              highlight
+              underlayColor={Colors.bottonPressColor}
               onPress={() => {
                 LayoutAnimation.easeInEaseOut();
                 setIndex(j);
@@ -74,6 +76,17 @@ const PairDetails = props => {
   //     getPairInfo(pairData.symbolPair);
   //   }, [getPairInfo, pairData.symbolPair]),
   // );
+  const explanation = useCallback(
+    (title1, title2, color = Colors.primaryColor) => {
+      return (
+        <View style={styles.poolToken}>
+          <TextM style={[styles.subtitleStyle, {color}]}>{title1}</TextM>
+          <TextM style={[styles.subtitleStyle, {color}]}>{title2}</TextM>
+        </View>
+      );
+    },
+    [],
+  );
   const [index, setIndex] = useState(0);
   const [data, setData] = useState([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
   const [loadCompleted, setLoadCompleted] = useState(true);
@@ -89,27 +102,43 @@ const PairDetails = props => {
           </TextL>
         </View>
         <ListItem
+          style={styles.liquidityBox}
           disabled
           title={i18n.t('swap.liquidity')}
           subtitle={subtitle}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
-        {/* <ListItem
+        {explanation(
+          `${reserveA || '0'} ${symbolA || ''}`,
+          `${reserveB || '0'} ${symbolB || ''}`,
+        )}
+        <ListItem
+          disabled
+          style={styles.liquidityBox}
+          title={`${i18n.t('swap.volume')}(24h)`}
+          subtitle="$ 234,123"
+          rightElement={null}
+          subtitleStyle={styles.subtitleStyle}
+        />
+        {explanation(
+          `${reserveA || '0'} ${symbolA || ''}`,
+          `${reserveB || '0'} ${symbolB || ''}`,
+          Colors.fontGray,
+        )}
+        <ListItem
+          disabled
+          style={styles.liquidityBox}
           title={`${i18n.t('swap.fee')}(24h)`}
           subtitle="$ 234,123"
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
-        /> */}
-        <ListItem
-          disabled
-          title={i18n.t('swap.pooledTokens')}
-          subtitle={`${reserveA || '0'} ${symbolA || ''}`}
-          subtitleDetails={`${reserveB || '0'} ${symbolB || ''}`}
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-          subtitleDetailsStyle={styles.subtitleStyle}
         />
+        {explanation(
+          `${reserveA || '0'} ${symbolA || ''}`,
+          `${reserveB || '0'} ${symbolB || ''}`,
+          Colors.fontGray,
+        )}
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.price')}
@@ -137,14 +166,14 @@ const PairDetails = props => {
           subtitleStyle={styles.subtitleStyle}
         />
         <PairCharts {...pairData} />
-        {/* <View style={styles.overviewBox}>
+        <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.transactions')}
           </TextL>
-        </View> */}
+        </View>
       </View>
     );
-  }, [pairData, tokenUSD]);
+  }, [explanation, pairData, tokenUSD]);
   const stickyHead = useCallback(() => {
     return (
       <ToolBar
@@ -206,12 +235,12 @@ const PairDetails = props => {
     <View style={GStyle.secondContainer}>
       <CommonHeader title={`${symbolPair} ${i18n.t('swap.pair')}`} canBack />
       <SectionStickyList
-        data={[]}
+        data={data}
         loadCompleted={loadCompleted}
         upPullRefresh={upPullRefresh}
         // onEndReached={onEndReached}
         renderHeader={renderHeader}
-        // stickyHead={stickyHead}
+        stickyHead={stickyHead}
         renderItem={renderItem}
         ref={list}
         showFooter
@@ -308,5 +337,22 @@ const styles = StyleSheet.create({
   bottomItem: {
     borderRadius: pTd(15),
     marginHorizontal: pTd(15),
+  },
+  liquidityBox: {
+    borderBottomWidth: 0,
+    minHeight: 0,
+    paddingBottom: 0,
+  },
+  poolToken: {
+    paddingTop: pTd(10),
+    width: '100%',
+    backgroundColor: 'white',
+    alignItems: 'flex-end',
+    paddingRight: pTd(30),
+    height: pTd(110),
+    justifyContent: 'space-around',
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderColor,
+    paddingBottom: pTd(20),
   },
 });
