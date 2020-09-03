@@ -20,6 +20,7 @@ import navigationService from '../utils/common/navigationService';
 import {Loading, CommonToast} from '../components/template';
 import unitConverter from '../utils/pages/unitConverter';
 import aelfUtils from '../utils/pages/aelfUtils';
+import swapUtils from '../utils/pages/swapUtils';
 import {isIos} from '../utils/common/device';
 import settingsActions from '../redux/settingsRedux';
 import i18n from 'i18n-js';
@@ -89,7 +90,6 @@ function* onAppInitSaga({privateKey}) {
       const contract = yield getContract(privateKey, contractNameAddressSets);
       console.log(contract, '======contract');
       if (contract && Object.keys(contract).length > 0) {
-        console.log(yield contract.tokenContract.GetResourceTokenInfo.call());
         yield put(contractsActions.setContracts({contracts: contract}));
         yield put(userActions.getAllowanceList());
         yield put(userActions.getUserBalance());
@@ -103,6 +103,7 @@ function* onAppInitSaga({privateKey}) {
 }
 function* getUserBalanceSaga() {
   try {
+    yield put(userActions.getTokenUsd());
     const userInfo = yield select(userSelectors.getUserInfo);
     const {address, contracts, privateKey} = userInfo;
     if (address && privateKey) {
@@ -199,7 +200,6 @@ function* logOutSaga({address}) {
 }
 function* transferSaga({param}) {
   try {
-    console.log(param);
     const {contracts} = yield select(userSelectors.getUserInfo);
     const transaction = yield contracts.tokenContract.Transfer(param);
     const result = yield aelfInstance.chain.getTxResult(
@@ -277,46 +277,58 @@ function* onApproveSaga({amount, appContractAddress}) {
     console.log(error, 'onApproveSaga');
   }
 }
-const getUSD = data => {
-  const promise = data.map(item => {
-    return getFetchRequest(
-      `https://wallet-test.aelf.io/api/token/price?fsym=${
-        item.symbol
-      }&tsyms=USD`,
-    ).then(v => {
-      const {USD} = v || {};
-      if (USD) {
-        return {
-          ...item,
-          USD,
-        };
-      } else {
-        return {
-          ...item,
-          USD: 0,
-        };
-      }
-    });
-  });
-  return Promise.all(promise);
-};
-function* getAllTokensSaga() {
+// const getUSD = data => {
+//   const promise = data.map(item => {
+//     return getFetchRequest(
+//       `https://wallet-test.aelf.io/api/token/price?fsym=${
+//         item.symbol
+//       }&tsyms=USD`,
+//     ).then(v => {
+//       const {USD} = v || {};
+//       if (USD) {
+//         return {
+//           ...item,
+//           USD,
+//         };
+//       } else {
+//         return {
+//           ...item,
+//           USD: 0,
+//         };
+//       }
+//     });
+//   });
+//   return Promise.all(promise);
+// };
+const allTokenPageSize = 100;
+function* getAllTokensSaga({num}) {
+  const pageNum = num || 1;
   try {
-    yield put(userActions.getTokenUsd());
     const result = yield getFetchRequest(
-      `${explorerURL}/api/viewer/getAllTokens?total=0&pageSize=100&pageNum=1`,
+      `${explorerURL}/api/viewer/getAllTokens?total=0&pageSize=${allTokenPageSize}&pageNum=${pageNum}`,
     );
     const {
       msg,
       data: {list},
     } = result;
     if (msg === 'success') {
-      const allTokens = yield select(userSelectors.allTokens);
-      if (
-        list &&
-        (!allTokens || !aelfUtils.compareAllTokens(allTokens, list, 'symbol'))
-      ) {
-        yield put(userActions.setAllTokens(list));
+      let AllList = [];
+      if (list) {
+        const allTokens = yield select(userSelectors.allTokens);
+        if (num) {
+          if (Array.isArray(allTokens)) {
+            AllList = AllList.concat(allTokens);
+          }
+        }
+        AllList = AllList.concat(list);
+        if (!aelfUtils.containsAllTokens(allTokens, AllList, 'symbol')) {
+          AllList = swapUtils.removeDuplicates(AllList, 'symbol');
+          yield put(userActions.setAllTokens(AllList));
+          yield put(userActions.getTokenUsd());
+        }
+        if (list.length >= allTokenPageSize) {
+          yield put(userActions.getAllTokens(pageNum + 1));
+        }
       }
     }
   } catch (error) {
@@ -353,10 +365,17 @@ function* getTokenUsdSaga() {
     let obj = {};
     const allTokens = yield select(userSelectors.allTokens);
     if (Array.isArray(allTokens)) {
-      const USDList = yield getUSD(allTokens);
+      const USDList = yield getFetchRequest(
+        'https://wallet-test.aelf.io/api/token/prices-tokens-of-aelf',
+      );
       Array.isArray(USDList) &&
-        USDList.forEach(item => {
-          obj[item.symbol] = item;
+        allTokens.forEach(item => {
+          const usd = USDList.find(i => i.symbol === item.symbol);
+          if (usd?.USD) {
+            obj[item.symbol] = {...item, USD: usd?.USD};
+          } else {
+            obj[item.symbol] = {...item, USD: 0};
+          }
         });
       const tokenUSD = yield select(userSelectors.tokenUSD);
       if (JSON.stringify(tokenUSD) !== JSON.stringify(obj)) {

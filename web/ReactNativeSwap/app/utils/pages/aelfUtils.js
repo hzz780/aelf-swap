@@ -96,6 +96,22 @@ const compareAllTokens = (first, second, type) => {
     return false;
   }
 };
+const containsAllTokens = (first, second, type) => {
+  let contains = false;
+  if (Array.isArray(first) && Array.isArray(second)) {
+    contains = true;
+    second.forEach(item => {
+      const obj = first.find(i => {
+        return i[type] === item[type];
+      });
+      if (!obj) {
+        contains = false;
+      }
+    });
+  }
+  console.log(contains, first, second);
+  return contains;
+};
 export default {
   checkPassword,
   webURLAddress,
@@ -109,4 +125,5 @@ export default {
   timeConversion,
   getTxResult,
   compareAllTokens,
+  containsAllTokens,
 };
