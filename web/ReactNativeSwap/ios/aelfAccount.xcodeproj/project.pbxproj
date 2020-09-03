@@ -794,6 +794,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = aelfAccount/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
@@ -822,6 +823,7 @@
 				CURRENT_PROJECT_VERSION = 20200901445;
 				DEVELOPMENT_TEAM = LR77E76VJ6;
 				INFOPLIST_FILE = aelfAccount/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
