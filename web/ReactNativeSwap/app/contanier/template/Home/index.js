@@ -16,7 +16,7 @@ import {useDispatch} from 'react-redux';
 import swapUtils from '../../../utils/pages/swapUtils';
 import {useFocusEffect} from '@react-navigation/native';
 import OverviewCharts from './OverviewCharts';
-import {TextL} from '../../../components/template/CommonText';
+import {TextL, TextM, TextS} from '../../../components/template/CommonText';
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
   const toolList = ['Tokens', 'Pairs', 'Accounts'];
@@ -53,6 +53,18 @@ const ToolBar = memo(props => {
         disabled
       />
     </>
+  );
+});
+
+const SymbolText = memo(props => {
+  const {children, margin} = props;
+  return (
+    <TextS
+      ellipsizeMode="middle"
+      style={margin ? styles.marginGray : styles.colorGray}
+      numberOfLines={1}>
+      {children}
+    </TextS>
   );
 });
 let isActive = true;
@@ -102,16 +114,25 @@ const Home = () => {
       }
       const subtitle = swapUtils.getSwapUSD(item, tokenUSD);
       return (
-        <ListItem
-          title={item.symbolPair}
-          subtitle={subtitle}
-          rightElement={null}
-          titleStyle={{color: Colors.primaryColor}}
-          subtitleStyle={styles.subtitleStyle}
+        <Touchable
           onPress={() =>
             navigationService.navigate('PairDetails', {pairData: item})
           }
-        />
+          style={styles.listItemBox}>
+          <TextM numberOfLines={1} style={styles.titleStyle}>
+            {item.symbolPair}
+          </TextM>
+          <View style={styles.flexBox}>
+            <TextS numberOfLines={1}>{subtitle}</TextS>
+            <SymbolText margin>123 {item.symbolA}</SymbolText>
+            <SymbolText>123 {item.symbolB}</SymbolText>
+          </View>
+          <View style={styles.flexBox}>
+            <TextS numberOfLines={1}>{subtitle}</TextS>
+            <SymbolText margin>123 {item.symbolA}</SymbolText>
+            <SymbolText>123 {item.symbolB}</SymbolText>
+          </View>
+        </Touchable>
       );
     },
     [tokenUSD],
@@ -209,5 +230,28 @@ const styles = StyleSheet.create({
   },
   toolBarBox: {
     flexDirection: 'row',
+  },
+  titleStyle: {
+    flex: 1,
+    color: Colors.primaryColor,
+  },
+  listItemBox: {
+    paddingHorizontal: pTd(30),
+    paddingVertical: pTd(20),
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderColor,
+  },
+  flexBox: {
+    flex: 1,
+    marginLeft: pTd(10),
+  },
+  marginGray: {
+    marginTop: pTd(10),
+    color: Colors.fontGray,
+  },
+  colorGray: {
+    color: Colors.fontGray,
   },
 });
