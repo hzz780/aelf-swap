@@ -109,7 +109,6 @@ const containsAllTokens = (first, second, type) => {
       }
     });
   }
-  console.log(contains, first, second);
   return contains;
 };
 export default {
