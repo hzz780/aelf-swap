@@ -25,7 +25,6 @@ function postFetchRequest(url, params, config = {}) {
     //   'Content-Type': 'application/json',
     // };
   }
-  console.log(Param, '=====Param');
   return new Promise((resolve, reject) => {
     axios
       .post(url, Param, config)

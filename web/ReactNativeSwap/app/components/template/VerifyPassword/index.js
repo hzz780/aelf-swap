@@ -14,6 +14,7 @@ import {sleep} from '../../../utils/pages';
 import BounceSpinner from '../BounceSpinner';
 import {isIos} from '../../../utils/common/device';
 import {useStateToProps} from '../../../utils/pages/hooks';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 const BottomView = props => {
   const {cancel, determine} = props;
   const Components = useMemo(
@@ -66,17 +67,32 @@ const PayComponents = props => {
   }, [callBack]);
   return (
     <ScrollView alwaysBounceVertical={false} keyboardShouldPersistTaps="always">
-      <View style={styles.container}>
-        <TextL>{i18n.t('pleasePayPwd')}</TextL>
+      <View style={[styles.container]}>
+        <View style={styles.pleasePayPwdBox}>
+          <AntDesign color={'white'} size={pTd(40)} name="close" />
+          <TextM style={styles.pleasePayPwd} numberOfLines={1}>
+            {i18n.t('pleasePayPwd')}
+          </TextM>
+          <AntDesign
+            color={Colors.fontGray}
+            size={pTd(40)}
+            name="close"
+            onPress={() => OverlayModal.hide()}
+          />
+        </View>
         <Password
           maxLength={6}
           style={GStyle.marginArg(pTd(50), 0, pTd(30), 0)}
           onChange={value => onChange(value)}
         />
-        {pwTip && (
-          <TextM style={[GStyle.pwTip, styles.tips]}>{i18n.t('pwdErr')}</TextM>
-        )}
-        <BottomView cancel={cancel} determine={determine} />
+        <View style={styles.payTipsBox}>
+          {pwTip ? (
+            <TextM style={[GStyle.pwTip, styles.tips]}>
+              {i18n.t('pwdErr')}
+            </TextM>
+          ) : null}
+        </View>
+        {/* <BottomView cancel={cancel} determine={determine} /> */}
         {/* {isIos ? <KeyboardSpace /> : null} */}
       </View>
     </ScrollView>
@@ -293,5 +309,18 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     color: Colors.fontColor,
     marginRight: pTd(60),
+  },
+  pleasePayPwd: {
+    flex: 1,
+    textAlign: 'center',
+  },
+  pleasePayPwdBox: {
+    flexDirection: 'row',
+    paddingHorizontal: pTd(30),
+    alignItems: 'center',
+  },
+  payTipsBox: {
+    height: pTd(70),
+    alignItems: 'center',
   },
 });

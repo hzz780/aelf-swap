@@ -22,6 +22,12 @@ const {Types, Creators} = createActions({
   getPairInfo: ['symbolPair'],
   getOverviewChart: [],
   setOverviewChart: ['overviewChart'],
+
+  getTokenInfo: ['symbol', 'callBack'],
+  setTokenInfo: ['tokenInfo'],
+
+  getAccountInfo: ['address', 'callBack'],
+  setAccountInfo: ['accountInfo'],
 });
 
 export const swapTypes = Types;
@@ -35,6 +41,8 @@ export const INITIAL_STATE = Immutable({
   pairCandleStick: {},
   pairCharts: {},
   overviewChart: [],
+  tokenInfo: {},
+  accountInfo: {},
 });
 
 /* ------------- Selectors ------------- */
@@ -101,7 +109,7 @@ export const getPairCharts = state => {
   return state.merge();
 };
 export const setPairCharts = (state, {pairCharts}) => {
-  const {pairCandleStick: charts} = state;
+  const {pairCharts: charts} = state;
   return state.merge({
     pairCharts: Object.assign({}, charts || {}, pairCharts || {}),
   });
@@ -114,6 +122,24 @@ export const getOverviewChart = state => {
 };
 export const setOverviewChart = (state, {overviewChart}) => {
   return state.merge({overviewChart});
+};
+export const getTokenInfo = state => {
+  return state.merge();
+};
+export const setTokenInfo = (state, {tokenInfo}) => {
+  const {tokenInfo: token} = state;
+  return state.merge({
+    tokenInfo: Object.assign({}, token || {}, tokenInfo || {}),
+  });
+};
+export const getAccountInfo = state => {
+  return state.merge();
+};
+export const setAccountInfo = (state, {accountInfo}) => {
+  const {accountInfo: account} = state;
+  return state.merge({
+    accountInfo: Object.assign({}, account || {}, accountInfo || {}),
+  });
 };
 /* ------------- Hookup Reducers To Types ------------- */
 export const reducer = createReducer(INITIAL_STATE, {
@@ -136,4 +162,10 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_PAIR_INFO]: getPairInfo,
   [Types.GET_OVERVIEW_CHART]: getOverviewChart,
   [Types.SET_OVERVIEW_CHART]: setOverviewChart,
+
+  [Types.GET_TOKEN_INFO]: getTokenInfo,
+  [Types.SET_TOKEN_INFO]: setTokenInfo,
+
+  [Types.GET_ACCOUNT_INFO]: getAccountInfo,
+  [Types.SET_ACCOUNT_INFO]: setAccountInfo,
 });

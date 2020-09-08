@@ -296,9 +296,6 @@ function* getPairChartsSaga({symbolPair, range}) {
     const result = yield getFetchRequest(
       `${swapURL}/api/swap/pairChart?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
     );
-    console.log(
-      `${swapURL}/api/swap/pairChart?symbolPair=${symbolPair}&range=${range}&utcOffset=${utcOffset}`,
-    );
     console.log(result, '======result');
     if (result.msg === 'success') {
       let obj;
@@ -319,7 +316,6 @@ function* getPairChartsSaga({symbolPair, range}) {
 }
 function* getPairInfoSaga({symbolPair}) {
   try {
-    console.log(`${swapURL}/api/swap/pairInfo?symbolPair=${symbolPair}`);
     const result = yield getFetchRequest(
       `${swapURL}/api/swap/pairInfo?symbolPair=${symbolPair}`,
     );
@@ -331,7 +327,6 @@ function* getPairInfoSaga({symbolPair}) {
 function* getOverviewChartSaga() {
   try {
     const utcOffset = swapUtils.getUTCOffset();
-    console.log(`${swapURL}/api/swap/overviewChart?utcOffset=${utcOffset}`);
     const result = yield getFetchRequest(
       `${swapURL}/api/swap/overviewChart?utcOffset=${utcOffset}`,
     );
@@ -342,6 +337,60 @@ function* getOverviewChartSaga() {
   } catch (error) {
     console.log(error, '=getOverviewChartSaga');
   }
+}
+function* getTokenInfoSaga({symbol, callBack}) {
+  console.log(symbol, '=======symbol');
+  callBack && callBack(1);
+  const data = {
+    price: 123,
+    priceRate: 0.01,
+    liquidity: 1234, // ELF的流动量，单位为ELF个数，
+    liqiodityRate: 0.01,
+    volumeInPrice: 1231,
+    volumeInPriceRate: 0.01,
+    txsCount: 12412,
+    txsCountRate: 0.01,
+    topPairs: [
+      {
+        symbolPair: 'ELF-AEUSD',
+        symbolA: 'ELF',
+        symbolB: 'AEUSD',
+        liquidityInPrice: 123, // 美元价格计算的流动性，无则为'-'
+        volumeInPrice: 123, // 美元价格计算的交易总量，无则为'-',
+        volumeA: 123, // symbol A的交易总量
+        volumeB: 123, // symbol B的交易总量
+        priceA: 123, // symbol A的美元价格，无则为'-'
+        priceB: 123, // symbol B的美元价格，无则为'-'
+      },
+    ],
+  };
+  yield put(swapActions.setTokenInfo({[symbol]: data}));
+}
+
+function* getAccountInfoSaga({address, callBack}) {
+  console.log('getAccountInfoSaga', address);
+  const data = {
+    address: '1231414',
+    liquidityInPrice: 123124,
+    feePaid: 124,
+    totalSwapped: 123,
+    txsCount: 1234,
+    pairList: [
+      {
+        symbolPair: 'ELF-AEUSD',
+        symbolA: 'ELF',
+        symbolB: 'AEUSD',
+        liquidityInPrice: 123, // 美元价格计算的流动性，无则为'-'
+        volumeInPrice: 123, // 美元价格计算的交易总量，无则为'-',
+        volumeA: 123, // symbol A的交易总量
+        volumeB: 123, // symbol B的交易总量
+        priceA: 123, // symbol A的美元价格，无则为'-'
+        priceB: 123, // symbol B的美元价格，无则为'-'
+      },
+    ],
+  };
+  callBack && callBack(1);
+  yield put(swapActions.setAccountInfo({[address]: data}));
 }
 export default function* SwapSaga() {
   yield all([
@@ -355,5 +404,7 @@ export default function* SwapSaga() {
     yield takeLatest(swapTypes.GET_PAIR_CHARTS, getPairChartsSaga),
     yield takeLatest(swapTypes.GET_PAIR_INFO, getPairInfoSaga),
     yield takeLatest(swapTypes.GET_OVERVIEW_CHART, getOverviewChartSaga),
+    yield takeLatest(swapTypes.GET_TOKEN_INFO, getTokenInfoSaga),
+    yield takeLatest(swapTypes.GET_ACCOUNT_INFO, getAccountInfoSaga),
   ]);
 }

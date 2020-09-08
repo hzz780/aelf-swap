@@ -310,6 +310,8 @@
     "close": "收",
     "lowest": "低",
     "highest": "高",
-    "volume": "交易量"
+    "volume": "成交额",
+    "totalValue": "总价值",
+    "TXS": "交易数"
   }
 }

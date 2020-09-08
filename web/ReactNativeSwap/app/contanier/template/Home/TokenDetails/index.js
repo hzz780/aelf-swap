@@ -1,15 +1,15 @@
 import React, {memo, useMemo, useCallback, useRef, useState} from 'react';
-import {View, StyleSheet, LayoutAnimation} from 'react-native';
+import {View, LayoutAnimation} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
 import {
   CommonHeader,
   ListItem,
   SectionStickyList,
   Touchable,
+  BounceSpinner,
 } from '../../../../components/template';
 import {TextL, TextM, TextS} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
-import {bottomBarHeigth} from '../../../../utils/common/device';
 import navigationService from '../../../../utils/common/navigationService';
 import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
@@ -18,6 +18,10 @@ import swapUtils from '../../../../utils/pages/swapUtils';
 import {useStateToProps} from '../../../../utils/pages/hooks';
 import PairCharts from '../PairCharts';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
+import styles from './styles';
+import TitleTool from '../TitleTool';
+import PairsItem from '../PairsItem';
+import {useFocusEffect} from '@react-navigation/native';
 let isActive = true;
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
@@ -108,125 +112,117 @@ const liquidityList = [
     time: 123, // unix时间戳
   },
 ];
-const PairDetails = props => {
-  const {tokenUSD} = useStateToProps(base => {
-    const {user} = base;
+const TokenDetails = props => {
+  const {tokenInfo} = useStateToProps(base => {
+    const {user, swap} = base;
     return {
       tokenUSD: user.tokenUSD,
+      tokenInfo: swap.tokenInfo,
     };
   });
   const dispatch = useDispatch();
-  const [pairData, setPairData] = useState(props.route.params?.pairData || {});
-  const getPairs = useCallback(
-    (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
+  const getTokenInfo = useCallback(
+    (symbol, callBack) => dispatch(swapActions.getTokenInfo(symbol, callBack)),
     [dispatch],
   );
-  // const getPairInfo = useCallback(
-  //   symbolPair => dispatch(swapActions.getPairInfo(symbolPair)),
-  //   [dispatch],
-  // );
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getPairInfo(pairData.symbolPair);
-  //   }, [getPairInfo, pairData.symbolPair]),
-  // );
-  const explanation = useCallback(
-    (title1, title2, color = Colors.primaryColor) => {
-      return (
-        <View style={styles.poolToken}>
-          <TextM style={[styles.subtitleStyle, {color}]}>{title1}</TextM>
-          <TextM style={[styles.subtitleStyle, {color}]}>{title2}</TextM>
-        </View>
-      );
-    },
-    [],
+  const symbol = props.route.params?.symbol ?? '';
+  const tokenDetails = tokenInfo[symbol];
+  const {
+    price,
+    priceRate,
+    liquidity,
+    liqiodityRate,
+    volumeInPrice,
+    volumeInPriceRate,
+    txsCount,
+    txsCountRate,
+    topPairs,
+  } = tokenDetails || {};
+  console.log(tokenDetails, '=====tokenDetails');
+  useFocusEffect(
+    useCallback(() => {
+      upPullRefresh();
+    }, [upPullRefresh]),
   );
   const [index, setIndex] = useState(0);
   const [loadCompleted, setLoadCompleted] = useState(true);
   const list = useRef();
-  const renderHeader = useMemo(() => {
-    const {symbolA, symbolB, reserveA, reserveB} = pairData || {};
-    const subtitle = swapUtils.getSwapUSD(pairData, tokenUSD);
+  const Item = useCallback((title, subtitle, rate) => {
+    const {color, sign} = swapUtils.getRateStyle(rate);
     return (
-      <View>
+      <ListItem
+        disabled
+        title={title}
+        subtitle={subtitle}
+        subtitleDetails={sign + swapUtils.getPercentage(rate)}
+        rightElement={null}
+        subtitleDetailsStyle={[styles.subtitleDetailsStyle, {color}]}
+        subtitleStyle={styles.subtitleStyle}
+      />
+    );
+  }, []);
+  const TopPairs = useMemo(() => {
+    if (Array.isArray(topPairs)) {
+      return (
+        <>
+          <View style={[styles.overviewBox, styles.toolBarBox]}>
+            <TextL style={[styles.flexBox, {color: Colors.primaryColor}]}>
+              Top Pairs
+            </TextL>
+            <TextL style={[{color: Colors.primaryColor}]}>More ></TextL>
+          </View>
+          <TitleTool
+            titleList={[
+              i18n.t('swap.pair'),
+              i18n.t('swap.liquidity'),
+              i18n.t('swap.volume'),
+            ]}
+          />
+          {topPairs.map((item, i) => {
+            return <PairsItem item={item} key={i} />;
+          })}
+        </>
+      );
+    }
+  }, [topPairs]);
+  const renderHeader = useMemo(() => {
+    return (
+      <>
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.overview')}
           </TextL>
         </View>
-        <ListItem
-          style={styles.liquidityBox}
-          disabled
-          title={i18n.t('swap.liquidity')}
-          subtitle={subtitle}
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-        />
-        {explanation(
-          `${reserveA || '0'} ${symbolA || ''}`,
-          `${reserveB || '0'} ${symbolB || ''}`,
+        {Item(i18n.t('swap.price'), `$ ${price}`, priceRate)}
+        {Item(i18n.t('swap.liquidity'), `${liquidity}`, liqiodityRate)}
+        {Item(
+          `${i18n.t('swap.volume')}(24h)`,
+          `$ ${volumeInPrice}`,
+          volumeInPriceRate,
         )}
-        <ListItem
-          disabled
-          style={styles.liquidityBox}
-          title={`${i18n.t('swap.volume')}(24h)`}
-          subtitle="$ 234,123"
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-        />
-        {explanation(
-          `${reserveA || '0'} ${symbolA || ''}`,
-          `${reserveB || '0'} ${symbolB || ''}`,
-          Colors.fontGray,
-        )}
-        <ListItem
-          disabled
-          style={styles.liquidityBox}
-          title={`${i18n.t('swap.fee')}(24h)`}
-          subtitle="$ 234,123"
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-        />
-        {explanation(
-          `${reserveA || '0'} ${symbolA || ''}`,
-          `${reserveB || '0'} ${symbolB || ''}`,
-          Colors.fontGray,
-        )}
-        <View style={styles.overviewBox}>
-          <TextL style={{color: Colors.primaryColor}}>
-            {i18n.t('swap.price')}
-          </TextL>
-        </View>
-        <ListItem
-          disabled
-          style={styles.preBox}
-          title={symbolA}
-          subtitle={`≈ ${swapUtils.detailsPrice(
-            reserveA,
-            reserveB,
-          )} ${symbolB} ($ ${swapUtils.getUSD(symbolA, tokenUSD)})`}
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-        />
-        <ListItem
-          disabled
-          title={symbolB}
-          subtitle={`≈ ${swapUtils.detailsPrice(
-            reserveB,
-            reserveA,
-          )} ${symbolA} ($ ${swapUtils.getUSD(symbolB, tokenUSD)})`}
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-        />
-        <PairCharts {...pairData} />
+        {Item(`${i18n.t('swap.TXS')}(24h)`, `${txsCount}`, txsCountRate)}
+        <PairCharts />
+        {TopPairs}
+        {/* <PairCharts {...pairData} /> */}
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.transactions')}
           </TextL>
         </View>
-      </View>
+      </>
     );
-  }, [explanation, pairData, tokenUSD]);
+  }, [
+    Item,
+    TopPairs,
+    liqiodityRate,
+    liquidity,
+    price,
+    priceRate,
+    txsCount,
+    txsCountRate,
+    volumeInPrice,
+    volumeInPriceRate,
+  ]);
   const stickyHead = useCallback(() => {
     return <ToolBar setIndex={setIndex} index={index} />;
   }, [index]);
@@ -294,44 +290,24 @@ const PairDetails = props => {
       setLoadCompleted(value);
     }
   }, []);
-  const {symbolPair} = pairData || {};
   const upPullRefresh = useCallback(() => {
-    getPairs(symbolPair, (code, v) => {
-      if (code === 1) {
-        setPairData(v);
-      }
-      onSetLoadCompleted(true);
+    getTokenInfo(symbol, () => {
       list.current && list.current.endUpPullRefresh();
       list.current && list.current.endBottomRefresh();
     });
-  }, [getPairs, onSetLoadCompleted, symbolPair]);
+  }, [getTokenInfo, symbol]);
   const onEndReached = useCallback(() => {
     onSetLoadCompleted(true);
     list.current && list.current.endBottomRefresh();
   }, [onSetLoadCompleted]);
-  const data = index === 0 ? swapList : liquidityList;
-
-  return (
-    <View style={GStyle.secondContainer}>
-      <CommonHeader title={`${symbolPair} ${i18n.t('swap.pair')}`} canBack />
-      <SectionStickyList
-        data={data}
-        loadCompleted={loadCompleted}
-        upPullRefresh={upPullRefresh}
-        // onEndReached={onEndReached}
-        renderHeader={renderHeader}
-        stickyHead={stickyHead}
-        renderItem={renderItem}
-        ref={list}
-        showFooter
-        allLoadedTips=" "
-        listFooterHight={pTd(90)}
-      />
+  const BottomButton = useMemo(() => {
+    return (
       <View style={styles.bottomBox}>
         <Touchable
           onPress={() => {
-            // DeviceEventEmitter.emit('SWAP_DATA', pairData);
-            navigationService.navigate('DefaultSwap', {pairData});
+            navigationService.navigate('DefaultSwap', {
+              pairData: {symbolA: symbol},
+            });
           }}
           style={[
             styles.toolBarItem,
@@ -341,108 +317,46 @@ const PairDetails = props => {
           <TextL style={styles.whiteColor}>{i18n.t('swap.swap')}</TextL>
         </Touchable>
         <Touchable
-          onPress={() => navigationService.navigate('AddLiquidity', {pairData})}
+          onPress={() =>
+            navigationService.navigate('AddLiquidity', {
+              pairData: {symbolA: symbol},
+            })
+          }
           style={[styles.toolBarItem, styles.bottomItem]}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.addLiquidity')}
           </TextL>
         </Touchable>
       </View>
+    );
+  }, [symbol]);
+  const data = index === 0 ? swapList : liquidityList;
+  console.log(tokenDetails, '====tokenDetails');
+  return (
+    <View style={GStyle.secondContainer}>
+      <CommonHeader title={`${symbol}`} canBack />
+      {tokenDetails ? (
+        <>
+          <SectionStickyList
+            data={data}
+            loadCompleted={loadCompleted}
+            upPullRefresh={upPullRefresh}
+            // onEndReached={onEndReached}
+            renderHeader={renderHeader}
+            stickyHead={stickyHead}
+            renderItem={renderItem}
+            ref={list}
+            showFooter
+            allLoadedTips=" "
+            listFooterHight={pTd(90)}
+          />
+          {BottomButton}
+        </>
+      ) : (
+        <BounceSpinner type="Wave" style={styles.spinnerStyle} />
+      )}
     </View>
   );
 };
 
-export default memo(PairDetails);
-
-const styles = StyleSheet.create({
-  overviewBox: {
-    paddingTop: pTd(15),
-    paddingBottom: pTd(10),
-    paddingLeft: pTd(30),
-  },
-  preBox: {
-    marginTop: pTd(20),
-  },
-  subtitleStyle: {
-    fontSize: pTd(28),
-    fontWeight: 'bold',
-    color: Colors.fontBlack,
-  },
-  toolBarBox: {
-    flexDirection: 'row',
-  },
-  toolBarItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: pTd(20),
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: Colors.primaryColor,
-  },
-  whiteColor: {
-    color: 'white',
-  },
-  itemBox: {
-    flex: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderColor,
-    paddingLeft: pTd(30),
-    paddingVertical: pTd(20),
-    backgroundColor: 'white',
-  },
-  timeStyle: {
-    color: Colors.fontGray,
-    marginTop: pTd(5),
-  },
-  toolListTitile: {
-    paddingTop: pTd(15),
-    paddingBottom: pTd(10),
-    paddingHorizontal: pTd(30),
-    backgroundColor: '#f5f5f5',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderColor,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  bottomBox: {
-    flexDirection: 'row',
-    paddingHorizontal: pTd(30),
-    width: '100%',
-    position: 'absolute',
-    bottom: 0,
-    paddingTop: pTd(30),
-    paddingBottom: bottomBarHeigth || pTd(30),
-    backgroundColor: 'white',
-    borderTopWidth: 2,
-    borderTopColor: Colors.borderColor,
-  },
-  bottomItem: {
-    borderRadius: pTd(15),
-    marginHorizontal: pTd(15),
-  },
-  liquidityBox: {
-    borderBottomWidth: 0,
-    minHeight: 0,
-    paddingBottom: 0,
-  },
-  poolToken: {
-    paddingTop: pTd(10),
-    width: '100%',
-    backgroundColor: 'white',
-    alignItems: 'flex-end',
-    paddingRight: pTd(30),
-    height: pTd(110),
-    justifyContent: 'space-around',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderColor,
-    paddingBottom: pTd(20),
-  },
-  itemtitleBox: {
-    flexDirection: 'row',
-    paddingRight: pTd(30),
-  },
-  leftTitle: {
-    color: Colors.fontGray,
-    flex: 1,
-  },
-});
+export default memo(TokenDetails);

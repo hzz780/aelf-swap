@@ -1,13 +1,20 @@
 import config from '../../config';
 import aelfUtils from './aelfUtils';
+import {USD_DECIMALS} from '../../config/swapConstant';
+import {Colors} from '../../assets/theme';
 const {swapFee, swapDeadline, swapFloat} = config;
 const swapFormat = 'YYYY-MM-DD HH:mm';
 const digits = (count, num = 8) => {
   const floatPart = String(count).split('.')[1];
   if (count && floatPart && floatPart.length > num) {
-    count = Math.floor(count * 10 ** num) / 10 ** num;
+    count = count.toFixed(num + 1);
+    let counts = count.split('.');
+    count = counts[0] + '.' + counts[1].slice(0, num);
   }
-  return count;
+  if (count > 0) {
+    return count;
+  }
+  return '0';
 };
 const calculateMA = (dayCount, data) => {
   let result = [];
@@ -61,7 +68,7 @@ const getSwapUSD = (item, USDS) => {
       } else if (USDB) {
         number = USDB * item.reserveB * 2;
       }
-      number = digits(number, 2);
+      number = digits(number, USD_DECIMALS);
     }
     text = `$ ${number || '0'}`;
   }
@@ -215,13 +222,17 @@ const getDeadline = () => {
 const getPoolToken = (balance, totalSupply, reserve) => {
   let s = String(digits((balance / totalSupply) * reserve));
   if (s === '0') {
-    return '';
+    return '0';
   }
   return judgmentNaN(s);
 };
 const getPoolShare = (balance, totalSupply) => {
-  let s = Math.round((balance / totalSupply) * 10000) / 100 + '%';
-  return judgmentNaN(s);
+  const num = Math.round((balance / totalSupply) * 10000) / 100;
+  let s = judgmentNaN(num);
+  if (balance && totalSupply && s === 0) {
+    s = '<0.01';
+  }
+  return s + '%';
 };
 const getReserve = (tA, tB, pairs) => {
   let sA = tA.token;
@@ -309,7 +320,12 @@ const arrayMap = (arr, type, format) => {
       dates.push(
         aelfUtils.timeConversion(element.timestamp, format || swapFormat),
       );
-      data.push(element[type]);
+      const value = element[type];
+      if (typeof value === 'string') {
+        data.push(judgmentNaN(Number(value)));
+      } else {
+        data.push(value);
+      }
     }
   }
   return {data, dates};
@@ -320,6 +336,22 @@ const getCurrentReserve = (s, currentPair) => {
   }
   const {symbolA, reserveA, reserveB} = currentPair;
   return s === symbolA ? reserveA : reserveB;
+};
+const getPercentage = rate => {
+  let s = Math.round(rate * 10000) / 100 + '%';
+  return judgmentNaN(s);
+};
+const getTotalValue = value => {
+  return judgmentNaN(digits(value, USD_DECIMALS));
+};
+const getRateStyle = rate => {
+  let color = Colors.kGreen;
+  let sign = '+';
+  if (rate && Number(rate) < 0) {
+    color = Colors.kRed;
+    sign = '-';
+  }
+  return {color, sign};
 };
 export default {
   detailsPrice,
@@ -349,4 +381,7 @@ export default {
   arrayMap,
   calculateMA,
   getCurrentReserve,
+  getPercentage,
+  getTotalValue,
+  getRateStyle,
 };

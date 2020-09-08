@@ -15,7 +15,14 @@ const Input = props => {
     style,
     pointerEvents,
     opacity,
+    value,
+    keyboardType,
+    decimals,
   } = props;
+  let counts;
+  if (value && keyboardType === 'numeric') {
+    counts = value.split('.')[0].length;
+  }
   if (leftTitle || leftElement || rightElement) {
     return (
       <View style={[styles.leftTitleBox, leftTitleBox]}>
@@ -25,6 +32,7 @@ const Input = props => {
           <Text style={[styles.leftTextStyle, leftTextStyle]}>{leftTitle}</Text>
         )}
         <TextInput
+          maxLength={counts ? counts + decimals + 1 : undefined}
           placeholderTextColor={placeholderTextColor || '#999'}
           pointerEvents={disabled ? 'none' : pointerEvents}
           opacity={disabled ? 0.6 : opacity}
@@ -37,6 +45,7 @@ const Input = props => {
   }
   return (
     <TextInput
+      maxLength={counts ? counts + decimals + 1 : undefined}
       placeholderTextColor={placeholderTextColor || '#999'}
       pointerEvents={disabled ? 'none' : pointerEvents}
       opacity={disabled ? 0.6 : opacity}
@@ -46,6 +55,10 @@ const Input = props => {
   );
 };
 export default memo(Input);
+Input.defaultProps = {
+  decimals: 8,
+};
+
 const styles = StyleSheet.create({
   input: {
     color: Colors.fontBlack,

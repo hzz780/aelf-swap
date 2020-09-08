@@ -310,6 +310,8 @@
     "close": "close",
     "lowest": "lowest",
     "highest": "highest",
-    "volume": "Volume"
+    "volume": "Volume",
+    "totalValue": "Total Value",
+    "TXS": "Transactions"
   }
 }

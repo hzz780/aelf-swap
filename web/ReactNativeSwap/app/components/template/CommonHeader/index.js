@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titleBox: {
+    flex: 2,
     alignItems: 'center',
   },
   leftTitleStyle: {
@@ -111,7 +112,12 @@ const Header = props => {
           titleElement
         ) : (
           <View style={styles.titleBox}>
-            <Text style={[styles.title, titleStyle]}>{title || ''}</Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="middle"
+              style={[styles.title, titleStyle]}>
+              {title || ''}
+            </Text>
           </View>
         )}
 
