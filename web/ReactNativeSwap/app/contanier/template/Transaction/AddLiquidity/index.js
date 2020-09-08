@@ -97,7 +97,7 @@ const AddLiquidity = props => {
                 firstBalance,
                 swapUtils.getCurrentReserve(firstToken.token, currentPair),
                 swapUtils.getCurrentReserve(secondToken.token, currentPair),
-                tokenUSD[(secondToken?.token)]?.decimals,
+                reduxUtils.getTokenDecimals(secondToken?.token),
               ),
             },
           };
@@ -110,7 +110,7 @@ const AddLiquidity = props => {
                 secondBalance,
                 swapUtils.getCurrentReserve(secondToken.token, currentPair),
                 swapUtils.getCurrentReserve(firstToken.token, currentPair),
-                tokenUSD[(firstToken?.token)]?.decimals,
+                reduxUtils.getTokenDecimals(firstToken?.token),
               ),
             },
           };
@@ -125,7 +125,6 @@ const AddLiquidity = props => {
       secondBalance,
       secondToken,
       setState,
-      tokenUSD,
     ],
   );
   const rightElement = useCallback(
@@ -164,7 +163,7 @@ const AddLiquidity = props => {
               v,
               swapUtils.getCurrentReserve(firstToken?.token, currentPair),
               swapUtils.getCurrentReserve(secondToken?.token, currentPair),
-              tokenUSD[(secondToken?.token)]?.decimals,
+              reduxUtils.getTokenDecimals(secondToken?.token),
             ),
           },
         });
@@ -174,7 +173,7 @@ const AddLiquidity = props => {
         });
       }
     },
-    [currentPair, firstToken, secondToken, setState, tokenUSD],
+    [currentPair, firstToken, secondToken, setState],
   );
   const firstItem = useMemo(() => {
     return (
@@ -186,6 +185,7 @@ const AddLiquidity = props => {
           </TextM>
         </View>
         <Input
+          decimals={reduxUtils.getTokenDecimals(firstToken?.token)}
           keyboardType="numeric"
           value={firstToken?.input}
           onChangeText={onChangeFirst}
@@ -210,7 +210,7 @@ const AddLiquidity = props => {
               v,
               swapUtils.getCurrentReserve(secondToken?.token, currentPair),
               swapUtils.getCurrentReserve(firstToken?.token, currentPair),
-              tokenUSD[(firstToken?.token)]?.decimals,
+              reduxUtils.getTokenDecimals(firstToken?.token),
             ),
           },
         });
@@ -218,7 +218,7 @@ const AddLiquidity = props => {
         setState({secondToken: {...secondToken, input: v}});
       }
     },
-    [currentPair, firstToken, secondToken, setState, tokenUSD],
+    [currentPair, firstToken, secondToken, setState],
   );
   const secondItem = useMemo(() => {
     return (
@@ -230,6 +230,7 @@ const AddLiquidity = props => {
           </TextM>
         </View>
         <Input
+          decimals={reduxUtils.getTokenDecimals(secondToken?.token)}
           keyboardType="numeric"
           value={secondToken?.input}
           onChangeText={onChangeSecond}
@@ -362,6 +363,7 @@ const AddLiquidity = props => {
       secondToken,
       currentPair,
     );
+    console.log(swapUtils.getSharePool(poolToken, currentPair?.totalSupply));
     return (
       <>
         <TextL style={[styles.themeColor, styles.mrginText]}>

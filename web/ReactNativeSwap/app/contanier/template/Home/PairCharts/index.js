@@ -92,7 +92,7 @@ const PairCharts = props => {
   const ToolMemo = useMemo(() => {
     const toolListLength = list.length;
     return (
-      <View style={styles.toolBox}>
+      <View flexWrap="wrap" style={styles.toolBox}>
         {list.map((item, index) => {
           let toolItemBox = [styles.toolItemBox];
           let textStyles;

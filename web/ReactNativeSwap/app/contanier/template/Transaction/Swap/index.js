@@ -53,13 +53,12 @@ const Swap = props => {
       subscription.remove();
     };
   }, [getPItem]);
-  const {language, pairs, userBalances, tokenUSD} = useStateToProps(base => {
+  const {language, pairs, userBalances} = useStateToProps(base => {
     const {settings, swap, user} = base;
     return {
       language: settings.language,
       pairs: swap.pairs,
       userBalances: user.userBalances,
-      tokenUSD: user.tokenUSD,
     };
   });
   const {pairData} = props.route.params || {};
@@ -91,6 +90,21 @@ const Swap = props => {
               token: '',
             },
           };
+        } else if (toSwapToken?.input) {
+          const Pair = swapUtils.getPair(item, toSwapToken, pairs);
+          const t = swapUtils.getInInput(
+            item?.token,
+            toSwapToken?.token,
+            Pair,
+            toSwapToken?.input,
+            reduxUtils.getTokenDecimals(item?.token),
+          );
+          obj = {
+            swapToken: {
+              ...item,
+              input: t,
+            },
+          };
         }
       } else if (swapToken?.token) {
         if (swapToken.token === item.token) {
@@ -101,11 +115,26 @@ const Swap = props => {
               token: '',
             },
           };
+        } else if (swapToken?.input) {
+          const Pair = swapUtils.getPair(swapToken, item, pairs);
+          const t = swapUtils.getOutInput(
+            swapToken?.token,
+            item?.token,
+            Pair,
+            swapToken?.input,
+            reduxUtils.getTokenDecimals(item?.token),
+          );
+          obj = {
+            toSwapToken: {
+              ...item,
+              input: t,
+            },
+          };
         }
       }
       setState(obj);
     },
-    [setState, swapToken, toSwapToken],
+    [pairs, setState, swapToken, toSwapToken],
   );
   const showTokenModal = useCallback(
     type => {
@@ -151,7 +180,7 @@ const Swap = props => {
                       toSwapToken?.token,
                       currentPair,
                       item.balance,
-                      tokenUSD[(toSwapToken?.token)]?.decimals,
+                      reduxUtils.getTokenDecimals(toSwapToken?.token),
                     );
                     obj = {
                       ...obj,
@@ -189,7 +218,7 @@ const Swap = props => {
         />
       );
     },
-    [currentPair, setState, showTokenModal, swapToken, toSwapToken, tokenUSD],
+    [currentPair, setState, showTokenModal, swapToken, toSwapToken],
   );
   const Description = useMemo(() => {
     let color = 'green';
@@ -243,7 +272,7 @@ const Swap = props => {
           toSwapToken?.token,
           currentPair,
           v,
-          tokenUSD[(toSwapToken?.token)]?.decimals,
+          reduxUtils.getTokenDecimals(toSwapToken?.token),
         );
         obj = {
           ...obj,
@@ -262,7 +291,7 @@ const Swap = props => {
       };
       setState(obj);
     },
-    [currentPair, setState, swapToken, toSwapToken, tokenUSD],
+    [currentPair, setState, swapToken, toSwapToken],
   );
   const SwapItem = useMemo(() => {
     return (
@@ -314,7 +343,7 @@ const Swap = props => {
                 toSwapToken?.token,
                 currentPair,
                 v,
-                tokenUSD[(swapToken?.token)]?.decimals,
+                reduxUtils.getTokenDecimals(swapToken?.token),
               ),
             },
           };
@@ -328,7 +357,7 @@ const Swap = props => {
       };
       setState(obj);
     },
-    [currentPair, setState, swapToken, toSwapToken, tokenUSD],
+    [currentPair, setState, swapToken, toSwapToken],
   );
   const PriceMemo = useMemo(() => {
     let f = swapToken,
@@ -365,6 +394,7 @@ const Swap = props => {
         </View>
         <Input
           keyboardType="numeric"
+          decimals={8}
           value={toSwapToken?.input}
           onChangeText={onChangeToSwap}
           style={styles.inputStyle}
@@ -392,7 +422,8 @@ const Swap = props => {
       ...swapToken,
       balance: swapBalance,
     }) &&
-    toSwapToken?.input
+    toSwapToken?.input &&
+    toSwapToken?.input > 0
   ) {
     disabled = false;
   }
