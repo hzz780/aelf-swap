@@ -66,7 +66,6 @@ const Home = () => {
           title={item.symbolPair}
           subtitle={subtitle}
           rightElement={null}
-          titleStyle={{color: Colors.primaryColor}}
           subtitleStyle={styles.subtitleStyle}
           onPress={() =>
             navigationService.navigate('PairDetails', {pairData: item})

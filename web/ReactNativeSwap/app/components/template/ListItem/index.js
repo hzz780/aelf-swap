@@ -2,7 +2,7 @@
 import React, {memo, useMemo} from 'react';
 import {StyleSheet, Switch, View} from 'react-native';
 import {pTd} from '../../../utils/common';
-import {TextL, TextS, TextM} from '../CommonText';
+import {TextS, TextM} from '../CommonText';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Touchable from '../Touchable';
 import {Colors} from '../../../assets/theme';
@@ -53,11 +53,11 @@ const ListItem = props => {
       style={[styles.container, style]}>
       {details ? (
         <View style={styles.titleStyle}>
-          <TextL style={[titleStyle]}>{title}</TextL>
+          <TextM style={[titleStyle]}>{title}</TextM>
           <TextS style={[styles.detailsStyle, detailsStyle]}>{details}</TextS>
         </View>
       ) : (
-        <TextL style={[styles.titleStyle, titleStyle]}>{title}</TextL>
+        <TextM style={[styles.titleStyle, titleStyle]}>{title}</TextM>
       )}
       {subtitle ? (
         subtitleDetails ? (
