@@ -76,21 +76,32 @@ const RemoveLiquidity = props => {
                     balance,
                     totalSupply,
                     reserveA,
+                    reduxUtils.getTokenDecimals(symbolA),
                   ),
                   inputB: swapUtils.getPoolToken(
                     balance,
                     totalSupply,
                     reserveB,
+                    reduxUtils.getTokenDecimals(symbolB),
                   ),
                 });
               }}
             />
           )}
-          <TextL>{symbol}</TextL>
+          <TextM>{symbol}</TextM>
         </View>
       );
     },
-    [balance, inputS, reserveA, reserveB, setState, totalSupply],
+    [
+      balance,
+      inputS,
+      reserveA,
+      reserveB,
+      setState,
+      symbolA,
+      symbolB,
+      totalSupply,
+    ],
   );
   const inputItem = useMemo(() => {
     return (
@@ -107,8 +118,18 @@ const RemoveLiquidity = props => {
           onChangeText={v => {
             setState({
               inputS: v,
-              inputA: swapUtils.getPoolToken(v, totalSupply, reserveA),
-              inputB: swapUtils.getPoolToken(v, totalSupply, reserveB),
+              inputA: swapUtils.getPoolToken(
+                v,
+                totalSupply,
+                reserveA,
+                reduxUtils.getTokenDecimals(symbolA),
+              ),
+              inputB: swapUtils.getPoolToken(
+                v,
+                totalSupply,
+                reserveB,
+                reduxUtils.getTokenDecimals(symbolB),
+              ),
             });
           }}
           style={styles.inputStyle}
@@ -124,6 +145,8 @@ const RemoveLiquidity = props => {
     reserveB,
     rightElement,
     setState,
+    symbolA,
+    symbolB,
     symbolPair,
     totalSupply,
   ]);
@@ -138,12 +161,18 @@ const RemoveLiquidity = props => {
         </View>
         <Input
           keyboardType="numeric"
+          decimals={reduxUtils.getTokenDecimals(symbolA)}
           value={inputA}
           onChangeText={v => {
             setState({
               inputA: v,
               inputS: swapUtils.getPoolToken(v, reserveA, totalSupply),
-              inputB: swapUtils.getPoolToken(v, reserveA, reserveB),
+              inputB: swapUtils.getPoolToken(
+                v,
+                reserveA,
+                reserveB,
+                reduxUtils.getTokenDecimals(symbolB),
+              ),
             });
           }}
           style={styles.inputStyle}
@@ -159,6 +188,7 @@ const RemoveLiquidity = props => {
     rightElement,
     setState,
     symbolA,
+    symbolB,
     totalSupply,
   ]);
   const secondItem = useMemo(() => {
@@ -171,13 +201,19 @@ const RemoveLiquidity = props => {
           </TextM> */}
         </View>
         <Input
+          decimals={reduxUtils.getTokenDecimals(symbolB)}
           keyboardType="numeric"
           value={inputB}
           onChangeText={v => {
             setState({
               inputB: v,
               inputS: swapUtils.getPoolToken(v, reserveB, totalSupply),
-              inputA: swapUtils.getPoolToken(v, reserveB, reserveA),
+              inputA: swapUtils.getPoolToken(
+                v,
+                reserveB,
+                reserveA,
+                reduxUtils.getTokenDecimals(symbolA),
+              ),
             });
           }}
           style={styles.inputStyle}
@@ -187,13 +223,14 @@ const RemoveLiquidity = props => {
       </View>
     );
   }, [
+    symbolB,
     inputB,
     rightElement,
-    symbolB,
     setState,
     reserveB,
     totalSupply,
     reserveA,
+    symbolA,
   ]);
   const onRemove = useCallback(() => {
     TransactionVerification.show(value => {
@@ -215,7 +252,14 @@ const RemoveLiquidity = props => {
   }, [inputA, inputB, inputS, removeLiquidity, symbolA, symbolB]);
   const remove = useMemo(() => {
     let disabled = true;
-    if (inputS <= balance && inputA && inputB) {
+    if (
+      inputS <= balance &&
+      inputA &&
+      inputB &&
+      inputA > 0 &&
+      inputB > 0 &&
+      inputS > 0
+    ) {
       disabled = false;
     }
     return (
@@ -240,7 +284,6 @@ const RemoveLiquidity = props => {
         <TextL style={[styles.themeColor, styles.mrginText]}>
           {i18n.t('swap.price')}
         </TextL>
-        <View style={[styles.splitLine]} />
         <ListItem
           disabled
           title={symbolA}
@@ -272,7 +315,6 @@ const RemoveLiquidity = props => {
         <TextL style={[styles.themeColor, styles.mrginText]}>
           {i18n.t('swap.willRemove')}
         </TextL>
-        <View style={[styles.splitLine]} />
         <ListItem
           disabled
           title={i18n.t('swap.sharePool')}
@@ -353,6 +395,7 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   mrginText: {
+    marginTop: pTd(40),
     marginVertical: pTd(15),
   },
   splitLine: {
@@ -365,11 +408,14 @@ const styles = StyleSheet.create({
     color: Colors.fontBlack,
   },
   itemBox: {
+    minHeight: 0,
     paddingHorizontal: 0,
+    borderBottomWidth: 0,
+    paddingVertical: pTd(10),
   },
   grayColor: {
     color: Colors.fontGray,
-    paddingTop: pTd(30),
+    paddingTop: pTd(10),
   },
   myLiquidity: {
     marginTop: pTd(20),

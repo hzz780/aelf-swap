@@ -136,9 +136,9 @@ const AddLiquidity = props => {
             {hideMax ? null : (
               <MAXComponent onPress={() => onMAX(type, item)} />
             )}
-            <TextL onPress={() => showTokenModal(type)}>
+            <TextM onPress={() => showTokenModal(type)}>
               {token} <Entypo size={pTd(30)} name="chevron-thin-down" />
-            </TextL>
+            </TextM>
           </View>
         );
       }
@@ -325,7 +325,6 @@ const AddLiquidity = props => {
         <TextL style={[styles.themeColor, styles.mrginText]}>
           {i18n.t('swap.price')}
         </TextL>
-        <View style={[styles.splitLine]} />
         <ListItem
           disabled
           style={styles.itemBox}
@@ -369,7 +368,6 @@ const AddLiquidity = props => {
         <TextL style={[styles.themeColor, styles.mrginText]}>
           {i18n.t('swap.willReceive')}
         </TextL>
-        <View style={[styles.splitLine]} />
         <ListItem
           disabled
           title={`${firstToken?.token}-${secondToken?.token} ${i18n.t(

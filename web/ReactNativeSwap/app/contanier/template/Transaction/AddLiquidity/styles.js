@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   themeColor: {
+    fontWeight: 'bold',
     color: Colors.primaryColor,
   },
   redColor: {
@@ -34,6 +35,7 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   mrginText: {
+    marginTop: pTd(40),
     marginVertical: pTd(15),
   },
   splitLine: {
@@ -46,11 +48,14 @@ const styles = StyleSheet.create({
     color: Colors.fontBlack,
   },
   itemBox: {
+    minHeight: 0,
     paddingHorizontal: 0,
+    borderBottomWidth: 0,
+    paddingVertical: pTd(10),
   },
   grayColor: {
     color: Colors.fontGray,
-    paddingTop: pTd(30),
+    paddingTop: pTd(10),
   },
 });
 

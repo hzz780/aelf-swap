@@ -201,12 +201,12 @@ const Swap = props => {
                 }}
               />
             )}
-            <TextL
+            <TextM
               onPress={() => {
                 showTokenModal(type);
               }}>
               {token} <Entypo size={pTd(30)} name="chevron-thin-down" />
-            </TextL>
+            </TextM>
           </View>
         );
       }
@@ -304,6 +304,7 @@ const Swap = props => {
         </View>
         <Input
           keyboardType="numeric"
+          decimals={reduxUtils.getTokenDecimals(swapToken?.token)}
           value={swapToken?.input}
           onChangeText={onChangeSwap}
           style={styles.inputStyle}
@@ -394,7 +395,7 @@ const Swap = props => {
         </View>
         <Input
           keyboardType="numeric"
-          decimals={8}
+          decimals={reduxUtils.getTokenDecimals(toSwapToken?.token)}
           value={toSwapToken?.input}
           onChangeText={onChangeToSwap}
           style={styles.inputStyle}

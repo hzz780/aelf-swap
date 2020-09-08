@@ -1,13 +1,23 @@
 import config from '../../config';
 import aelfUtils from './aelfUtils';
+const USD_DECIMALS = 4;
+import {Colors} from '../../assets/theme';
 const {swapFee, swapDeadline, swapFloat} = config;
 const swapFormat = 'YYYY-MM-DD HH:mm';
 const digits = (count, num = 8) => {
-  const floatPart = String(count).split('.')[1];
+  let SCount = String(count);
+  const floatPart = SCount.split('.')[1];
   if (count && floatPart && floatPart.length > num) {
     count = Math.floor(count * 10 ** num) / 10 ** num;
+    SCount = String(count);
   }
-  return count;
+  if (SCount.indexOf('-') >= 0) {
+    SCount = '0' + String(Number(SCount) + 1).substr(1);
+  }
+  if (SCount > 0) {
+    return SCount;
+  }
+  return '0';
 };
 const calculateMA = (dayCount, data) => {
   let result = [];
@@ -61,7 +71,7 @@ const getSwapUSD = (item, USDS) => {
       } else if (USDB) {
         number = USDB * item.reserveB * 2;
       }
-      number = digits(number);
+      number = digits(number, USD_DECIMALS);
     }
     text = `$ ${number || '0'}`;
   }
@@ -152,7 +162,7 @@ const getAmounB = (amountA, reserveA, reserveB, decimals) => {
   return judgmentNaN(s);
 };
 const getOutInput = (sA, sB, currentPair, aA, decimals) => {
-  const {symbolA, reserveA, reserveB} = currentPair;
+  const {symbolA, reserveA, reserveB} = currentPair || {};
   let rA = symbolA === sA ? reserveA : reserveB;
   let rB = symbolA === sB ? reserveA : reserveB;
   aA = Number(aA);
@@ -164,7 +174,7 @@ const getOutInput = (sA, sB, currentPair, aA, decimals) => {
   return judgmentNaN(s);
 };
 const getInInput = (sA, sB, currentPair, aB, decimals) => {
-  const {symbolA, reserveA, reserveB} = currentPair;
+  const {symbolA, reserveA, reserveB} = currentPair || {};
   let rA = symbolA === sA ? reserveA : reserveB;
   let rB = symbolA === sB ? reserveA : reserveB;
   aB = Number(aB);
@@ -212,16 +222,23 @@ const getDeadline = () => {
     nanos: 0,
   };
 };
-const getPoolToken = (balance, totalSupply, reserve) => {
-  let s = String(digits((balance / totalSupply) * reserve));
-  if (s === '0') {
+const getPoolToken = (balance, totalSupply, reserve, decimals) => {
+  if (!(balance && totalSupply && reserve)) {
     return '';
+  }
+  let s = String(digits((balance / totalSupply) * reserve, decimals));
+  if (s === '0') {
+    return '0';
   }
   return judgmentNaN(s);
 };
 const getPoolShare = (balance, totalSupply) => {
-  let s = Math.round((balance / totalSupply) * 10000) / 100 + '%';
-  return judgmentNaN(s);
+  const num = Math.round((balance / totalSupply) * 10000) / 100;
+  let s = judgmentNaN(num);
+  if (balance && totalSupply && s === 0) {
+    s = '<0.01';
+  }
+  return s + '%';
 };
 const getReserve = (tA, tB, pairs) => {
   let sA = tA.token;
@@ -309,7 +326,12 @@ const arrayMap = (arr, type, format) => {
       dates.push(
         aelfUtils.timeConversion(element.timestamp, format || swapFormat),
       );
-      data.push(element[type]);
+      const value = element[type];
+      if (typeof value === 'string') {
+        data.push(judgmentNaN(Number(value)));
+      } else {
+        data.push(value);
+      }
     }
   }
   return {data, dates};
@@ -318,8 +340,24 @@ const getCurrentReserve = (s, currentPair) => {
   if (!currentPair) {
     return 0;
   }
-  const {symbolA, reserveA, reserveB} = currentPair;
+  const {symbolA, reserveA, reserveB} = currentPair || {};
   return s === symbolA ? reserveA : reserveB;
+};
+const getPercentage = rate => {
+  let s = Math.round(rate * 10000) / 100 + '%';
+  return judgmentNaN(s);
+};
+const getTotalValue = value => {
+  return judgmentNaN(digits(value, USD_DECIMALS));
+};
+const getRateStyle = rate => {
+  let color = Colors.kGreen;
+  let sign = '+';
+  if (rate && Number(rate) < 0) {
+    color = Colors.kRed;
+    sign = '-';
+  }
+  return {color, sign};
 };
 export default {
   detailsPrice,
@@ -349,4 +387,7 @@ export default {
   arrayMap,
   calculateMA,
   getCurrentReserve,
+  getPercentage,
+  getTotalValue,
+  getRateStyle,
 };

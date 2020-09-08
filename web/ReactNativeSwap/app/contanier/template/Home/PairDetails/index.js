@@ -117,7 +117,6 @@ const PairDetails = props => {
         </View>
         <ListItem
           disabled
-          style={styles.preBox}
           title={symbolA}
           subtitle={`≈ ${swapUtils.detailsPrice(
             reserveA,
@@ -247,8 +246,7 @@ export default memo(PairDetails);
 
 const styles = StyleSheet.create({
   overviewBox: {
-    paddingTop: pTd(15),
-    paddingBottom: pTd(10),
+    paddingVertical: pTd(15),
     paddingLeft: pTd(30),
   },
   preBox: {

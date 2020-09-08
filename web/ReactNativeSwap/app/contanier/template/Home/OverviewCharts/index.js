@@ -94,14 +94,14 @@ const OverviewCharts = () => {
       boundaryGap = true;
     }
     return (
-      <View>
+      <>
         {loading && (
           <View style={[styles.loadView]}>
             <BounceSpinner type="Wave" />
           </View>
         )}
         <Charts series={series} dates={timeDates} boundaryGap={boundaryGap} />
-      </View>
+      </>
     );
   }, [list, overviewChart, toolIndex]);
   return (
@@ -115,7 +115,6 @@ const OverviewCharts = () => {
 export default memo(OverviewCharts);
 const styles = StyleSheet.create({
   container: {
-    marginTop: pTd(10),
     paddingTop: pTd(10),
     backgroundColor: 'white',
   },

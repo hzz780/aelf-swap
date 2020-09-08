@@ -77,7 +77,7 @@ const Home = () => {
   );
   const renderHeader = useMemo(() => {
     return (
-      <View>
+      <>
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.overview')}
@@ -89,7 +89,7 @@ const Home = () => {
             {i18n.t('swap.allMarkets')}
           </TextL>
         </View>
-      </View>
+      </>
     );
   }, []);
   const stickyHead = useCallback(() => {
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   overviewBox: {
     paddingTop: pTd(15),
-    paddingBottom: pTd(10),
+    paddingBottom: pTd(15),
     paddingLeft: pTd(30),
   },
 });

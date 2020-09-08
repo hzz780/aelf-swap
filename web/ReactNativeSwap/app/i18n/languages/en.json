@@ -309,6 +309,7 @@
     "open": "open",
     "close": "close",
     "lowest": "lowest",
-    "highest": "highest"
+    "highest": "highest",
+    "decimalTip": "(Only supports {{decimals}} decimals)"
   }
 }

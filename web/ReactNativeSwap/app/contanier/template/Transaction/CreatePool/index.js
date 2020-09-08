@@ -69,7 +69,7 @@ const CreatePool = () => {
             ActionSheet.show(items, {title: i18n.t('cancel')});
           }}
           style={styles.selectBox}>
-          <TextL style={{color}}>{tokenName}</TextL>
+          <TextM style={{color}}>{tokenName}</TextM>
           <Entypo size={pTd(30)} name="chevron-thin-down" />
         </Touchable>
       );

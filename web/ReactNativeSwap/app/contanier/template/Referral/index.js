@@ -35,7 +35,6 @@ const Referral = () => {
     };
   });
   useEffect(() => {
-    SplashScreen.hide();
     if (language) {
       if (languageList.includes(language)) {
         changeLanguage(language);
@@ -56,6 +55,9 @@ const Referral = () => {
       }
     }
     const timer = setTimeout(() => {
+      setTimeout(() => {
+        SplashScreen.hide();
+      }, 1000);
       if (address) {
         navigationService.reset(
           securityLock ? [{name: 'Tab'}, {name: 'SecurityLock'}] : 'Tab',
