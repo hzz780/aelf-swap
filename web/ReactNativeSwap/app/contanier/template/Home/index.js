@@ -109,6 +109,7 @@ const Home = () => {
     <View style={GStyle.secondContainer}>
       <CommonHeader title={i18n.t('swap.market')} />
       <SectionStickyList
+        listFooterHight={1}
         whetherAutomatic
         data={pairs}
         loadCompleted={loadCompleted}
@@ -120,7 +121,6 @@ const Home = () => {
         renderItem={renderItem}
         ref={list}
         showFooter
-        allLoadedTips=" "
       />
     </View>
   );

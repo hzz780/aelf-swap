@@ -214,7 +214,6 @@ const PairDetails = props => {
         renderItem={renderItem}
         ref={list}
         showFooter
-        allLoadedTips=" "
         listFooterHight={pTd(90)}
       />
       <View style={styles.bottomBox}>

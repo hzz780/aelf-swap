@@ -9,6 +9,7 @@ import {useSetState} from '../../../../utils/pages/hooks';
 import {ScrollView} from 'react-native-gesture-handler';
 const arrowSize = pTd(9);
 import i18n from 'i18n-js';
+import {bottomBarHeigth} from '../../../../utils/common/device';
 const arrowStyle = {
   borderLeftColor: 'transparent',
   borderRightColor: 'transparent',
@@ -71,7 +72,7 @@ const Components = memo(props => {
         </Touchable>
       </View>
       <ScrollView>
-        <View>
+        <View style={styles.listBox}>
           {list.map((item, index) => {
             return (
               <Touchable
@@ -106,12 +107,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column-reverse',
   },
   containerStyle: {
-    height: '60%',
+    height: '65%',
   },
   chooseTokenModal: {
     borderTopRightRadius: pTd(50),
     borderTopLeftRadius: pTd(50),
-    paddingHorizontal: pTd(50),
     paddingTop: pTd(50),
   },
   titleBox: {
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: pTd(50),
   },
   listHead: {
     paddingVertical: pTd(10),
@@ -126,6 +127,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderBottomColor: Colors.borderColor,
+    paddingHorizontal: pTd(50),
   },
   itemBox: {
     paddingVertical: pTd(30),
@@ -159,5 +161,9 @@ const styles = StyleSheet.create({
   balanceBox: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  listBox: {
+    paddingHorizontal: pTd(50),
+    paddingBottom: bottomBarHeigth,
   },
 });
