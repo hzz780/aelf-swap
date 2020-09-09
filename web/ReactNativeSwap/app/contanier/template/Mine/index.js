@@ -8,7 +8,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Constants from 'expo-constants';
 import settingsActions from '../../../redux/settingsRedux';
 import {pTd} from '../../../utils/common';
-import {TextL} from '../../../components/template/CommonText';
+import {TextL, TextM} from '../../../components/template/CommonText';
 import {Touchable, ListItem} from '../../../components/template';
 import navigationService from '../../../utils/common/navigationService';
 import i18n from 'i18n-js';
@@ -71,7 +71,7 @@ const Tool = () => {
                 size={30}
                 color={Colors.primaryColor}
               />
-              <TextL>{i18n.t('mineModule.collect')}</TextL>
+              <TextM>{i18n.t('mineModule.collect')}</TextM>
             </Touchable>
             <Touchable
               onPress={() => navigationService.navigate('Transfer')}
@@ -81,7 +81,7 @@ const Tool = () => {
                 size={30}
                 color={Colors.primaryColor}
               />
-              <TextL>{i18n.t('mineModule.transfer')}</TextL>
+              <TextM>{i18n.t('mineModule.transfer')}</TextM>
             </Touchable>
             <Touchable
               onPress={() => navigationService.navigate('MyLiquidity')}
@@ -91,7 +91,7 @@ const Tool = () => {
                 size={30}
                 color={Colors.primaryColor}
               />
-              <TextL>{i18n.t('swap.liquidity')}</TextL>
+              <TextM>{i18n.t('swap.liquidity')}</TextM>
             </Touchable>
           </View>
           {List.map((item, index) => (

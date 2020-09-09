@@ -20,13 +20,13 @@ import navigationService from '../utils/common/navigationService';
 import {Loading, CommonToast} from '../components/template';
 import unitConverter from '../utils/pages/unitConverter';
 import aelfUtils from '../utils/pages/aelfUtils';
+import swapUtils from '../utils/pages/swapUtils';
 import {isIos} from '../utils/common/device';
 import settingsActions from '../redux/settingsRedux';
 import i18n from 'i18n-js';
 import {Alert} from 'react-native';
 import swapActions from '../redux/swapRedux';
 import {getFetchRequest} from '../utils/common/networkRequest';
-import swapUtils from '../utils/pages/swapUtils';
 const {
   explorerURL,
   tokenSymbol,
@@ -91,7 +91,6 @@ function* onAppInitSaga({privateKey}) {
       const contract = yield getContract(privateKey, contractNameAddressSets);
       console.log(contract, '======contract');
       if (contract && Object.keys(contract).length > 0) {
-        console.log(yield contract.tokenContract.GetResourceTokenInfo.call());
         yield put(contractsActions.setContracts({contracts: contract}));
         yield put(userActions.getAllowanceList());
         yield put(userActions.getUserBalance());
@@ -201,7 +200,6 @@ function* logOutSaga({address}) {
 }
 function* transferSaga({param}) {
   try {
-    console.log(param);
     const {contracts} = yield select(userSelectors.getUserInfo);
     const transaction = yield contracts.tokenContract.Transfer(param);
     const result = yield aelfInstance.chain.getTxResult(

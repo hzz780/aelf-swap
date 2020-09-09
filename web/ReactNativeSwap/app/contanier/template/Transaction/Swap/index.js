@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, {memo, useMemo, useCallback, useEffect} from 'react';
 import {View, StyleSheet, Keyboard, DeviceEventEmitter} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
@@ -9,9 +8,10 @@ import {
   KeyboardScrollView,
   Touchable,
 } from '../../../../components/template';
-import {TextM, TextL} from '../../../../components/template/CommonText';
+import {TextM} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
 import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import ChooseTokenModal from '../ChooseTokenModal';
 import {MAXComponent, ChooseToken} from '../MAXComponent';
@@ -80,31 +80,110 @@ const Swap = props => {
   const currentPair = swapUtils.getPair(swapToken, toSwapToken, pairs);
   const onModal = useCallback(
     (item, type) => {
-      let obj = {[type]: item};
-      if (type === 'swapToken' && toSwapToken?.token) {
-        if (toSwapToken.token === item.token) {
-          obj = {
-            ...obj,
-            toSwapToken: {
-              input: '',
-              token: '',
-            },
-          };
+      if (tType === type && state[type]?.token === item.token) {
+        return;
+      }
+      let obj = {};
+      if (type === 'swapToken') {
+        obj = {swapToken: {...item, input: swapToken?.input}};
+        if (toSwapToken?.token) {
+          if (toSwapToken.token === item.token) {
+            if (swapToken?.input && toSwapToken?.input) {
+              onSwapToken();
+              return;
+            }
+            obj = {
+              ...obj,
+              toSwapToken: {
+                token: swapToken?.token,
+                input: '',
+              },
+            };
+          } else if (toSwapToken?.input) {
+            const Pair = swapUtils.getPair(item, toSwapToken, pairs);
+            const t = swapUtils.getInInput(
+              item?.token,
+              toSwapToken?.token,
+              Pair,
+              toSwapToken?.input,
+              reduxUtils.getTokenDecimals(item?.token),
+            );
+            obj = {
+              swapToken: {
+                ...item,
+                input: t,
+              },
+            };
+          } else if (swapToken?.input) {
+            const Pair = swapUtils.getPair(item, toSwapToken, pairs);
+            const t = swapUtils.getOutInput(
+              item.token,
+              toSwapToken?.token,
+              Pair,
+              swapToken?.input,
+              reduxUtils.getTokenDecimals(toSwapToken?.token),
+            );
+            obj = {
+              ...obj,
+              toSwapToken: {
+                ...toSwapToken,
+                input: t,
+              },
+            };
+          }
         }
-      } else if (swapToken?.token) {
-        if (swapToken.token === item.token) {
-          obj = {
-            ...obj,
-            swapToken: {
-              input: '',
-              token: '',
-            },
-          };
+      } else if (type === 'toSwapToken') {
+        obj = {toSwapToken: {...item, input: toSwapToken?.input}};
+        if (swapToken?.token) {
+          if (swapToken.token === item.token) {
+            if (swapToken?.input && toSwapToken?.input) {
+              onSwapToken();
+              return;
+            }
+            obj = {
+              ...obj,
+              swapToken: {
+                token: toSwapToken?.token,
+                input: '',
+              },
+            };
+          } else if (swapToken?.input) {
+            const Pair = swapUtils.getPair(swapToken, item, pairs);
+            const t = swapUtils.getOutInput(
+              swapToken?.token,
+              item?.token,
+              Pair,
+              swapToken?.input,
+              reduxUtils.getTokenDecimals(item?.token),
+            );
+            obj = {
+              toSwapToken: {
+                ...item,
+                input: t,
+              },
+            };
+          } else if (toSwapToken?.input) {
+            const Pair = swapUtils.getPair(swapToken, item, pairs);
+            const t = swapUtils.getInInput(
+              swapToken?.token,
+              item?.token,
+              Pair,
+              toSwapToken?.input,
+              reduxUtils.getTokenDecimals(swapToken?.token),
+            );
+            obj = {
+              ...obj,
+              swapToken: {
+                ...swapToken,
+                input: t,
+              },
+            };
+          }
         }
       }
       setState(obj);
     },
-    [setState, swapToken, toSwapToken],
+    [onSwapToken, pairs, setState, state, swapToken, tType, toSwapToken],
   );
   const showTokenModal = useCallback(
     type => {
@@ -171,12 +250,12 @@ const Swap = props => {
                 }}
               />
             )}
-            <TextL
+            <TextM
               onPress={() => {
                 showTokenModal(type);
               }}>
               {token} <Entypo size={pTd(30)} name="chevron-thin-down" />
-            </TextL>
+            </TextM>
           </View>
         );
       }
@@ -231,6 +310,7 @@ const Swap = props => {
         </View>
       </View>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language, swapToken, tType, toSwapToken]);
   const onChangeSwap = useCallback(
     v => {
@@ -274,6 +354,7 @@ const Swap = props => {
         </View>
         <Input
           keyboardType="numeric"
+          decimals={reduxUtils.getTokenDecimals(swapToken?.token)}
           value={swapToken?.input}
           onChangeText={onChangeSwap}
           style={styles.inputStyle}
@@ -285,6 +366,7 @@ const Swap = props => {
         />
       </View>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language, swapBalance, swapToken, onChangeSwap, rightElement]);
   const onChangeToSwap = useCallback(
     v => {
@@ -352,11 +434,51 @@ const Swap = props => {
         </TextM>
       </View>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language, swapToken, toSwapToken, conversion, currentPair, setState]);
+  const onSwapToken = useCallback(() => {
+    if (tType === 'swapToken') {
+      const t = swapUtils.getInInput(
+        toSwapToken?.token,
+        swapToken?.token,
+        currentPair,
+        swapToken?.input,
+        reduxUtils.getTokenDecimals(toSwapToken?.token),
+      );
+      setState({
+        swapToken: {
+          ...toSwapToken,
+          input: t,
+        },
+        toSwapToken: swapToken,
+        tType: 'toSwapToken',
+      });
+    } else {
+      const t = swapUtils.getOutInput(
+        toSwapToken?.token,
+        swapToken?.token,
+        currentPair,
+        toSwapToken?.input,
+        reduxUtils.getTokenDecimals(swapToken?.token),
+      );
+      setState({
+        swapToken: toSwapToken,
+        toSwapToken: {...swapToken, input: t},
+        tType: 'swapToken',
+      });
+    }
+  }, [currentPair, setState, swapToken, tType, toSwapToken]);
   const ToSwapItem = useMemo(() => {
     return (
       <View style={styles.inputItem}>
-        <View style={styles.inputTitleBox}>
+        <MaterialCommunityIcons
+          onPress={onSwapToken}
+          name="swap-vertical"
+          size={pTd(50)}
+          color={Colors.primaryColor}
+          style={{marginTop: pTd(20)}}
+        />
+        <View style={[styles.inputTitleBox, {marginTop: pTd(20)}]}>
           <TextM>{i18n.t('swap.take')}</TextM>
           <TextM>
             {i18n.t('mineModule.balance')}: {toSwapBalance}
@@ -364,6 +486,7 @@ const Swap = props => {
         </View>
         <Input
           keyboardType="numeric"
+          decimals={reduxUtils.getTokenDecimals(toSwapToken?.token)}
           value={toSwapToken?.input}
           onChangeText={onChangeToSwap}
           style={styles.inputStyle}
@@ -377,8 +500,10 @@ const Swap = props => {
         {PriceMemo}
       </View>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     language,
+    onSwapToken,
     toSwapBalance,
     toSwapToken,
     onChangeToSwap,
@@ -391,7 +516,8 @@ const Swap = props => {
       ...swapToken,
       balance: swapBalance,
     }) &&
-    toSwapToken?.input
+    toSwapToken?.input &&
+    toSwapToken?.input > 0
   ) {
     disabled = false;
   }

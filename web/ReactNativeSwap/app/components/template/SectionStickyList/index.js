@@ -63,11 +63,7 @@ export default class SectionStickyList extends Component {
       SecondComponent = <View style={{height: height}} />;
     }
     if (loadCompleted) {
-      FirstComponent = (
-        <View style={styles.FooterStyles}>
-          <Text>{allLoadedTips || 'All loaded'}</Text>
-        </View>
-      );
+      FirstComponent = <View style={styles.FooterStyles} />;
     } else {
       FirstComponent = (
         <Touchable
@@ -82,10 +78,10 @@ export default class SectionStickyList extends Component {
       );
     }
     return (
-      <View>
+      <>
         {FirstComponent}
         {SecondComponent}
-      </View>
+      </>
     );
   };
 
@@ -169,7 +165,6 @@ export default class SectionStickyList extends Component {
 }
 const styles = StyleSheet.create({
   FooterStyles: {
-    height: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },

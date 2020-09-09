@@ -312,6 +312,7 @@
     "highest": "高",
     "volume": "成交额",
     "totalValue": "总价值",
-    "TXS": "交易数"
+    "TXS": "交易数",
+    "decimalTip": "(仅支持{{decimals}}位小数)"
   }
 }

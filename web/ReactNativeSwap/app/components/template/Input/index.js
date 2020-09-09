@@ -2,7 +2,7 @@
 import React, {memo} from 'react';
 import {TextInput, StyleSheet, View, Text} from 'react-native';
 import {Colors} from '../../../assets/theme';
-
+import i18n from 'i18n-js';
 const Input = props => {
   const {
     leftElement,
@@ -18,9 +18,11 @@ const Input = props => {
     value,
     keyboardType,
     decimals,
+    placeholder,
   } = props;
   let counts;
-  if (value && keyboardType === 'numeric') {
+  const tyNumeric = keyboardType === 'numeric';
+  if (value && tyNumeric) {
     counts = value.split('.')[0].length;
   }
   if (leftTitle || leftElement || rightElement) {
@@ -37,6 +39,11 @@ const Input = props => {
           pointerEvents={disabled ? 'none' : pointerEvents}
           opacity={disabled ? 0.6 : opacity}
           {...props}
+          placeholder={
+            tyNumeric
+              ? placeholder + i18n.t('swap.decimalTip', {decimals})
+              : placeholder
+          }
           style={[styles.leftTitleInput, style]}
         />
         {rightElement && rightElement}

@@ -41,7 +41,6 @@ const getAddData = (firstToken, secondToken, currentPair) => {
       secondToken.input,
       secondToken.token,
     );
-  console.log(currentPair.symbolA, symbolA, '-------');
   if (currentPair.symbolA !== symbolA) {
     symbolA = secondToken.token;
     symbolB = firstToken.token;

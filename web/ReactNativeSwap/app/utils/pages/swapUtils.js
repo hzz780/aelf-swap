@@ -5,14 +5,17 @@ import {Colors} from '../../assets/theme';
 const {swapFee, swapDeadline, swapFloat} = config;
 const swapFormat = 'YYYY-MM-DD HH:mm';
 const digits = (count, num = 8) => {
-  const floatPart = String(count).split('.')[1];
+  let SCount = String(count);
+  const floatPart = SCount.split('.')[1];
   if (count && floatPart && floatPart.length > num) {
-    count = count.toFixed(num + 1);
-    let counts = count.split('.');
-    count = counts[0] + '.' + counts[1].slice(0, num);
+    count = Math.floor(count * 10 ** num) / 10 ** num;
+    SCount = String(count);
   }
-  if (count > 0) {
-    return count;
+  if (SCount.indexOf('-') >= 0) {
+    SCount = '0' + String(Number(SCount) + 1).substr(1);
+  }
+  if (SCount > 0) {
+    return SCount;
   }
   return '0';
 };
@@ -159,7 +162,7 @@ const getAmounB = (amountA, reserveA, reserveB, decimals) => {
   return judgmentNaN(s);
 };
 const getOutInput = (sA, sB, currentPair, aA, decimals) => {
-  const {symbolA, reserveA, reserveB} = currentPair;
+  const {symbolA, reserveA, reserveB} = currentPair || {};
   let rA = symbolA === sA ? reserveA : reserveB;
   let rB = symbolA === sB ? reserveA : reserveB;
   aA = Number(aA);
@@ -171,7 +174,7 @@ const getOutInput = (sA, sB, currentPair, aA, decimals) => {
   return judgmentNaN(s);
 };
 const getInInput = (sA, sB, currentPair, aB, decimals) => {
-  const {symbolA, reserveA, reserveB} = currentPair;
+  const {symbolA, reserveA, reserveB} = currentPair || {};
   let rA = symbolA === sA ? reserveA : reserveB;
   let rB = symbolA === sB ? reserveA : reserveB;
   aB = Number(aB);
@@ -219,8 +222,11 @@ const getDeadline = () => {
     nanos: 0,
   };
 };
-const getPoolToken = (balance, totalSupply, reserve) => {
-  let s = String(digits((balance / totalSupply) * reserve));
+const getPoolToken = (balance, totalSupply, reserve, decimals) => {
+  if (!(balance && totalSupply && reserve)) {
+    return '';
+  }
+  let s = String(digits((balance / totalSupply) * reserve, decimals));
   if (s === '0') {
     return '0';
   }
@@ -334,7 +340,7 @@ const getCurrentReserve = (s, currentPair) => {
   if (!currentPair) {
     return 0;
   }
-  const {symbolA, reserveA, reserveB} = currentPair;
+  const {symbolA, reserveA, reserveB} = currentPair || {};
   return s === symbolA ? reserveA : reserveB;
 };
 const getPercentage = rate => {

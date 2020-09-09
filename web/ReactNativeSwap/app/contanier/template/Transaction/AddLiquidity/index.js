@@ -136,9 +136,9 @@ const AddLiquidity = props => {
             {hideMax ? null : (
               <MAXComponent onPress={() => onMAX(type, item)} />
             )}
-            <TextL onPress={() => showTokenModal(type)}>
+            <TextM onPress={() => showTokenModal(type)}>
               {token} <Entypo size={pTd(30)} name="chevron-thin-down" />
-            </TextL>
+            </TextM>
           </View>
         );
       }
@@ -185,6 +185,7 @@ const AddLiquidity = props => {
           </TextM>
         </View>
         <Input
+          decimals={reduxUtils.getTokenDecimals(firstToken?.token)}
           keyboardType="numeric"
           value={firstToken?.input}
           onChangeText={onChangeFirst}
@@ -229,6 +230,7 @@ const AddLiquidity = props => {
           </TextM>
         </View>
         <Input
+          decimals={reduxUtils.getTokenDecimals(secondToken?.token)}
           keyboardType="numeric"
           value={secondToken?.input}
           onChangeText={onChangeSecond}
@@ -323,7 +325,6 @@ const AddLiquidity = props => {
         <TextL style={[styles.themeColor, styles.mrginText]}>
           {i18n.t('swap.price')}
         </TextL>
-        <View style={[styles.splitLine]} />
         <ListItem
           disabled
           style={styles.itemBox}
@@ -361,12 +362,12 @@ const AddLiquidity = props => {
       secondToken,
       currentPair,
     );
+    console.log(swapUtils.getSharePool(poolToken, currentPair?.totalSupply));
     return (
       <>
         <TextL style={[styles.themeColor, styles.mrginText]}>
           {i18n.t('swap.willReceive')}
         </TextL>
-        <View style={[styles.splitLine]} />
         <ListItem
           disabled
           title={`${firstToken?.token}-${secondToken?.token} ${i18n.t(

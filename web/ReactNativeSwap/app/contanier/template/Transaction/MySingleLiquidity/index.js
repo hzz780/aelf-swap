@@ -61,7 +61,7 @@ export default memo(MySingleLiquidity);
 const styles = StyleSheet.create({
   myLiquidity: {
     marginTop: pTd(20),
-    backgroundColor: '#e5e5e5',
+    backgroundColor: '#F3F3F3',
     padding: pTd(20),
     borderRadius: pTd(15),
     marginBottom: pTd(30) + bottomBarHeigth,

@@ -168,7 +168,7 @@ const Home = () => {
   );
   const renderHeader = useMemo(() => {
     return (
-      <View>
+      <>
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.overview')}
@@ -207,7 +207,7 @@ const Home = () => {
             {i18n.t('swap.allMarkets')}
           </TextL>
         </View>
-      </View>
+      </>
     );
   }, []);
   const stickyHead = useCallback(() => {
@@ -218,6 +218,7 @@ const Home = () => {
     <View style={GStyle.secondContainer}>
       <CommonHeader title={i18n.t('swap.market')} />
       <SectionStickyList
+        listFooterHight={1}
         whetherAutomatic
         data={data}
         loadCompleted={loadCompleted}
@@ -229,7 +230,6 @@ const Home = () => {
         renderItem={renderItem}
         ref={list}
         showFooter
-        allLoadedTips=" "
       />
     </View>
   );

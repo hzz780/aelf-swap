@@ -312,6 +312,7 @@
     "highest": "highest",
     "volume": "Volume",
     "totalValue": "Total Value",
-    "TXS": "Transactions"
+    "TXS": "Transactions",
+    "decimalTip": "(Only supports {{decimals}} decimals)"
   }
 }

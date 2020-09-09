@@ -4,6 +4,7 @@ import {Colors} from '../../../../assets/theme';
 
 const styles = StyleSheet.create({
   itemBox: {
+    backgroundColor: 'white',
     paddingVertical: pTd(20),
     width: '100%',
     borderBottomWidth: 1,
@@ -31,7 +32,6 @@ const styles = StyleSheet.create({
     paddingVertical: pTd(15),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
     borderWidth: 1,
     borderColor: Colors.primaryColor,
     borderRadius: pTd(10),
