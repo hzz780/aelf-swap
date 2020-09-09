@@ -85,7 +85,15 @@ const Swap = props => {
       }
       let obj = {};
       if (type === 'swapToken') {
-        obj = {swapToken: {...item, input: swapToken?.input}};
+        obj = {
+          swapToken: {
+            ...item,
+            input: swapUtils.swapDigits(
+              swapToken.input,
+              reduxUtils.getTokenDecimals(item?.token),
+            ),
+          },
+        };
         if (toSwapToken?.token) {
           if (toSwapToken.token === item.token) {
             if (swapToken?.input && toSwapToken?.input) {
@@ -133,7 +141,15 @@ const Swap = props => {
           }
         }
       } else if (type === 'toSwapToken') {
-        obj = {toSwapToken: {...item, input: toSwapToken?.input}};
+        obj = {
+          toSwapToken: {
+            ...item,
+            input: swapUtils.swapDigits(
+              toSwapToken?.input,
+              reduxUtils.getTokenDecimals(item?.token),
+            ),
+          },
+        };
         if (swapToken?.token) {
           if (swapToken.token === item.token) {
             if (swapToken?.input && toSwapToken?.input) {

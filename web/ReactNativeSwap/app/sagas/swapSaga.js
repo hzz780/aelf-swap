@@ -107,11 +107,10 @@ function* createPairSaga({symbolPair}) {
     console.log(result, '=======result');
     Loading.destroy();
     if (Success(result)) {
-      SwapTransactionPopup.show({txId: createPair.TransactionId});
+      SwapTransactionPopup.show({txId: createPair.TransactionId, goBack: true});
     } else {
       CommonToast.fail(i18n.t('swap.tryAgain'));
     }
-    navigationService.goBack();
   } catch (error) {
     Loading.destroy();
     CommonToast.fail(i18n.t('swap.tryAgain'));
@@ -130,11 +129,10 @@ function* addLiquiditySaga({data}) {
     console.log(result, '=======result');
     Loading.destroy();
     if (Success(result)) {
-      SwapTransactionPopup.show({txId: add.TransactionId});
+      SwapTransactionPopup.show({txId: add.TransactionId, goBack: true});
     } else {
       CommonToast.fail(i18n.t('swap.tryAgain'));
     }
-    navigationService.goBack();
   } catch (error) {
     yield delay(500);
     Loading.destroy();
@@ -257,11 +255,10 @@ function* removeLiquiditySaga({data}) {
     console.log(result, '=======result');
     Loading.destroy();
     if (Success(result)) {
-      SwapTransactionPopup.show({txId: remove.TransactionId});
+      SwapTransactionPopup.show({txId: remove.TransactionId, goBack: true});
     } else {
       CommonToast.fail(i18n.t('swap.tryAgain'));
     }
-    navigationService.goBack();
   } catch (error) {
     yield delay(500);
     Loading.destroy();
