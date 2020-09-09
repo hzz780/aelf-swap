@@ -10,8 +10,7 @@ import {useDispatch} from 'react-redux';
 import {useFocusEffect} from '@react-navigation/native';
 import {useStateToProps} from '../../../../utils/pages/hooks';
 import {TextM, TextS} from '../../../../components/template/CommonText';
-import {Colors} from '../../../../assets/theme';
-import {pixelSize} from '../../../../utils/common/device';
+import {Colors, GStyle} from '../../../../assets/theme';
 import {pTd} from '../../../../utils/common';
 import config from '../../../../components/template/Charts/config';
 import swapUtils from '../../../../utils/pages/swapUtils';
@@ -95,7 +94,7 @@ const PairCharts = props => {
       <View flexWrap="wrap" style={styles.toolBox}>
         {list.map((item, index) => {
           let toolItemBox = [styles.toolItemBox];
-          let textStyles;
+          let textStyles = {color: Colors.fontGray};
           if (index === toolIndex) {
             toolItemBox.push(styles.bgColor);
             textStyles = styles.textColor;
@@ -294,7 +293,6 @@ const PairCharts = props => {
     </View>
   );
 };
-
 export default memo(PairCharts);
 const styles = StyleSheet.create({
   container: {
@@ -320,7 +318,11 @@ const styles = StyleSheet.create({
   },
   toolItemBox: {
     padding: 5,
-    borderWidth: pixelSize,
+    backgroundColor: '#f0f0f0',
+    marginLeft: pTd(10),
+    borderRadius: pTd(10),
+    paddingTop: pTd(10),
+    ...GStyle.shadow,
   },
   bgColor: {
     backgroundColor: Colors.primaryColor,

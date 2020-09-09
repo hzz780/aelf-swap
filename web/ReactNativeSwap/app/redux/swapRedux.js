@@ -101,7 +101,7 @@ export const getPairCharts = state => {
   return state.merge();
 };
 export const setPairCharts = (state, {pairCharts}) => {
-  const {pairCandleStick: charts} = state;
+  const {pairCharts: charts} = state;
   return state.merge({
     pairCharts: Object.assign({}, charts || {}, pairCharts || {}),
   });

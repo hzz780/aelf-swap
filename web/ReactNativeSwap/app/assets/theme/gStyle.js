@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import {pTd} from '../../utils/common';
 import Colors from './colors';
 const GStyle = StyleSheet.create({
@@ -14,7 +14,18 @@ const GStyle = StyleSheet.create({
     marginTop: 3,
     color: 'red',
   },
-
+  shadow: {
+    ...Platform.select({
+      ios: {
+        shadowColor: '#e0e0e0',
+        shadowOffset: {width: -1, height: 0.5},
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 1,
+      },
+    }),
+  },
   //-------- margin -----------
   marginArg: function() {
     var margin = {};

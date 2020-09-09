@@ -7,7 +7,7 @@ import {
   BounceSpinner,
 } from '../../../../components/template';
 import {pixelSize} from '../../../../utils/common/device';
-import {Colors} from '../../../../assets/theme';
+import {Colors, GStyle} from '../../../../assets/theme';
 import {TextM} from '../../../../components/template/CommonText';
 import config from '../../../../components/template/Charts/config';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
@@ -32,7 +32,7 @@ const OverviewCharts = () => {
       <View style={styles.toolBox}>
         {list.map((item, index) => {
           let toolItemBox = [styles.toolItemBox];
-          let textStyles;
+          let textStyles = {color: Colors.fontGray};
           if (index === toolIndex) {
             toolItemBox.push(styles.bgColor);
             textStyles = styles.textColor;
@@ -136,7 +136,11 @@ const styles = StyleSheet.create({
   },
   toolItemBox: {
     padding: 5,
-    borderWidth: pixelSize,
+    backgroundColor: '#f0f0f0',
+    marginLeft: pTd(10),
+    borderRadius: pTd(10),
+    paddingTop: pTd(10),
+    ...GStyle.shadow,
   },
   bgColor: {
     backgroundColor: Colors.primaryColor,

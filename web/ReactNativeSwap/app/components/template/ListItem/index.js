@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   subtitleStyle: {
-    fontSize: pTd(30),
+    fontSize: pTd(28),
     color: Colors.fontGray,
   },
   subtitleDetailsStyle: {
