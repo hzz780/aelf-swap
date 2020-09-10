@@ -19,6 +19,24 @@ const digits = (count, num = 8) => {
   }
   return '0';
 };
+const swapDigits = (count, num = 8) => {
+  if (!count) {
+    return '';
+  }
+  let SCount = String(count);
+  const floatPart = SCount.split('.')[1];
+  if (count && floatPart && floatPart.length > num) {
+    count = Math.floor(count * 10 ** num) / 10 ** num;
+    SCount = String(count);
+  }
+  if (SCount.indexOf('-') >= 0) {
+    SCount = '0' + String(Number(SCount) + 1).substr(1);
+  }
+  if (SCount > 0) {
+    return SCount;
+  }
+  return '0';
+};
 const calculateMA = (dayCount, data) => {
   let result = [];
   for (var i = 0, len = data.length; i < len; i++) {
@@ -390,4 +408,5 @@ export default {
   getPercentage,
   getTotalValue,
   getRateStyle,
+  swapDigits,
 };

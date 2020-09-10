@@ -1,5 +1,5 @@
 import Spinner from 'react-native-spinkit';
-import {ImageBackground} from 'react-native';
+import {ImageBackground, View} from 'react-native';
 import * as Localization from 'expo-localization';
 import React, {useEffect, useCallback, memo} from 'react';
 import {useDispatch} from 'react-redux';
@@ -9,11 +9,13 @@ import {languageList} from '../../../i18n/config';
 import {launchScreen} from '../../../assets/images';
 import settingsActions from '../../../redux/settingsRedux';
 import navigationService from '../../../utils/common/navigationService';
-import {Colors} from '../../../assets/theme';
+import {Colors, GStyle} from '../../../assets/theme';
 import {useStateToProps} from '../../../utils/pages/hooks';
+import {statusBarHeight, isIos} from '../../../utils/common/device';
 
 const style = {
   flex: 1,
+  marginTop: isIos ? 0 : statusBarHeight,
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'column-reverse',
@@ -35,6 +37,7 @@ const Referral = () => {
     };
   });
   useEffect(() => {
+    SplashScreen.hide();
     if (language) {
       if (languageList.includes(language)) {
         changeLanguage(language);
@@ -55,9 +58,6 @@ const Referral = () => {
       }
     }
     const timer = setTimeout(() => {
-      setTimeout(() => {
-        SplashScreen.hide();
-      }, 1000);
       if (address) {
         navigationService.reset(
           securityLock ? [{name: 'Tab'}, {name: 'SecurityLock'}] : 'Tab',
@@ -71,9 +71,11 @@ const Referral = () => {
     };
   }, [changeLanguage, language, securityLock, address]);
   return (
-    <ImageBackground style={style} source={launchScreen}>
-      <Spinner type={'Circle'} color={Colors.primaryColor} size={60} />
-    </ImageBackground>
+    <View style={GStyle.container}>
+      <ImageBackground style={style} source={launchScreen}>
+        <Spinner type={'Circle'} color={Colors.primaryColor} size={60} />
+      </ImageBackground>
+    </View>
   );
 };
 export default memo(Referral);

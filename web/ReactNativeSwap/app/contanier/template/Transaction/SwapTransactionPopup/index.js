@@ -11,8 +11,9 @@ import {TextL, CopyText} from '../../../../components/template/CommonText';
 import i18n from 'i18n-js';
 import {statusBarHeight} from '../../../../utils/common/device';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
+import navigationService from '../../../../utils/common/navigationService';
 const Components = memo(props => {
-  const {txId} = props;
+  const {txId, goBack} = props;
   return (
     <View style={styles.chooseTokenModal}>
       <TextL>Transaction Submitted</TextL>
@@ -26,11 +27,17 @@ const Components = memo(props => {
         onPress={() => {
           OverlayModal.hide();
           Communication.web(aelfUtils.webURLTx(txId));
+          goBack && navigationService.goBack();
         }}
         style={styles.explorer}>
         View on aelf Block Explorer
       </TextL>
-      <Touchable onPress={() => OverlayModal.hide()} style={styles.okStyle}>
+      <Touchable
+        onPress={() => {
+          OverlayModal.hide();
+          goBack && navigationService.goBack();
+        }}
+        style={styles.okStyle}>
         <TextL style={styles.okText}>OK</TextL>
       </Touchable>
     </View>

@@ -65,9 +65,70 @@ const AddLiquidity = props => {
   );
   const onModal = useCallback(
     (item, type) => {
-      setState({[type]: item});
+      let obj = {};
+      if (type === 'firstToken') {
+        obj = {
+          firstToken: {
+            ...item,
+            input: swapUtils.swapDigits(
+              firstToken.input,
+              reduxUtils.getTokenDecimals(item?.token),
+            ),
+          },
+        };
+        if (secondToken?.token) {
+          if (secondToken?.input) {
+            const Pair = swapUtils.getPair(item, secondToken, pairs);
+            if (Pair) {
+              obj = {
+                ...obj,
+                firstToken: {
+                  ...item,
+                  input: swapUtils.getAmounB(
+                    secondToken?.input,
+                    swapUtils.getCurrentReserve(secondToken?.token, Pair),
+                    swapUtils.getCurrentReserve(item?.token, Pair),
+                    reduxUtils.getTokenDecimals(item?.token),
+                  ),
+                },
+              };
+            }
+          }
+        }
+      } else if (type === 'secondToken') {
+        obj = {
+          secondToken: {
+            ...item,
+            input: swapUtils.swapDigits(
+              secondToken?.input,
+              reduxUtils.getTokenDecimals(item?.token),
+            ),
+          },
+        };
+        if (firstToken?.token) {
+          if (firstToken?.input) {
+            const Pair = swapUtils.getPair(firstToken, item, pairs);
+            console.log(Pair, '======Pair');
+            if (Pair) {
+              obj = {
+                ...obj,
+                secondToken: {
+                  ...item,
+                  input: swapUtils.getAmounB(
+                    firstToken?.input,
+                    swapUtils.getCurrentReserve(firstToken?.token, Pair),
+                    swapUtils.getCurrentReserve(item?.token, Pair),
+                    reduxUtils.getTokenDecimals(item?.token),
+                  ),
+                },
+              };
+            }
+          }
+        }
+      }
+      setState(obj);
     },
-    [setState],
+    [firstToken, pairs, secondToken, setState],
   );
   const showTokenModal = useCallback(
     type => {

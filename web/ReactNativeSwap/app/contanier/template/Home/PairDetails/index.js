@@ -323,7 +323,7 @@ const PairDetails = props => {
         renderItem={renderItem}
         ref={list}
         showFooter
-        listFooterHight={pTd(90)}
+        listFooterHight={pTd(200)}
       />
       <View style={styles.bottomBox}>
         <Touchable
