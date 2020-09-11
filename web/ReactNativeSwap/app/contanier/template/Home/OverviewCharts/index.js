@@ -6,7 +6,6 @@ import {
   Touchable,
   BounceSpinner,
 } from '../../../../components/template';
-import {pixelSize} from '../../../../utils/common/device';
 import {Colors, GStyle} from '../../../../assets/theme';
 import {TextM} from '../../../../components/template/CommonText';
 import config from '../../../../components/template/Charts/config';
@@ -114,6 +113,7 @@ const OverviewCharts = () => {
 export default memo(OverviewCharts);
 const styles = StyleSheet.create({
   container: {
+    marginTop: pTd(20),
     paddingTop: pTd(10),
     backgroundColor: 'white',
   },

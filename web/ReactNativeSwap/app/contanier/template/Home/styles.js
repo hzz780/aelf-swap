@@ -29,6 +29,8 @@ const styles = StyleSheet.create({
     color: Colors.fontGray,
   },
   subtitleStyle: {
+    fontSize: pTd(26),
+    fontWeight: 'bold',
     color: Colors.fontBlack,
   },
   overviewBox: {

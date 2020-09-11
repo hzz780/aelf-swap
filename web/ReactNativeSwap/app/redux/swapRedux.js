@@ -28,6 +28,9 @@ const {Types, Creators} = createActions({
 
   getAccountInfo: ['address', 'callBack'],
   setAccountInfo: ['accountInfo'],
+
+  getOverviewInfo: [],
+  setOverviewInfo: ['overviewInfo'],
 });
 
 export const swapTypes = Types;
@@ -43,6 +46,7 @@ export const INITIAL_STATE = Immutable({
   overviewChart: [],
   tokenInfo: {},
   accountInfo: {},
+  overviewInfo: {},
 });
 
 /* ------------- Selectors ------------- */
@@ -141,6 +145,13 @@ export const setAccountInfo = (state, {accountInfo}) => {
     accountInfo: Object.assign({}, account || {}, accountInfo || {}),
   });
 };
+
+export const getOverviewInfo = state => {
+  return state.merge();
+};
+export const setOverviewInfo = (state, {overviewInfo}) => {
+  return state.merge({overviewInfo});
+};
 /* ------------- Hookup Reducers To Types ------------- */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_PAIRS]: getPairs,
@@ -168,4 +179,7 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.GET_ACCOUNT_INFO]: getAccountInfo,
   [Types.SET_ACCOUNT_INFO]: setAccountInfo,
+
+  [Types.GET_OVERVIEW_INFO]: getOverviewInfo,
+  [Types.SET_OVERVIEW_INFO]: setOverviewInfo,
 });

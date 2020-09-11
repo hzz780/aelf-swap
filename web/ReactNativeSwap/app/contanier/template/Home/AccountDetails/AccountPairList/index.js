@@ -1,4 +1,4 @@
-import React, {memo, useCallback} from 'react';
+import React, {useCallback, memo} from 'react';
 import {ListComponent, CommonHeader} from '../../../../../components/template';
 import {useStateToProps} from '../../../../../utils/pages/hooks';
 import PairsItem from '../../PairsItem';
@@ -6,23 +6,23 @@ import {View} from 'react-native';
 import {GStyle} from '../../../../../assets/theme';
 import TitleTool from '../../TitleTool';
 import i18n from 'i18n-js';
-const TokenMore = props => {
-  const {tokenInfo} = useStateToProps(base => {
+const AccountPairList = props => {
+  const {accountInfo} = useStateToProps(base => {
     const {user, swap} = base;
     return {
       tokenUSD: user.tokenUSD,
-      tokenInfo: swap.tokenInfo,
+      accountInfo: swap.accountInfo,
     };
   });
-  const symbol = props.route.params?.symbol ?? '';
-  const tokenDetails = tokenInfo[symbol];
-  const {topPairs} = tokenDetails || {};
+  const address = props.route.params?.address ?? '';
+  const addressDetails = accountInfo ? accountInfo[address] : undefined;
+  const {pairList} = addressDetails || {};
   const renderItem = useCallback(({item}) => {
     return <PairsItem item={item} />;
   }, []);
   return (
     <View style={GStyle.container}>
-      <CommonHeader title="Top Pairs" canBack />
+      <CommonHeader title={i18n.t('swap.account.pairList')} canBack />
       <TitleTool
         titleList={[
           i18n.t('swap.pair'),
@@ -30,9 +30,9 @@ const TokenMore = props => {
           i18n.t('swap.volume'),
         ]}
       />
-      <ListComponent data={topPairs} renderItem={renderItem} />
+      <ListComponent data={pairList} renderItem={renderItem} />
     </View>
   );
 };
 
-export default memo(TokenMore);
+export default memo(AccountPairList);

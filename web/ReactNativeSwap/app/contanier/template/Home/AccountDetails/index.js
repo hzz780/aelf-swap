@@ -7,21 +7,24 @@ import {
   SectionStickyList,
   Touchable,
   BounceSpinner,
+  ActionSheet,
 } from '../../../../components/template';
 import {TextL, TextM, TextS} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
-import navigationService from '../../../../utils/common/navigationService';
 import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import swapUtils from '../../../../utils/pages/swapUtils';
-import {useStateToProps} from '../../../../utils/pages/hooks';
+import {useStateToProps, useSetState} from '../../../../utils/pages/hooks';
 import PairCharts from '../PairCharts';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
 import styles from './styles';
 import TitleTool from '../TitleTool';
 import PairsItem from '../PairsItem';
 import {useFocusEffect} from '@react-navigation/native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import navigationService from '../../../../utils/common/navigationService';
+import {bottomBarHeigth} from '../../../../utils/common/device';
 let isActive = true;
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
@@ -126,10 +129,17 @@ const AccountDetails = props => {
       dispatch(swapActions.getAccountInfo(address, callBack)),
     [dispatch],
   );
+  const [state, setState] = useSetState(
+    {
+      symbolPair: '',
+    },
+    true,
+  );
+  console.log(state, '======state');
   const address = props.route.params?.address ?? '';
   const addressDetails = accountInfo ? accountInfo[address] : undefined;
-  const {totalSwapped, feePaid, txsCount, pairList} = addressDetails || {};
-  console.log(addressDetails, '=====addressDetails');
+  const {totalSwapped, feePaid, txsCount, pairList, liquidityInPrice} =
+    addressDetails || {};
   useFocusEffect(
     useCallback(() => {
       upPullRefresh();
@@ -153,12 +163,18 @@ const AccountDetails = props => {
     if (Array.isArray(pairList)) {
       return (
         <>
-          <View style={[styles.overviewBox, styles.toolBarBox]}>
+          <Touchable
+            onPress={() => {
+              navigationService.navigate('AccountPairList', {address});
+            }}
+            style={[styles.overviewBox, styles.toolBarBox]}>
             <TextL style={[styles.flexBox, {color: Colors.primaryColor}]}>
-              Pairs
+              {i18n.t('swap.pairs')}
             </TextL>
-            <TextL style={[{color: Colors.primaryColor}]}>More ></TextL>
-          </View>
+            <TextL style={[{color: Colors.primaryColor}]}>
+              {i18n.t('swap.more')} {'>'}
+            </TextL>
+          </Touchable>
           <TitleTool
             titleList={[
               i18n.t('swap.pair'),
@@ -172,7 +188,25 @@ const AccountDetails = props => {
         </>
       );
     }
-  }, [pairList]);
+  }, [address, pairList]);
+  const onSelect = useCallback(
+    item => {
+      setState({symbolPair: item.symbolPair});
+    },
+    [setState],
+  );
+  const onAllPairs = useCallback(() => {
+    const items = Array.isArray(pairList)
+      ? pairList.map(item => {
+          return {
+            ...item,
+            title: item.symbolPair,
+            onPress: onSelect,
+          };
+        })
+      : [];
+    ActionSheet.show(items, {title: i18n.t('cancel')});
+  }, [onSelect, pairList]);
   const renderHeader = useMemo(() => {
     return (
       <>
@@ -181,10 +215,20 @@ const AccountDetails = props => {
             {i18n.t('swap.overview')}
           </TextL>
         </View>
-        {Item('Account', address)}
-        {Item('Total Value Swapped', `$ ${totalSwapped || ''}`)}
-        {Item('Total Fees Paid', `$ ${feePaid || ''}`)}
-        {Item('Total Transactions', txsCount)}
+        {Item(i18n.t('account'), address)}
+        {Item(i18n.t('swap.account.totalSwapped'), `$ ${totalSwapped || ''}`)}
+        {Item(i18n.t('swap.account.feePaid'), `$ ${feePaid || ''}`)}
+        {Item(i18n.t('swap.account.txsCount'), txsCount)}
+        <ListItem
+          onPress={onAllPairs}
+          style={styles.allPairsStyle}
+          title={i18n.t('swap.account.allPairs')}
+          rightElement={<AntDesign name="caretdown" color={Colors.fontGray} />}
+        />
+        {Item(
+          i18n.t('swap.account.liquidityInPrice'),
+          `$ ${liquidityInPrice || ''}`,
+        )}
         <PairCharts />
         {TopPairs}
         {/* <PairCharts {...pairData} /> */}
@@ -195,7 +239,16 @@ const AccountDetails = props => {
         </View>
       </>
     );
-  }, [Item, TopPairs, address, feePaid, totalSwapped, txsCount]);
+  }, [
+    Item,
+    TopPairs,
+    address,
+    feePaid,
+    liquidityInPrice,
+    onAllPairs,
+    totalSwapped,
+    txsCount,
+  ]);
   const stickyHead = useCallback(() => {
     return <ToolBar setIndex={setIndex} index={index} />;
   }, [index]);
@@ -290,7 +343,7 @@ const AccountDetails = props => {
             ref={list}
             showFooter
             allLoadedTips=" "
-            listFooterHight={pTd(90)}
+            listFooterHight={bottomBarHeigth + pTd(20)}
           />
         </>
       ) : (

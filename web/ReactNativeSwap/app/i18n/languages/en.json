@@ -313,6 +313,18 @@
     "volume": "Volume",
     "totalValue": "Total Value",
     "TXS": "Transactions",
-    "decimalTip": "(Only supports {{decimals}} decimals)"
+    "decimalTip": "(Only supports {{decimals}} decimals)",
+    "pairs": "Pairs",
+    "account": {
+      "allPairs": "All Pairs",
+      "totalSwapped": "Total Value Swapped",
+      "feePaid": "Total Fees Paid",
+      "txsCount": "Total Transactions",
+      "liquidityInPrice": "Liquidity (Including Fees)",
+      "pairList": "Pair List"
+    },
+    "token": {
+      "topPairs": "Top Pairs"
+    }
   }
 }

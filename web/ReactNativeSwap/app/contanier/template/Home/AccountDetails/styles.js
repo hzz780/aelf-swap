@@ -106,6 +106,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 100,
   },
+  allPairsStyle: {
+    marginVertical: pTd(20),
+    paddingHorizontal: pTd(50),
+  },
 });
 
 export default styles;

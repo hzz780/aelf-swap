@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import Touchable from '../Touchable';
 import {Colors} from '../../../assets/theme';
+import {pTd} from '../../../utils/common';
+import {bottomBarHeigth} from '../../../utils/common/device';
 export default class SectionStickyList extends Component {
   //renderItem
   static propTypes = {
@@ -63,7 +65,7 @@ export default class SectionStickyList extends Component {
       SecondComponent = <View style={{height: height}} />;
     }
     if (loadCompleted) {
-      FirstComponent = <View style={styles.FooterStyles} />;
+      FirstComponent = <View />;
     } else {
       FirstComponent = (
         <Touchable
@@ -165,6 +167,8 @@ export default class SectionStickyList extends Component {
 }
 const styles = StyleSheet.create({
   FooterStyles: {
+    paddingVertical: pTd(20),
+    marginBottom: bottomBarHeigth,
     alignItems: 'center',
     justifyContent: 'center',
   },

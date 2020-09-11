@@ -389,6 +389,21 @@ function* getAccountInfoSaga({address, callBack}) {
   callBack && callBack(1);
   yield put(swapActions.setAccountInfo({[address]: data}));
 }
+
+function* getOverviewInfoSaga() {
+  const data = {
+    totalLiquidity: 12313,
+    totalLiquidityRate: 0.01, // 流动性变化率，此处为1%
+    volume: 12313,
+    volumeRate: 0.01, // 交易量变化率，此处为1%
+    ELFPrice: 123,
+    ELFPriceRate: 0.01,
+    txsCount: 123131,
+    txsCountRate: 0.01, //交易数变化率
+    pairsCount: 1231,
+  };
+  yield put(swapActions.setOverviewInfo(data));
+}
 export default function* SwapSaga() {
   yield all([
     yield takeLatest(swapTypes.GET_PAIRS, getPairsSaga),
@@ -403,5 +418,6 @@ export default function* SwapSaga() {
     yield takeLatest(swapTypes.GET_OVERVIEW_CHART, getOverviewChartSaga),
     yield takeLatest(swapTypes.GET_TOKEN_INFO, getTokenInfoSaga),
     yield takeLatest(swapTypes.GET_ACCOUNT_INFO, getAccountInfoSaga),
+    yield takeLatest(swapTypes.GET_OVERVIEW_INFO, getOverviewInfoSaga),
   ]);
 }

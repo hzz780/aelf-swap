@@ -4,21 +4,20 @@ import {
   CommonHeader,
   SectionStickyList,
   Touchable,
-  ListItem,
 } from '../../../components/template';
 import {View} from 'react-native';
 import {useStateToProps} from '../../../utils/pages/hooks';
-import {GStyle, Colors} from '../../../assets/theme';
+import {GStyle} from '../../../assets/theme';
 import navigationService from '../../../utils/common/navigationService';
 import swapActions from '../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import swapUtils from '../../../utils/pages/swapUtils';
 import {useFocusEffect} from '@react-navigation/native';
-import OverviewCharts from './OverviewCharts';
-import {TextL, TextM, TextS} from '../../../components/template/CommonText';
+import {TextM, TextS} from '../../../components/template/CommonText';
 import styles from './styles';
 import ToolBar from './ToolBar';
 import PairsItem from './PairsItem';
+import Overview from './Overview';
 let isActive = true;
 const tokenList = [
   {
@@ -66,12 +65,11 @@ const Home = () => {
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
     [dispatch],
   );
-  const {pairs, tokenUSD} = useStateToProps(base => {
-    const {settings, swap, user} = base;
+  const {pairs} = useStateToProps(base => {
+    const {settings, swap} = base;
     return {
       language: settings.language,
       pairs: swap.pairs,
-      tokenUSD: user.tokenUSD,
     };
   });
   useFocusEffect(
@@ -92,7 +90,6 @@ const Home = () => {
     onSetLoadCompleted(true);
   }, [getPairs, onSetLoadCompleted]);
   const onEndReached = useCallback(() => {
-    console.log('onEndReachedonEndReachedonEndReached');
     onSetLoadCompleted(true);
     list.current && list.current.endBottomRefresh();
   }, [onSetLoadCompleted]);
@@ -155,60 +152,8 @@ const Home = () => {
     },
     [index],
   );
-  const explanation = useCallback(
-    (title1, title2, color = Colors.primaryColor) => {
-      return (
-        <View style={styles.poolToken}>
-          <TextM style={[styles.subtitleStyle, {color}]}>{title1}</TextM>
-          <TextM style={[styles.subtitleStyle, {color}]}>{title2}</TextM>
-        </View>
-      );
-    },
-    [],
-  );
   const renderHeader = useMemo(() => {
-    return (
-      <>
-        <View style={styles.overviewBox}>
-          <TextL style={{color: Colors.primaryColor}}>
-            {i18n.t('swap.overview')}
-          </TextL>
-        </View>
-        <ListItem
-          disabled
-          title={i18n.t('swap.totalValue')}
-          subtitle="$ 234,123"
-          subtitleDetails="-10.00%"
-          rightElement={null}
-          subtitleDetailsStyle={styles.subtitleDetailsStyle}
-          subtitleStyle={styles.subtitleStyle}
-        />
-        <ListItem
-          disabled
-          title={`${i18n.t('swap.volume')}(24h)`}
-          subtitleDetails="-10.00%"
-          subtitle="$ 234,123"
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-          subtitleDetailsStyle={styles.subtitleDetailsStyle}
-        />
-        <ListItem
-          disabled
-          title={`${i18n.t('swap.transactions')}(24h)`}
-          subtitleDetails="-10.00%"
-          subtitle="$ 234,123"
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
-          subtitleDetailsStyle={styles.subtitleDetailsStyle}
-        />
-        <OverviewCharts />
-        <View style={styles.overviewBox}>
-          <TextL style={{color: Colors.primaryColor}}>
-            {i18n.t('swap.allMarkets')}
-          </TextL>
-        </View>
-      </>
-    );
+    return <Overview />;
   }, []);
   const stickyHead = useCallback(() => {
     return <ToolBar index={index} setIndex={setIndex} />;
@@ -218,18 +163,17 @@ const Home = () => {
     <View style={GStyle.secondContainer}>
       <CommonHeader title={i18n.t('swap.market')} />
       <SectionStickyList
-        listFooterHight={1}
-        whetherAutomatic
+        ref={list}
         data={data}
-        loadCompleted={loadCompleted}
-        upPullRefresh={upPullRefresh}
-        onEndReached={onEndReached}
-        bottomLoadTip={i18n.t('swap.loadMore')}
-        renderHeader={renderHeader}
+        showFooter
+        whetherAutomatic
         stickyHead={stickyHead}
         renderItem={renderItem}
-        ref={list}
-        showFooter
+        renderHeader={renderHeader}
+        onEndReached={onEndReached}
+        loadCompleted={loadCompleted}
+        upPullRefresh={upPullRefresh}
+        bottomLoadTip={i18n.t('swap.loadMore')}
       />
     </View>
   );

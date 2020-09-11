@@ -3,7 +3,6 @@ import {View, LayoutAnimation} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
 import {
   CommonHeader,
-  ListItem,
   SectionStickyList,
   Touchable,
   BounceSpinner,
@@ -22,6 +21,7 @@ import styles from './styles';
 import TitleTool from '../TitleTool';
 import PairsItem from '../PairsItem';
 import {useFocusEffect} from '@react-navigation/native';
+import RateItem from '../RateItem';
 let isActive = true;
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
@@ -147,30 +147,22 @@ const TokenDetails = props => {
   const [index, setIndex] = useState(0);
   const [loadCompleted, setLoadCompleted] = useState(true);
   const list = useRef();
-  const Item = useCallback((title, subtitle, rate) => {
-    const {color, sign} = swapUtils.getRateStyle(rate);
-    return (
-      <ListItem
-        disabled
-        title={title}
-        subtitle={subtitle}
-        subtitleDetails={sign + swapUtils.getPercentage(rate)}
-        rightElement={null}
-        subtitleDetailsStyle={[styles.subtitleDetailsStyle, {color}]}
-        subtitleStyle={styles.subtitleStyle}
-      />
-    );
-  }, []);
   const TopPairs = useMemo(() => {
     if (Array.isArray(topPairs)) {
       return (
         <>
-          <View style={[styles.overviewBox, styles.toolBarBox]}>
+          <Touchable
+            onPress={() => {
+              navigationService.navigate('TokenMore', {symbol});
+            }}
+            style={[styles.overviewBox, styles.toolBarBox]}>
             <TextL style={[styles.flexBox, {color: Colors.primaryColor}]}>
-              Top Pairs
+              {i18n.t('swap.token.topPairs')}
             </TextL>
-            <TextL style={[{color: Colors.primaryColor}]}>More ></TextL>
-          </View>
+            <TextL style={[{color: Colors.primaryColor}]}>
+              {i18n.t('swap.more')} {'>'}
+            </TextL>
+          </Touchable>
           <TitleTool
             titleList={[
               i18n.t('swap.pair'),
@@ -184,7 +176,7 @@ const TokenDetails = props => {
         </>
       );
     }
-  }, [topPairs]);
+  }, [symbol, topPairs]);
   const renderHeader = useMemo(() => {
     return (
       <>
@@ -193,14 +185,26 @@ const TokenDetails = props => {
             {i18n.t('swap.overview')}
           </TextL>
         </View>
-        {Item(i18n.t('swap.price'), `$ ${price}`, priceRate)}
-        {Item(i18n.t('swap.liquidity'), `${liquidity}`, liqiodityRate)}
-        {Item(
-          `${i18n.t('swap.volume')}(24h)`,
-          `$ ${volumeInPrice}`,
-          volumeInPriceRate,
-        )}
-        {Item(`${i18n.t('swap.TXS')}(24h)`, `${txsCount}`, txsCountRate)}
+        <RateItem
+          title={i18n.t('swap.price')}
+          subtitle={`$ ${price || ''}`}
+          rate={priceRate}
+        />
+        <RateItem
+          title={i18n.t('swap.liquidity')}
+          subtitle={liquidity}
+          rate={liqiodityRate}
+        />
+        <RateItem
+          title={`${i18n.t('swap.volume')}(24h)`}
+          subtitle={`$ ${volumeInPrice || ''}`}
+          rate={volumeInPriceRate}
+        />
+        <RateItem
+          title={`${i18n.t('swap.TXS')}(24h)`}
+          subtitle={txsCount}
+          rate={txsCountRate}
+        />
         <PairCharts />
         {TopPairs}
         {/* <PairCharts {...pairData} /> */}
@@ -212,7 +216,6 @@ const TokenDetails = props => {
       </>
     );
   }, [
-    Item,
     TopPairs,
     liqiodityRate,
     liquidity,
@@ -348,7 +351,7 @@ const TokenDetails = props => {
             ref={list}
             showFooter
             allLoadedTips=" "
-            listFooterHight={pTd(90)}
+            listFooterHight={pTd(200)}
           />
           {BottomButton}
         </>

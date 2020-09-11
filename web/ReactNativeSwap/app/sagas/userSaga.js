@@ -105,6 +105,7 @@ function* onAppInitSaga({privateKey}) {
 function* getUserBalanceSaga() {
   try {
     yield put(userActions.getTokenUsd());
+    yield put(swapActions.getOverviewInfo());
     const userInfo = yield select(userSelectors.getUserInfo);
     const {address, contracts, privateKey} = userInfo;
     if (address && privateKey) {

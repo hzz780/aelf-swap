@@ -313,6 +313,14 @@
     "volume": "成交额",
     "totalValue": "总价值",
     "TXS": "交易数",
-    "decimalTip": "(仅支持{{decimals}}位小数)"
+    "decimalTip": "(仅支持{{decimals}}位小数)",
+    "pairs": "Pairs",
+    "account": {
+      "allPairs": "All Pairs",
+      "totalSwapped": "Total Value Swapped",
+      "feePaid": "Total Fees Paid",
+      "txsCount": "Total Transactions",
+      "liquidityInPrice": "Liquidity (Including Fees)"
+    }
   }
 }

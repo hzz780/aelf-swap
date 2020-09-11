@@ -11,11 +11,6 @@ const styles = StyleSheet.create({
   preBox: {
     marginTop: pTd(20),
   },
-  subtitleStyle: {
-    fontSize: pTd(28),
-    fontWeight: 'bold',
-    color: Colors.fontBlack,
-  },
   toolBarBox: {
     flexDirection: 'row',
   },
