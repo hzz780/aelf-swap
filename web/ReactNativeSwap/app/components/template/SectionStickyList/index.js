@@ -54,7 +54,7 @@ export default class SectionStickyList extends Component {
     const {bottomLoad} = this.state;
     const {
       loadCompleted,
-      allLoadedTips,
+      // allLoadedTips,
       bottomLoadTip,
       listFooterHight,
     } = this.props;

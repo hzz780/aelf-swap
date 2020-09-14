@@ -33,11 +33,11 @@ const LoginAccountLogin = () => {
   );
   const onSwitchAccount = useCallback(
     item => {
-      const {keystore, privateKey, address, userName} = item;
+      const {keystore, privateKey, address: itemAddress, userName} = item;
       VerifyPassword.passwordShow(keystore, async value => {
         if (value) {
           onLoginSuccess({
-            address,
+            itemAddress,
             keystore,
             userName,
             balance: 0,
