@@ -3,7 +3,7 @@ import i18n from 'i18n-js';
 import {Touchable} from '../../../../components/template';
 import {View, LayoutAnimation} from 'react-native';
 import {Colors} from '../../../../assets/theme';
-import {TextL, TextM, TextS} from '../../../../components/template/CommonText';
+import {TextL} from '../../../../components/template/CommonText';
 import styles from '../styles';
 import TitleTool from '../TitleTool';
 const ToolBar = memo(props => {

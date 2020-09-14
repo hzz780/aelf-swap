@@ -16,13 +16,12 @@ import {contractsSelectors} from '../redux/contractsRedux';
 import i18n from 'i18n-js';
 import aelfUtils from '../utils/pages/aelfUtils';
 import {CommonToast, Loading} from '../components/template';
-import navigationService from '../utils/common/navigationService';
 import unitConverter from '../utils/pages/unitConverter';
 import {userSelectors} from '../redux/userRedux';
 import {getFetchRequest} from '../utils/common/networkRequest';
 import config from '../config';
 import swapUtils from '../utils/pages/swapUtils';
-import SwapTransactionPopup from '../contanier/template/Transaction/SwapTransactionPopup';
+import SwapTransactionPopup from '../container/template/Transaction/SwapTransactionPopup';
 const {swapURL} = config;
 const Success = result => {
   if (result.Status === 'PENDING' || result.Status === 'MINED') {

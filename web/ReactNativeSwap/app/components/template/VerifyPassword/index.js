@@ -77,7 +77,7 @@ const PayComponents = props => {
             color={Colors.fontGray}
             size={pTd(40)}
             name="close"
-            onPress={() => OverlayModal.hide()}
+            onPress={cancel}
           />
         </View>
         <Password

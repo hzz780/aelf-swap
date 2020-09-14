@@ -16,12 +16,12 @@ const Components = memo(props => {
   const {txId, goBack} = props;
   return (
     <View style={styles.chooseTokenModal}>
-      <TextL>Transaction Submitted</TextL>
+      <TextL>{i18n.t('swap.transactionPop.transactionSubmitted')}</TextL>
       <CopyText
         style={styles.txIdStyle}
         copied={txId}
         iconColor={Colors.primaryColor}>
-        TxId:{txId}
+        {i18n.t('swap.transactionPop.txId')}:{txId}
       </CopyText>
       <TextL
         onPress={() => {
@@ -30,7 +30,7 @@ const Components = memo(props => {
           goBack && navigationService.goBack();
         }}
         style={styles.explorer}>
-        View on aelf Block Explorer
+        {i18n.t('swap.transactionPop.explorer')}
       </TextL>
       <Touchable
         onPress={() => {
@@ -38,7 +38,7 @@ const Components = memo(props => {
           goBack && navigationService.goBack();
         }}
         style={styles.okStyle}>
-        <TextL style={styles.okText}>OK</TextL>
+        <TextL style={styles.okText}>{i18n.t('swap.transactionPop.OK')}</TextL>
       </Touchable>
     </View>
   );
