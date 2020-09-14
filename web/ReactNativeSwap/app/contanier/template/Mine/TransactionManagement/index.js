@@ -19,6 +19,7 @@ const TransactionManagement = () => {
     return (
       <View style={GStyle.secondContainer}>
         <CommonHeader
+          titleBox={styles.titleBox}
           title={i18n.t('mineModule.transactionManagementT')}
           canBack
         />
@@ -46,5 +47,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     marginTop: '50%',
+  },
+  titleBox: {
+    flex: 3,
   },
 });

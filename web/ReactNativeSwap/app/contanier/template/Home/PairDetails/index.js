@@ -18,6 +18,8 @@ import swapUtils from '../../../../utils/pages/swapUtils';
 import {useStateToProps} from '../../../../utils/pages/hooks';
 import PairCharts from '../PairCharts';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
+import {useFocusEffect} from '@react-navigation/native';
+import RateItem from './RateItem';
 let isActive = true;
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
@@ -109,10 +111,11 @@ const liquidityList = [
   },
 ];
 const PairDetails = props => {
-  const {tokenUSD} = useStateToProps(base => {
-    const {user} = base;
+  const {tokenUSD, pairInfos} = useStateToProps(base => {
+    const {user, swap} = base;
     return {
       tokenUSD: user.tokenUSD,
+      pairInfos: swap.pairInfos,
     };
   });
   const dispatch = useDispatch();
@@ -121,25 +124,16 @@ const PairDetails = props => {
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
     [dispatch],
   );
-  // const getPairInfo = useCallback(
-  //   symbolPair => dispatch(swapActions.getPairInfo(symbolPair)),
-  //   [dispatch],
-  // );
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getPairInfo(pairData.symbolPair);
-  //   }, [getPairInfo, pairData.symbolPair]),
-  // );
-  const explanation = useCallback(
-    (title1, title2, color = Colors.primaryColor) => {
-      return (
-        <View style={styles.poolToken}>
-          <TextM style={[styles.subtitleStyle, {color}]}>{title1}</TextM>
-          <TextM style={[styles.subtitleStyle, {color}]}>{title2}</TextM>
-        </View>
-      );
-    },
-    [],
+  const getPairInfo = useCallback(
+    symbolPair => dispatch(swapActions.getPairInfo(symbolPair)),
+    [dispatch],
+  );
+  const pairInfo = pairInfos?.[pairData?.symbolPair];
+  console.log(pairInfo, '=======info');
+  useFocusEffect(
+    useCallback(() => {
+      getPairInfo(pairData.symbolPair);
+    }, [getPairInfo, pairData.symbolPair]),
   );
   const [index, setIndex] = useState(0);
   const [loadCompleted, setLoadCompleted] = useState(true);
@@ -147,51 +141,50 @@ const PairDetails = props => {
   const renderHeader = useMemo(() => {
     const {symbolA, symbolB, reserveA, reserveB} = pairData || {};
     const subtitle = swapUtils.getSwapUSD(pairData, tokenUSD);
+    const {
+      liquidityInPrice,
+      volumeInPrice,
+      volumeInPriceRate,
+      volumeA,
+      volumeB,
+      liquidityInPriceRate,
+      liquidityA,
+      liquidityB,
+      feeInPrice,
+      feeInPriceRate,
+    } = pairInfo || {};
     return (
-      <View>
+      <>
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.overview')}
           </TextL>
         </View>
-        <ListItem
-          style={styles.liquidityBox}
-          disabled
+        <RateItem
           title={i18n.t('swap.liquidity')}
           subtitle={subtitle}
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
+          rate={liquidityInPriceRate}
+          tA={liquidityA}
+          tB={liquidityB}
+          sA={symbolA}
+          sB={symbolB}
         />
-        {explanation(
-          `${reserveA || '0'} ${symbolA || ''}`,
-          `${reserveB || '0'} ${symbolB || ''}`,
-        )}
-        <ListItem
-          disabled
-          style={styles.liquidityBox}
+        <RateItem
           title={`${i18n.t('swap.volume')}(24h)`}
-          subtitle="$ 234,123"
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
+          subtitle={`$ ${volumeInPrice || ''}`}
+          rate={volumeInPriceRate}
+          tA={volumeA}
+          tB={volumeB}
+          sA={symbolA}
+          sB={symbolB}
+          fColor={Colors.fontGray}
         />
-        {explanation(
-          `${reserveA || '0'} ${symbolA || ''}`,
-          `${reserveB || '0'} ${symbolB || ''}`,
-          Colors.fontGray,
-        )}
-        <ListItem
-          disabled
-          style={styles.liquidityBox}
+        <RateItem
           title={`${i18n.t('swap.fee')}(24h)`}
-          subtitle="$ 234,123"
-          rightElement={null}
-          subtitleStyle={styles.subtitleStyle}
+          subtitle={`$ ${feeInPrice || ''}`}
+          rate={feeInPriceRate}
+          fColor={Colors.fontGray}
         />
-        {explanation(
-          `${reserveA || '0'} ${symbolA || ''}`,
-          `${reserveB || '0'} ${symbolB || ''}`,
-          Colors.fontGray,
-        )}
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.price')}
@@ -223,9 +216,9 @@ const PairDetails = props => {
             {i18n.t('swap.transactions')}
           </TextL>
         </View>
-      </View>
+      </>
     );
-  }, [explanation, pairData, tokenUSD]);
+  }, [pairData, pairInfo, tokenUSD]);
   const stickyHead = useCallback(() => {
     return <ToolBar setIndex={setIndex} index={index} />;
   }, [index]);
@@ -421,18 +414,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     minHeight: 0,
     paddingBottom: 0,
-  },
-  poolToken: {
-    paddingTop: pTd(10),
-    width: '100%',
-    backgroundColor: 'white',
-    alignItems: 'flex-end',
-    paddingRight: pTd(30),
-    height: pTd(110),
-    justifyContent: 'space-around',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderColor,
-    paddingBottom: pTd(20),
   },
   itemtitleBox: {
     flexDirection: 'row',

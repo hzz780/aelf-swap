@@ -78,6 +78,7 @@ const Header = props => {
     rightOnPress,
     leftTitle,
     leftOnPress,
+    titleBox,
   } = props;
   return (
     <View
@@ -111,7 +112,7 @@ const Header = props => {
         {titleElement ? (
           titleElement
         ) : (
-          <View style={styles.titleBox}>
+          <View style={[styles.titleBox, titleBox]}>
             <Text
               numberOfLines={1}
               ellipsizeMode="middle"

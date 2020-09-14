@@ -320,7 +320,11 @@
       "totalSwapped": "Total Value Swapped",
       "feePaid": "Total Fees Paid",
       "txsCount": "Total Transactions",
-      "liquidityInPrice": "Liquidity (Including Fees)"
+      "liquidityInPrice": "Liquidity (Including Fees)",
+      "pairList": "Pair List"
+    },
+    "token": {
+      "topPairs": "Top Pairs"
     }
   }
 }

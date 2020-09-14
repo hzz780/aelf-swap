@@ -9,6 +9,7 @@ import {Colors} from '../../../assets/theme';
 const ListItem = props => {
   const {
     title,
+    titleElement,
     onPress,
     subtitle,
     style,
@@ -51,7 +52,9 @@ const ListItem = props => {
       disabled={disabled}
       onPress={onPress}
       style={[styles.container, style]}>
-      {details ? (
+      {titleElement ? (
+        titleElement
+      ) : details ? (
         <View style={styles.titleStyle}>
           <TextM style={[titleStyle]}>{title}</TextM>
           <TextS style={[styles.detailsStyle, detailsStyle]}>{details}</TextS>

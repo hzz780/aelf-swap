@@ -20,6 +20,8 @@ const {Types, Creators} = createActions({
   setPairCharts: ['pairCharts'],
 
   getPairInfo: ['symbolPair'],
+  setPairInfo: ['pairInfos'],
+
   getOverviewChart: [],
   setOverviewChart: ['overviewChart'],
 
@@ -44,6 +46,7 @@ export const INITIAL_STATE = Immutable({
   pairCandleStick: {},
   pairCharts: {},
   overviewChart: [],
+  pairInfos: {},
   tokenInfo: {},
   accountInfo: {},
   overviewInfo: {},
@@ -152,6 +155,12 @@ export const getOverviewInfo = state => {
 export const setOverviewInfo = (state, {overviewInfo}) => {
   return state.merge({overviewInfo});
 };
+export const setPairInfo = (state, {pairInfos}) => {
+  const {pairInfos: pair} = state;
+  return state.merge({
+    pairInfos: Object.assign({}, pair || {}, pairInfos || {}),
+  });
+};
 /* ------------- Hookup Reducers To Types ------------- */
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_PAIRS]: getPairs,
@@ -171,6 +180,8 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_PAIR_CHARTS]: setPairCharts,
 
   [Types.GET_PAIR_INFO]: getPairInfo,
+  [Types.SET_PAIR_INFO]: setPairInfo,
+
   [Types.GET_OVERVIEW_CHART]: getOverviewChart,
   [Types.SET_OVERVIEW_CHART]: setOverviewChart,
 

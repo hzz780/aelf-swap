@@ -313,10 +313,29 @@ function* getPairChartsSaga({symbolPair, range}) {
 }
 function* getPairInfoSaga({symbolPair}) {
   try {
-    const result = yield getFetchRequest(
-      `${swapURL}/api/swap/pairInfo?symbolPair=${symbolPair}`,
-    );
-    console.log(result, '======result');
+    // const result = yield getFetchRequest(
+    //   `${swapURL}/api/swap/pairInfo?symbolPair=${symbolPair}`,
+    // );
+    // console.log(result, '======result');
+    const data = {
+      symbolA: 'ELF',
+      symbolB: 'AEUSD',
+      priceA: 0.01, // symbol A美元价格
+      priceB: 0.01, // symbol B美元价格
+      volumeA: 123,
+      volumeB: 123,
+      volumeInPrice: 123,
+      volumeInPriceRate: 0.01,
+      liquidityA: 123,
+      liquidityB: 123,
+      liquidityInPrice: 123123,
+      liquidityInPriceRate: 0.01,
+      txsCount: 123,
+      txsCountRate: 123,
+      feeInPrice: 1234,
+      feeInPriceRate: 0.1,
+    };
+    yield put(swapActions.setPairInfo({[symbolPair]: data}));
   } catch (error) {
     console.log(error, '=getPairInfoSagagetPairInfoSaga');
   }

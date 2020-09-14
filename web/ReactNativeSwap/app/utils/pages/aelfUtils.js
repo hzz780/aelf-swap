@@ -112,10 +112,10 @@ const containsAllTokens = (first, second, type) => {
   return contains;
 };
 const deepCompare = (x, y) => {
-  let i, l, leftChain, rightChain;
+  var i, l, leftChain, rightChain;
 
   function compare2Objects(x, y) {
-    let p;
+    var p;
 
     // remember that NaN === NaN returns false
     // and isNaN(undefined) returns true

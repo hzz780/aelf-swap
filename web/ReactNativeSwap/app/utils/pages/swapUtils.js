@@ -362,8 +362,8 @@ const getCurrentReserve = (s, currentPair) => {
   return s === symbolA ? reserveA : reserveB;
 };
 const getPercentage = rate => {
-  let s = Math.round(rate * 10000) / 100 + '%';
-  return judgmentNaN(s);
+  let s = Math.round(rate * 10000) / 100;
+  return (judgmentNaN(s) || '0') + '%';
 };
 const getTotalValue = value => {
   return judgmentNaN(digits(value, USD_DECIMALS));
