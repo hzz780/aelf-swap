@@ -1,7 +1,7 @@
 import React, {memo} from 'react';
 import i18n from 'i18n-js';
 import {Touchable} from '../../../../components/template';
-import {View, LayoutAnimation} from 'react-native';
+import {View} from 'react-native';
 import {Colors} from '../../../../assets/theme';
 import {TextL} from '../../../../components/template/CommonText';
 import styles from '../styles';
@@ -18,10 +18,7 @@ const ToolBar = memo(props => {
             <Touchable
               highlight
               underlayColor={Colors.bottonPressColor}
-              onPress={() => {
-                LayoutAnimation.easeInEaseOut();
-                setIndex && setIndex(j);
-              }}
+              onPress={() => setIndex?.(j)}
               key={j}
               style={[
                 styles.toolBarItem,
@@ -37,11 +34,11 @@ const ToolBar = memo(props => {
           titleList={[
             i18n.t('swap.pair'),
             i18n.t('swap.liquidity'),
-            i18n.t('swap.volume'),
+            `${i18n.t('swap.volume')}(24h)`,
           ]}
         />
       ) : index === 2 ? (
-        <TitleTool titleList={[i18n.t('account'), i18n.t('swap.volume')]} />
+        <TitleTool titleList={[i18n.t('account'), 'Value']} />
       ) : (
         <TitleTool
           titleList={[

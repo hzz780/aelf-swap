@@ -593,7 +593,7 @@ const Swap = props => {
   const upPullRefresh = useCallback(
     callBack => {
       getPairs(undefined, () => {
-        callBack && callBack();
+        callBack?.();
       });
     },
     [getPairs],

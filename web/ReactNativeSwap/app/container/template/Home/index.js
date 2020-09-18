@@ -15,7 +15,7 @@ import swapUtils from '../../../utils/pages/swapUtils';
 import {useFocusEffect} from '@react-navigation/native';
 import {TextM, TextS} from '../../../components/template/CommonText';
 import styles from './styles';
-import ToolBar from './ToolBar';
+import HomeToolBar from './HomeToolBar';
 import PairsItem from './PairsItem';
 import Overview from './Overview';
 let isActive = true;
@@ -42,40 +42,64 @@ const tokenList = [
     priceRate: 0.01, // 价格变化率
   },
 ];
-const accountList = [
-  {
-    address: 'aDTDFwfZxkMwYqCxndue9YU9xAF5wskSekdKQXHdPAEyynbEv',
-    totalBalanceInPrice: 12313, // 美元价格计算的总市值
-  },
-  {
-    address: '12313213',
-    totalBalanceInPrice: 12313, // 美元价格计算的总市值
-  },
-  {
-    address: '12313213',
-    totalBalanceInPrice: 12313, // 美元价格计算的总市值
-  },
-];
+// const accountList = [
+//   {
+//     address: 'aDTDFwfZxkMwYqCxndue9YU9xAF5wskSekdKQXHdPAEyynbEv',
+//     totalBalanceInPrice: 12313, // 美元价格计算的总市值
+//   },
+//   {
+//     address: '12313213',
+//     totalBalanceInPrice: 12313, // 美元价格计算的总市值
+//   },
+//   {
+//     address: '12313213',
+//     totalBalanceInPrice: 12313, // 美元价格计算的总市值
+//   },
+// ];
 const Home = () => {
   const dispatch = useDispatch();
   const list = useRef();
-  const [loadCompleted, setLoadCompleted] = useState(false);
+  const [loadCompleted, setLoadCompleted] = useState({});
   const [index, setIndex] = useState(1);
   const getPairs = useCallback(
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
     [dispatch],
   );
-  const {pairs} = useStateToProps(base => {
+  const getAccountList = useCallback(
+    loadingPaging => dispatch(swapActions.getAccountList(loadingPaging)),
+    [dispatch],
+  );
+  const getTokenList = useCallback(
+    loadingPaging => dispatch(swapActions.getTokenList(loadingPaging)),
+    [dispatch],
+  );
+  const {pairs, accountList} = useStateToProps(base => {
     const {settings, swap} = base;
     return {
       language: settings.language,
       pairs: swap.pairs,
+      accountList: swap.accountList,
     };
   });
+  console.log(accountList, '======accountList');
+  const onGetAccountList = useCallback(
+    loadingPaging => {
+      getAccountList(loadingPaging);
+    },
+    [getAccountList],
+  );
+  const onGetTokenList = useCallback(
+    loadingPaging => {
+      getTokenList(loadingPaging);
+    },
+    [getTokenList],
+  );
   useFocusEffect(
     useCallback(() => {
       getPairs();
-    }, [getPairs]),
+      onGetAccountList();
+      onGetTokenList();
+    }, [getPairs, onGetAccountList, onGetTokenList]),
   );
   const onSetLoadCompleted = useCallback(value => {
     if (isActive) {
@@ -90,9 +114,12 @@ const Home = () => {
     onSetLoadCompleted(true);
   }, [getPairs, onSetLoadCompleted]);
   const onEndReached = useCallback(() => {
-    onSetLoadCompleted(true);
+    // onSetLoadCompleted(true);
+    if (index === 2) {
+      onGetAccountList(true);
+    }
     list.current && list.current.endBottomRefresh();
-  }, [onSetLoadCompleted]);
+  }, [index, onGetAccountList]);
   const renderItem = useCallback(
     ({item}) => {
       if (!item) {
@@ -132,7 +159,9 @@ const Home = () => {
         return (
           <Touchable
             onPress={() =>
-              navigationService.navigate('AccountDetails', {address})
+              navigationService.navigate('AccountDetails', {
+                address: 'aDTDFwfZxkMwYqCxndue9YU9xAF5wskSekdKQXHdPAEyynbEv',
+              })
             }
             style={styles.listItem2Box}>
             <TextM
@@ -144,7 +173,7 @@ const Home = () => {
             <TextS
               style={[styles.accountSubtitle, styles.flexBox]}
               numberOfLines={1}>
-              ${totalBalanceInPrice}
+              ${swapUtils.USDdigits(totalBalanceInPrice)}
             </TextS>
           </Touchable>
         );
@@ -156,7 +185,19 @@ const Home = () => {
     return <Overview />;
   }, []);
   const stickyHead = useCallback(() => {
-    return <ToolBar index={index} setIndex={setIndex} />;
+    return (
+      <HomeToolBar
+        index={index}
+        setIndex={i => {
+          setIndex(i);
+          list.current?.scrollTo({
+            sectionIndex: 0,
+            itemIndex: 0,
+            animated: false,
+          });
+        }}
+      />
+    );
   }, [index]);
   const data = index === 1 ? pairs : index === 2 ? accountList : tokenList;
   return (
@@ -171,7 +212,7 @@ const Home = () => {
         renderItem={renderItem}
         renderHeader={renderHeader}
         onEndReached={onEndReached}
-        loadCompleted={loadCompleted}
+        loadCompleted={loadCompleted[index]}
         upPullRefresh={upPullRefresh}
         bottomLoadTip={i18n.t('swap.loadMore')}
       />

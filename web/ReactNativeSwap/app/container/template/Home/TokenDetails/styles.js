@@ -8,9 +8,6 @@ const styles = StyleSheet.create({
     paddingBottom: pTd(10),
     paddingHorizontal: pTd(30),
   },
-  preBox: {
-    marginTop: pTd(20),
-  },
   toolBarBox: {
     flexDirection: 'row',
   },
@@ -24,28 +21,6 @@ const styles = StyleSheet.create({
   },
   whiteColor: {
     color: 'white',
-  },
-  itemBox: {
-    flex: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderColor,
-    paddingLeft: pTd(30),
-    paddingVertical: pTd(20),
-    backgroundColor: 'white',
-  },
-  timeStyle: {
-    color: Colors.fontGray,
-    marginTop: pTd(5),
-  },
-  toolListTitile: {
-    paddingTop: pTd(15),
-    paddingBottom: pTd(10),
-    paddingHorizontal: pTd(30),
-    backgroundColor: '#f5f5f5',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderColor,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   bottomBox: {
     flexDirection: 'row',

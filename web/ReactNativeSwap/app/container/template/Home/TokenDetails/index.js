@@ -1,5 +1,5 @@
 import React, {memo, useMemo, useCallback, useRef, useState} from 'react';
-import {View, LayoutAnimation} from 'react-native';
+import {View} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
 import {
   CommonHeader,
@@ -7,7 +7,7 @@ import {
   Touchable,
   BounceSpinner,
 } from '../../../../components/template';
-import {TextL, TextM, TextS} from '../../../../components/template/CommonText';
+import {TextL} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
 import navigationService from '../../../../utils/common/navigationService';
 import i18n from 'i18n-js';
@@ -15,139 +15,86 @@ import swapActions from '../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import swapUtils from '../../../../utils/pages/swapUtils';
 import {useStateToProps} from '../../../../utils/pages/hooks';
-import PairCharts from '../PairCharts';
-import aelfUtils from '../../../../utils/pages/aelfUtils';
+import TokenCharts from '../components/TokenCharts';
 import styles from './styles';
 import TitleTool from '../TitleTool';
-import PairsItem from '../PairsItem';
 import {useFocusEffect} from '@react-navigation/native';
 import RateItem from '../RateItem';
-let isActive = true;
-const ToolBar = memo(props => {
-  const {index, setIndex} = props;
-  const toolList = [
-    i18n.t('swap.swaps'),
-    i18n.t('swap.adds'),
-    i18n.t('swap.removes'),
-  ];
-  return (
-    <>
-      <View style={styles.toolBarBox}>
-        {toolList.map((item, j) => {
-          const current = j === index;
-          return (
-            <Touchable
-              highlight
-              underlayColor={Colors.bottonPressColor}
-              onPress={() => {
-                LayoutAnimation.easeInEaseOut();
-                setIndex(j);
-              }}
-              key={j}
-              style={[
-                styles.toolBarItem,
-                current && {backgroundColor: Colors.primaryColor},
-              ]}>
-              <TextL style={[current && styles.whiteColor]}>{item}</TextL>
-            </Touchable>
-          );
-        })}
-      </View>
-      <View style={styles.toolListTitile}>
-        <TextL style={{color: Colors.primaryColor}}>{toolList[index]}</TextL>
-        <TextL style={{color: Colors.primaryColor}}>
-          {i18n.t('swap.totalValue')}
-        </TextL>
-      </View>
-    </>
-  );
-});
-const swapList = [
-  {
-    sender: '12313', // 交易者
-    symbolIn: 'ELF',
-    symbolOut: 'AEUSD',
-    amountIn: 12312,
-    amountOut: 12313,
-    priceIn: 0.1,
-    priceOut: 0.1,
-    fee: 123,
-    txId: '13142',
-    time: 123, // unix时间戳
-  },
-  {
-    sender: '12313', // 交易者
-    symbolIn: 'ELF',
-    symbolOut: 'AEUSD',
-    amountIn: 12312,
-    amountOut: 12313,
-    priceIn: 0.1,
-    priceOut: 0.1,
-    fee: 123,
-    txId: '13142',
-    time: 123, // unix时间戳
-  },
-];
-const liquidityList = [
-  {
-    sender: '12313', // 交易者
-    symbolA: 'ELF',
-    symbolB: 'AEUSD',
-    amountA: 12312,
-    amountB: 12313,
-    priceA: 0.1,
-    priceB: 0.1,
-    txId: '13142',
-    time: 123, // unix时间戳
-  },
-  {
-    sender: '12313', // 交易者
-    symbolA: 'ELF',
-    symbolB: 'AEUSD',
-    amountA: 12312,
-    amountB: 12313,
-    priceA: 0.1,
-    priceB: 0.1,
-    txId: '13142',
-    time: 123, // unix时间戳
-  },
-];
+import TransactionsItem from '../components/TransactionsItem';
+import ToolBar from '../components/ToolBar';
+import PairItem from '../components/PairItem';
 const TokenDetails = props => {
-  const {tokenInfo} = useStateToProps(base => {
-    const {user, swap} = base;
-    return {
-      tokenUSD: user.tokenUSD,
-      tokenInfo: swap.tokenInfo,
-    };
-  });
   const dispatch = useDispatch();
   const getTokenInfo = useCallback(
     (symbol, callBack) => dispatch(swapActions.getTokenInfo(symbol, callBack)),
     [dispatch],
   );
   const symbol = props.route.params?.symbol ?? '';
-  const tokenDetails = tokenInfo[symbol];
   const {
-    price,
-    priceRate,
-    liquidity,
-    liqiodityRate,
-    volumeInPrice,
-    volumeInPriceRate,
-    txsCount,
-    txsCountRate,
-    topPairs,
-  } = tokenDetails || {};
+    tokenInfo,
+    symbolSwapList,
+    symbolAddLiquidityList,
+    symbolRemoveLiquidityList,
+  } = useStateToProps(base => {
+    const {swap} = base;
+    return {
+      tokenInfo: swap.tokenInfo,
+      symbolSwapList: swap.symbolSwap?.[symbol],
+      symbolAddLiquidityList: swap.symbolAddLiquidity?.[symbol],
+      symbolRemoveLiquidityList: swap.symbolRemoveLiquidity?.[symbol],
+    };
+  });
+  const tokenDetails = tokenInfo[symbol];
+  const [index, setIndex] = useState(0);
+  const [loadCompleted, setLoadCompleted] = useState(null);
+  const list = useRef();
+  const endList = useCallback(
+    (v, i) => {
+      if (v === 1) {
+        setLoadCompleted({...(loadCompleted || {}), [i]: false});
+      } else {
+        setLoadCompleted({...(loadCompleted || {}), [i]: true});
+      }
+      list.current?.endUpPullRefresh();
+      list.current?.endBottomRefresh();
+    },
+    [loadCompleted],
+  );
+  const onGetSymbolSwapList = useCallback(
+    (i, loadingPaging) =>
+      dispatch(
+        swapActions.getSymbolSwapList(symbol, loadingPaging, v =>
+          endList(v, i),
+        ),
+      ),
+    [dispatch, endList, symbol],
+  );
+  const onGetSymbolAddLiquidityList = useCallback(
+    (i, loadingPaging) =>
+      dispatch(
+        swapActions.getSymbolAddLiquidityList(symbol, loadingPaging, v =>
+          endList(v, i),
+        ),
+      ),
+    [dispatch, endList, symbol],
+  );
+  const onGetSymbolRemoveLiquidityList = useCallback(
+    (i, loadingPaging) =>
+      dispatch(
+        swapActions.getSymbolRemoveLiquidityList(symbol, loadingPaging, v =>
+          endList(v, i),
+        ),
+      ),
+    [dispatch, endList, symbol],
+  );
   console.log(tokenDetails, '=====tokenDetails');
   useFocusEffect(
     useCallback(() => {
       upPullRefresh();
     }, [upPullRefresh]),
   );
-  const [index, setIndex] = useState(0);
-  const [loadCompleted, setLoadCompleted] = useState(true);
-  const list = useRef();
   const TopPairs = useMemo(() => {
+    const {topPairs} = tokenDetails || {};
     if (Array.isArray(topPairs)) {
       return (
         <>
@@ -167,17 +114,35 @@ const TokenDetails = props => {
             titleList={[
               i18n.t('swap.pair'),
               i18n.t('swap.liquidity'),
-              i18n.t('swap.volume'),
+              `${i18n.t('swap.volume')}(24h)`,
             ]}
           />
-          {topPairs.map((item, i) => {
-            return <PairsItem item={item} key={i} />;
-          })}
+          {topPairs
+            .slice(0, topPairs.length > 2 ? 2 : topPairs.length - 1)
+            .map((item, i) => {
+              console.log(item, '=====item');
+              return <PairItem item={item} key={i} />;
+            })}
         </>
       );
+    } else {
+      return <BounceSpinner />;
     }
-  }, [symbol, topPairs]);
+  }, [symbol, tokenDetails]);
   const renderHeader = useMemo(() => {
+    const {
+      price,
+      priceRate,
+      liquidity,
+      liqiodityRate,
+      volumeInPrice,
+      volumeInPriceRate,
+      txsCount,
+      txsCountRate,
+    } = tokenDetails || {};
+    if (!tokenDetails) {
+      return <BounceSpinner />;
+    }
     return (
       <>
         <View style={styles.overviewBox}>
@@ -187,17 +152,17 @@ const TokenDetails = props => {
         </View>
         <RateItem
           title={i18n.t('swap.price')}
-          subtitle={`$ ${price || ''}`}
+          subtitle={`$ ${swapUtils.USDdigits(price)}`}
           rate={priceRate}
         />
         <RateItem
           title={i18n.t('swap.liquidity')}
-          subtitle={liquidity}
+          subtitle={`$ ${swapUtils.USDdigits(liquidity)}`}
           rate={liqiodityRate}
         />
         <RateItem
           title={`${i18n.t('swap.volume')}(24h)`}
-          subtitle={`$ ${volumeInPrice || ''}`}
+          subtitle={`$ ${swapUtils.USDdigits(volumeInPrice)}`}
           rate={volumeInPriceRate}
         />
         <RateItem
@@ -205,7 +170,7 @@ const TokenDetails = props => {
           subtitle={txsCount}
           rate={txsCountRate}
         />
-        <PairCharts />
+        <TokenCharts symbol={symbol} />
         {TopPairs}
         {/* <PairCharts {...pairData} /> */}
         <View style={styles.overviewBox}>
@@ -215,94 +180,53 @@ const TokenDetails = props => {
         </View>
       </>
     );
-  }, [
-    TopPairs,
-    liqiodityRate,
-    liquidity,
-    price,
-    priceRate,
-    txsCount,
-    txsCountRate,
-    volumeInPrice,
-    volumeInPriceRate,
-  ]);
+  }, [TopPairs, symbol, tokenDetails]);
   const stickyHead = useCallback(() => {
-    return <ToolBar setIndex={setIndex} index={index} />;
+    return (
+      <ToolBar
+        setIndex={i => {
+          list.current?.scrollTo({
+            sectionIndex: 0,
+            itemIndex: 0,
+            animated: false,
+          });
+          setIndex(i);
+        }}
+        index={index}
+      />
+    );
   }, [index]);
   const renderItem = useCallback(
-    ({item}) => {
-      if (!item) {
-        return;
-      }
-      const {
-        amountIn,
-        amountOut,
-        symbolIn,
-        symbolOut,
-        sender,
-        symbolA,
-        amountA,
-        amountB,
-        symbolB,
-        priceOut,
-        priceA,
-        priceB,
-      } = item || {};
-      let leftTitle = i18n.t('swap.swap'),
-        rigthTitle = i18n.t('swap.for');
-      if (index === 1) {
-        leftTitle = i18n.t('swap.add');
-        rigthTitle = i18n.t('swap.and');
-      } else if (index === 2) {
-        leftTitle = i18n.t('swap.remove');
-        rigthTitle = i18n.t('swap.and');
-      }
-      const totalValue = priceOut
-        ? priceOut * amountOut
-        : priceA * amountA + priceB * amountB;
-      return (
-        <View style={styles.itemBox}>
-          <View style={styles.itemtitleBox}>
-            <TextM style={styles.leftTitle}>
-              {leftTitle}{' '}
-              <TextL style={{color: Colors.fontBlack}}>
-                {amountIn || amountA} {symbolIn || symbolA}
-              </TextL>{' '}
-              {rigthTitle}{' '}
-              <TextL style={{color: Colors.fontBlack}}>
-                {amountOut || amountB} {symbolOut || symbolB}
-              </TextL>
-            </TextM>
-            <TextM numberOfLines={1}>
-              ${swapUtils.getTotalValue(totalValue)}
-            </TextM>
-          </View>
-          <TextS numberOfLines={1} style={styles.timeStyle}>
-            {sender}
-          </TextS>
-          <TextS style={styles.timeStyle}>
-            {aelfUtils.timeConversion(new Date().getTime())}
-          </TextS>
-        </View>
-      );
-    },
+    ({item}) => <TransactionsItem item={item} index={index} />,
     [index],
   );
-  const onSetLoadCompleted = useCallback(value => {
-    if (isActive) {
-      setLoadCompleted(value);
-    }
-  }, []);
   const upPullRefresh = useCallback(() => {
-    getTokenInfo(symbol, () => {
-      list.current && list.current.endUpPullRefresh();
-      list.current && list.current.endBottomRefresh();
-    });
-  }, [getTokenInfo, symbol]);
+    getTokenInfo(symbol);
+    setLoadCompleted(null);
+    onGetSymbolSwapList(0);
+    onGetSymbolAddLiquidityList(1);
+    onGetSymbolRemoveLiquidityList(2);
+  }, [
+    getTokenInfo,
+    onGetSymbolAddLiquidityList,
+    onGetSymbolRemoveLiquidityList,
+    onGetSymbolSwapList,
+    symbol,
+  ]);
   const onEndReached = useCallback(() => {
-    onSetLoadCompleted(true);
-    list.current && list.current.endBottomRefresh();
-  }, [onSetLoadCompleted]);
+    if (index === 0) {
+      onGetSymbolSwapList(0, true);
+    } else if (index === 1) {
+      onGetSymbolAddLiquidityList(1, true);
+    } else {
+      onGetSymbolRemoveLiquidityList(2, true);
+    }
+  }, [
+    index,
+    onGetSymbolAddLiquidityList,
+    onGetSymbolRemoveLiquidityList,
+    onGetSymbolSwapList,
+  ]);
   const BottomButton = useMemo(() => {
     return (
       <View style={styles.bottomBox}>
@@ -333,25 +257,36 @@ const TokenDetails = props => {
       </View>
     );
   }, [symbol]);
-  const data = index === 0 ? swapList : liquidityList;
-  console.log(tokenDetails, '====tokenDetails');
+  const getData = useCallback(() => {
+    if (index === 0) {
+      return symbolSwapList;
+    } else if (index === 1) {
+      return symbolAddLiquidityList;
+    }
+    return symbolRemoveLiquidityList;
+  }, [
+    index,
+    symbolAddLiquidityList,
+    symbolRemoveLiquidityList,
+    symbolSwapList,
+  ]);
   return (
     <View style={GStyle.secondContainer}>
       <CommonHeader title={`${symbol}`} canBack />
       {tokenDetails ? (
         <>
           <SectionStickyList
-            data={data}
-            loadCompleted={loadCompleted}
-            upPullRefresh={upPullRefresh}
-            // onEndReached={onEndReached}
-            renderHeader={renderHeader}
+            ref={list}
+            data={getData()}
+            showFooter
+            whetherAutomatic
             stickyHead={stickyHead}
             renderItem={renderItem}
-            ref={list}
-            showFooter
-            allLoadedTips=" "
             listFooterHight={pTd(200)}
+            onEndReached={onEndReached}
+            renderHeader={renderHeader}
+            loadCompleted={loadCompleted?.[index]}
+            upPullRefresh={upPullRefresh}
           />
           {BottomButton}
         </>

@@ -12,7 +12,7 @@ const show = callBack => {
   if (biometrics) {
     touchAuth()
       .then(() => {
-        callBack && callBack(true);
+        callBack?.(true);
       })
       .catch(() => VerifyPassword.payShow(callBack));
   } else {

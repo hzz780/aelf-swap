@@ -335,7 +335,7 @@ const RemoveLiquidity = props => {
         if (code === 1) {
           setPairData(v);
         }
-        callBack && callBack();
+        callBack?.();
       });
     },
     [getAccountAssets, symbolPair],

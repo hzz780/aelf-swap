@@ -54,7 +54,7 @@ const PayComponents = props => {
 
   const determine = useCallback(() => {
     if (payPw === intervalRef.current) {
-      callBack && callBack(true);
+      callBack?.(true);
       OverlayModal.hide();
     } else {
       setPwTip(true);
@@ -62,7 +62,7 @@ const PayComponents = props => {
   }, [intervalRef, payPw, callBack]);
 
   const cancel = useCallback(() => {
-    callBack && callBack(false);
+    callBack?.(false);
     OverlayModal.hide();
   }, [callBack]);
   return (
@@ -113,7 +113,7 @@ const PasswordComponents = props => {
     const checkResult = aelfUtils.checkPassword(keystore, intervalRef.current);
     setLoading(false);
     if (checkResult) {
-      callBack && callBack(true);
+      callBack?.(true);
       OverlayModal.hide();
     } else {
       setPwTip(true);
@@ -121,7 +121,7 @@ const PasswordComponents = props => {
   }, [callBack, keystore]);
 
   const cancel = useCallback(() => {
-    callBack && callBack(false);
+    callBack?.(false);
     OverlayModal.hide();
   }, [callBack]);
   return (
@@ -178,7 +178,7 @@ const InputComponents = props => {
         : defaultFun(intervalRef.current)
     ) {
       OverlayModal.hide();
-      callBack && callBack(true, intervalRef.current);
+      callBack?.(true, intervalRef.current);
     } else {
       setErrTip(true);
     }
@@ -186,7 +186,7 @@ const InputComponents = props => {
 
   const cancel = useCallback(() => {
     OverlayModal.hide();
-    callBack && callBack(false);
+    callBack?.(false);
   }, [callBack]);
   return (
     <ScrollView alwaysBounceVertical={false} keyboardShouldPersistTaps="always">

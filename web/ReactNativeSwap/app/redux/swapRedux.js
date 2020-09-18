@@ -30,9 +30,44 @@ const {Types, Creators} = createActions({
 
   getAccountInfo: ['address', 'callBack'],
   setAccountInfo: ['accountInfo'],
+  getAccountChart: ['address', 'range', 'symbolPair'],
+  setAccountChart: ['accountChart'],
 
   getOverviewInfo: [],
   setOverviewInfo: ['overviewInfo'],
+
+  getAccountList: ['loadingPaging'],
+  setAccountList: ['accountList'],
+
+  getTokenList: ['loadingPaging'],
+  setTokenList: ['tokenList'],
+
+  getTokenChart: ['symbol', 'range'],
+  setTokenChart: ['tokenChart'],
+
+  //pair list
+  getPairSwapList: ['symbolPair', 'loadingPaging', 'callBack'],
+  setPairSwap: ['pairSwap'],
+  getPairAddLiquidityList: ['symbolPair', 'loadingPaging', 'callBack'],
+  getPairRemoveLiquidityList: ['symbolPair', 'loadingPaging', 'callBack'],
+  setPairAddLiquidity: ['pairAddLiquidity'],
+  setPairRemoveLiquidity: ['pairRemoveLiquidity'],
+
+  //symbol list
+  getSymbolSwapList: ['symbol', 'loadingPaging', 'callBack'],
+  setSymbolSwap: ['symbolSwap'],
+  getSymbolAddLiquidityList: ['symbol', 'loadingPaging', 'callBack'],
+  getSymbolRemoveLiquidityList: ['symbol', 'loadingPaging', 'callBack'],
+  setSymbolAddLiquidity: ['symbolAddLiquidity'],
+  setSymbolRemoveLiquidity: ['symbolRemoveLiquidity'],
+
+  //address list
+  getAddressSwapList: ['address', 'loadingPaging', 'callBack'],
+  setAddressSwap: ['addressSwap'],
+  getAddressAddLiquidityList: ['address', 'loadingPaging', 'callBack'],
+  getAddressRemoveLiquidityList: ['address', 'loadingPaging', 'callBack'],
+  setAddressAddLiquidity: ['addressAddLiquidity'],
+  setAddressRemoveLiquidity: ['addressRemoveLiquidity'],
 });
 
 export const swapTypes = Types;
@@ -49,7 +84,23 @@ export const INITIAL_STATE = Immutable({
   pairInfos: {},
   tokenInfo: {},
   accountInfo: {},
+  accountChart: {},
   overviewInfo: {},
+  accountList: [],
+  tokenList: [],
+  tokenChart: {},
+
+  pairSwap: {},
+  pairAddLiquidity: {},
+  pairRemoveLiquidity: {},
+
+  symbolSwap: {},
+  symbolAddLiquidity: {},
+  symbolRemoveLiquidity: {},
+
+  addressSwap: {},
+  addressAddLiquidity: {},
+  addressRemoveLiquidity: {},
 });
 
 /* ------------- Selectors ------------- */
@@ -64,6 +115,64 @@ export const swapSelectors = {
   pairCharts: createSelector(
     _baseSelector,
     base => base.pairCharts,
+  ),
+  overviewInfo: createSelector(
+    _baseSelector,
+    base => base.overviewInfo,
+  ),
+  accountList: createSelector(
+    _baseSelector,
+    base => base.accountList,
+  ),
+  tokenList: createSelector(
+    _baseSelector,
+    base => base.tokenList,
+  ),
+  tokenChart: createSelector(
+    _baseSelector,
+    base => base.tokenChart,
+  ),
+
+  pairSwap: createSelector(
+    _baseSelector,
+    base => base.pairSwap,
+  ),
+  pairAddLiquidity: createSelector(
+    _baseSelector,
+    base => base.pairAddLiquidity,
+  ),
+  pairRemoveLiquidity: createSelector(
+    _baseSelector,
+    base => base.pairRemoveLiquidity,
+  ),
+
+  symbolSwap: createSelector(
+    _baseSelector,
+    base => base.symbolSwap,
+  ),
+  symbolAddLiquidity: createSelector(
+    _baseSelector,
+    base => base.symbolAddLiquidity,
+  ),
+  symbolRemoveLiquidity: createSelector(
+    _baseSelector,
+    base => base.symbolRemoveLiquidity,
+  ),
+  accountChart: createSelector(
+    _baseSelector,
+    base => base.accountChart,
+  ),
+  addressSwap: createSelector(
+    _baseSelector,
+    base => base.addressSwap,
+  ),
+  addressAddLiquidity: createSelector(
+    _baseSelector,
+    base => base.addressAddLiquidity,
+  ),
+  addressRemoveLiquidity: createSelector(
+    _baseSelector,
+    base => base.addressRemoveLiquidity,
   ),
 };
 
@@ -148,6 +257,15 @@ export const setAccountInfo = (state, {accountInfo}) => {
     accountInfo: Object.assign({}, account || {}, accountInfo || {}),
   });
 };
+export const setAccountChart = (state, {accountChart}) => {
+  const {accountChart: account} = state;
+  return state.merge({
+    accountChart: Object.assign({}, account || {}, accountChart || {}),
+  });
+};
+export const getAccountChart = state => {
+  return state.merge();
+};
 
 export const getOverviewInfo = state => {
   return state.merge();
@@ -159,6 +277,128 @@ export const setPairInfo = (state, {pairInfos}) => {
   const {pairInfos: pair} = state;
   return state.merge({
     pairInfos: Object.assign({}, pair || {}, pairInfos || {}),
+  });
+};
+export const getAccountList = state => {
+  return state.merge();
+};
+export const setAccountList = (state, {accountList}) => {
+  return state.merge({accountList});
+};
+
+export const getTokenList = state => {
+  return state.merge();
+};
+export const setTokenList = (state, {tokenList}) => {
+  return state.merge({tokenList});
+};
+
+export const getTokenChart = state => {
+  return state.merge();
+};
+export const setTokenChart = (state, {tokenChart}) => {
+  const {tokenChart: charts} = state;
+  return state.merge({
+    tokenChart: Object.assign({}, charts || {}, tokenChart || {}),
+  });
+};
+
+export const getPairSwapList = state => {
+  return state.merge();
+};
+export const setPairSwap = (state, {pairSwap}) => {
+  const {pairSwap: swap} = state;
+  return state.merge({
+    pairSwap: Object.assign({}, swap || {}, pairSwap || {}),
+  });
+};
+export const getPairAddLiquidityList = state => {
+  return state.merge();
+};
+export const getPairRemoveLiquidityList = state => {
+  return state.merge();
+};
+export const setPairAddLiquidity = (state, {pairAddLiquidity}) => {
+  const {pairAddLiquidity: add} = state;
+  return state.merge({
+    pairAddLiquidity: Object.assign({}, add || {}, pairAddLiquidity || {}),
+  });
+};
+export const setPairRemoveLiquidity = (state, {pairRemoveLiquidity}) => {
+  const {pairRemoveLiquidity: remove} = state;
+  return state.merge({
+    pairRemoveLiquidity: Object.assign(
+      {},
+      remove || {},
+      pairRemoveLiquidity || {},
+    ),
+  });
+};
+
+export const getSymbolSwapList = state => {
+  return state.merge();
+};
+export const setSymbolSwap = (state, {symbolSwap}) => {
+  const {symbolSwap: swap} = state;
+  return state.merge({
+    symbolSwap: Object.assign({}, swap || {}, symbolSwap || {}),
+  });
+};
+export const getSymbolAddLiquidityList = state => {
+  return state.merge();
+};
+export const getSymbolRemoveLiquidityList = state => {
+  return state.merge();
+};
+export const setSymbolAddLiquidity = (state, {symbolAddLiquidity}) => {
+  const {symbolAddLiquidity: add} = state;
+  return state.merge({
+    symbolAddLiquidity: Object.assign({}, add || {}, symbolAddLiquidity || {}),
+  });
+};
+export const setSymbolRemoveLiquidity = (state, {symbolRemoveLiquidity}) => {
+  const {symbolRemoveLiquidity: remove} = state;
+  return state.merge({
+    symbolRemoveLiquidity: Object.assign(
+      {},
+      remove || {},
+      symbolRemoveLiquidity || {},
+    ),
+  });
+};
+export const getAddressSwapList = state => {
+  return state.merge();
+};
+export const setAddressSwap = (state, {addressSwap}) => {
+  const {addressSwap: swap} = state;
+  return state.merge({
+    addressSwap: Object.assign({}, swap || {}, addressSwap || {}),
+  });
+};
+export const getAddressAddLiquidityList = state => {
+  return state.merge();
+};
+export const getAddressRemoveLiquidityList = state => {
+  return state.merge();
+};
+export const setAddressAddLiquidity = (state, {addressAddLiquidity}) => {
+  const {addressAddLiquidity: add} = state;
+  return state.merge({
+    addressAddLiquidity: Object.assign(
+      {},
+      add || {},
+      addressAddLiquidity || {},
+    ),
+  });
+};
+export const setAddressRemoveLiquidity = (state, {addressRemoveLiquidity}) => {
+  const {addressRemoveLiquidity: remove} = state;
+  return state.merge({
+    addressRemoveLiquidity: Object.assign(
+      {},
+      remove || {},
+      addressRemoveLiquidity || {},
+    ),
   });
 };
 /* ------------- Hookup Reducers To Types ------------- */
@@ -190,7 +430,39 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.GET_ACCOUNT_INFO]: getAccountInfo,
   [Types.SET_ACCOUNT_INFO]: setAccountInfo,
+  [Types.GET_ACCOUNT_CHART]: getAccountChart,
+  [Types.SET_ACCOUNT_CHART]: setAccountChart,
 
   [Types.GET_OVERVIEW_INFO]: getOverviewInfo,
   [Types.SET_OVERVIEW_INFO]: setOverviewInfo,
+
+  [Types.GET_ACCOUNT_LIST]: getAccountList,
+  [Types.SET_ACCOUNT_LIST]: setAccountList,
+
+  [Types.GET_TOKEN_LIST]: getTokenList,
+  [Types.SET_TOKEN_LIST]: setTokenList,
+
+  [Types.GET_TOKEN_CHART]: getTokenChart,
+  [Types.SET_TOKEN_CHART]: setTokenChart,
+
+  [Types.GET_PAIR_SWAP_LIST]: getPairSwapList,
+  [Types.SET_PAIR_SWAP]: setPairSwap,
+  [Types.GET_PAIR_ADD_LIQUIDITY_LIST]: getPairAddLiquidityList,
+  [Types.GET_PAIR_REMOVE_LIQUIDITY_LIST]: getPairRemoveLiquidityList,
+  [Types.SET_PAIR_ADD_LIQUIDITY]: setPairAddLiquidity,
+  [Types.SET_PAIR_REMOVE_LIQUIDITY]: setPairRemoveLiquidity,
+
+  [Types.GET_SYMBOL_SWAP_LIST]: getSymbolSwapList,
+  [Types.SET_SYMBOL_SWAP]: setSymbolSwap,
+  [Types.GET_SYMBOL_ADD_LIQUIDITY_LIST]: getSymbolAddLiquidityList,
+  [Types.GET_SYMBOL_REMOVE_LIQUIDITY_LIST]: getSymbolRemoveLiquidityList,
+  [Types.SET_SYMBOL_ADD_LIQUIDITY]: setSymbolAddLiquidity,
+  [Types.SET_SYMBOL_REMOVE_LIQUIDITY]: setSymbolRemoveLiquidity,
+
+  [Types.GET_ADDRESS_SWAP_LIST]: getAddressSwapList,
+  [Types.SET_ADDRESS_SWAP]: setAddressSwap,
+  [Types.GET_ADDRESS_ADD_LIQUIDITY_LIST]: getAddressAddLiquidityList,
+  [Types.GET_ADDRESS_REMOVE_LIQUIDITY_LIST]: getAddressRemoveLiquidityList,
+  [Types.SET_ADDRESS_ADD_LIQUIDITY]: setAddressAddLiquidity,
+  [Types.SET_ADDRESS_REMOVE_LIQUIDITY]: setAddressRemoveLiquidity,
 });

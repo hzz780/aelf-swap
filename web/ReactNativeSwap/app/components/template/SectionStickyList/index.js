@@ -40,15 +40,11 @@ export default class SectionStickyList extends Component {
   componentWillUnmount() {
     this.endRefresh && clearTimeout(this.endRefresh);
   }
-  scrollTo(OffsetY) {
-    if (!OffsetY) {
+  scrollTo(params) {
+    if (!params) {
       return;
     }
-    this._list &&
-      this._list.scrollToLocation({
-        sectionIndex: 0,
-        itemIndex: -1,
-      });
+    this._list?.scrollToLocation(params);
   }
   ListFooterComponent = _ => {
     const {bottomLoad} = this.state;

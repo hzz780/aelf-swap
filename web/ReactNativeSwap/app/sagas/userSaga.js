@@ -27,6 +27,9 @@ import i18n from 'i18n-js';
 import {Alert} from 'react-native';
 import swapActions from '../redux/swapRedux';
 import {getFetchRequest} from '../utils/common/networkRequest';
+const {swapURL} = config;
+const swapRoute = '/api/test';
+const swapPath = swapURL + swapRoute;
 const {
   explorerURL,
   tokenSymbol,
@@ -366,21 +369,35 @@ function* getTokenUsdSaga() {
     let obj = {};
     const allTokens = yield select(userSelectors.allTokens);
     if (Array.isArray(allTokens)) {
-      const USDList = yield getFetchRequest(
-        'https://wallet-test.aelf.io/api/token/prices-tokens-of-aelf',
+      let symbols = '';
+      allTokens.forEach((item, index) => {
+        if (index === 0) {
+          symbols = item.symbol;
+        } else {
+          symbols = symbols + ',' + item.symbol;
+        }
+      });
+      const result = yield getFetchRequest(
+        `${swapPath}/getPrices?symbols=${symbols}`,
       );
-      Array.isArray(USDList) &&
-        allTokens.forEach(item => {
-          const usd = USDList.find(i => i.symbol === item.symbol);
-          if (usd?.USD) {
-            obj[item.symbol] = {...item, USD: usd?.USD};
-          } else {
-            obj[item.symbol] = {...item, USD: 0};
-          }
-        });
-      const tokenUSD = yield select(userSelectors.tokenUSD);
-      if (JSON.stringify(tokenUSD) !== JSON.stringify(obj)) {
-        yield put(userActions.setTokenUsd(obj));
+      if (result.msg === 'success') {
+        const USDList = result.data;
+        Array.isArray(USDList) &&
+          allTokens.forEach(item => {
+            const usd = USDList.find(i => i.symbol === item.symbol);
+            if (usd?.price) {
+              obj[item.symbol] = {
+                ...item,
+                USD: swapUtils.USDdigits(usd?.price),
+              };
+            } else {
+              obj[item.symbol] = {...item, USD: 0};
+            }
+          });
+        const tokenUSD = yield select(userSelectors.tokenUSD);
+        if (JSON.stringify(tokenUSD) !== JSON.stringify(obj)) {
+          yield put(userActions.setTokenUsd(obj));
+        }
       }
     }
   } catch (error) {

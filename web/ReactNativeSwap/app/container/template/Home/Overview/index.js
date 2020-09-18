@@ -5,9 +5,10 @@ import {Colors} from '../../../../assets/theme';
 import styles from '../styles';
 import i18n from 'i18n-js';
 import RateItem from '../RateItem';
-import OverviewCharts from '../OverviewCharts';
+import OverviewCharts from '../components/OverviewCharts';
 import {useStateToProps} from '../../../../utils/pages/hooks';
-import {ListItem} from '../../../../components/template';
+import {BounceSpinner, ListItem} from '../../../../components/template';
+import swapUtils from '../../../../utils/pages/swapUtils';
 const Overview = () => {
   const {overviewInfo} = useStateToProps(base => {
     const {settings, swap} = base;
@@ -25,6 +26,9 @@ const Overview = () => {
     ELFPrice,
     pairsCount,
   } = overviewInfo || {};
+  if (!overviewInfo) {
+    return <BounceSpinner type="Wave" />;
+  }
   return (
     <>
       <View style={styles.overviewBox}>
@@ -34,18 +38,18 @@ const Overview = () => {
       </View>
       <RateItem
         title={i18n.t('swap.totalValue')}
-        subtitle={totalLiquidity}
+        subtitle={`$ ${swapUtils.USDdigits(totalLiquidity)}`}
         rate={totalLiquidityRate}
       />
       <RateItem
         title={`${i18n.t('swap.volume')}(24h)`}
-        subtitle={volume}
+        subtitle={swapUtils.USDdigits(volume)}
         rate={volumeRate}
       />
       <ListItem
         disabled
         title={`ELF ${i18n.t('swap.price')}`}
-        subtitle={`$ ${ELFPrice}`}
+        subtitle={`$ ${swapUtils.USDdigits(ELFPrice)}`}
         rightElement={null}
         subtitleStyle={styles.subtitleStyle}
       />

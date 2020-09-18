@@ -1,5 +1,5 @@
 import React, {memo, useMemo, useCallback, useRef, useState} from 'react';
-import {View, LayoutAnimation} from 'react-native';
+import {View} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
 import {
   CommonHeader,
@@ -9,15 +9,12 @@ import {
   BounceSpinner,
   ActionSheet,
 } from '../../../../components/template';
-import {TextL, TextM, TextS} from '../../../../components/template/CommonText';
-import {pTd} from '../../../../utils/common';
+import {TextL} from '../../../../components/template/CommonText';
 import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
-import swapUtils from '../../../../utils/pages/swapUtils';
 import {useStateToProps, useSetState} from '../../../../utils/pages/hooks';
-import PairCharts from '../PairCharts';
-import aelfUtils from '../../../../utils/pages/aelfUtils';
+import AccountCharts from '../components/AccountCharts';
 import styles from './styles';
 import TitleTool from '../TitleTool';
 import PairsItem from '../PairsItem';
@@ -25,104 +22,10 @@ import {useFocusEffect} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import navigationService from '../../../../utils/common/navigationService';
 import {bottomBarHeigth} from '../../../../utils/common/device';
-let isActive = true;
-const ToolBar = memo(props => {
-  const {index, setIndex} = props;
-  const toolList = [
-    i18n.t('swap.swaps'),
-    i18n.t('swap.adds'),
-    i18n.t('swap.removes'),
-  ];
-  return (
-    <>
-      <View style={styles.toolBarBox}>
-        {toolList.map((item, j) => {
-          const current = j === index;
-          return (
-            <Touchable
-              highlight
-              underlayColor={Colors.bottonPressColor}
-              onPress={() => {
-                LayoutAnimation.easeInEaseOut();
-                setIndex(j);
-              }}
-              key={j}
-              style={[
-                styles.toolBarItem,
-                current && {backgroundColor: Colors.primaryColor},
-              ]}>
-              <TextL style={[current && styles.whiteColor]}>{item}</TextL>
-            </Touchable>
-          );
-        })}
-      </View>
-      <View style={styles.toolListTitile}>
-        <TextL style={{color: Colors.primaryColor}}>{toolList[index]}</TextL>
-        <TextL style={{color: Colors.primaryColor}}>
-          {i18n.t('swap.totalValue')}
-        </TextL>
-      </View>
-    </>
-  );
-});
-const swapList = [
-  {
-    sender: '12313', // 交易者
-    symbolIn: 'ELF',
-    symbolOut: 'AEUSD',
-    amountIn: 12312,
-    amountOut: 12313,
-    priceIn: 0.1,
-    priceOut: 0.1,
-    fee: 123,
-    txId: '13142',
-    time: 123, // unix时间戳
-  },
-  {
-    sender: '12313', // 交易者
-    symbolIn: 'ELF',
-    symbolOut: 'AEUSD',
-    amountIn: 12312,
-    amountOut: 12313,
-    priceIn: 0.1,
-    priceOut: 0.1,
-    fee: 123,
-    txId: '13142',
-    time: 123, // unix时间戳
-  },
-];
-const liquidityList = [
-  {
-    sender: '12313', // 交易者
-    symbolA: 'ELF',
-    symbolB: 'AEUSD',
-    amountA: 12312,
-    amountB: 12313,
-    priceA: 0.1,
-    priceB: 0.1,
-    txId: '13142',
-    time: 123, // unix时间戳
-  },
-  {
-    sender: '12313', // 交易者
-    symbolA: 'ELF',
-    symbolB: 'AEUSD',
-    amountA: 12312,
-    amountB: 12313,
-    priceA: 0.1,
-    priceB: 0.1,
-    txId: '13142',
-    time: 123, // unix时间戳
-  },
-];
+import TransactionsItem from '../components/TransactionsItem';
+import swapUtils from '../../../../utils/pages/swapUtils';
+import ToolBar from '../components/ToolBar';
 const AccountDetails = props => {
-  const {accountInfo} = useStateToProps(base => {
-    const {user, swap} = base;
-    return {
-      tokenUSD: user.tokenUSD,
-      accountInfo: swap.accountInfo,
-    };
-  });
   const dispatch = useDispatch();
   const getAccountInfo = useCallback(
     (address, callBack) =>
@@ -131,15 +34,68 @@ const AccountDetails = props => {
   );
   const [state, setState] = useSetState(
     {
-      symbolPair: '',
+      symbolPair: null,
     },
     true,
   );
-  console.log(state, '======state');
+  const {symbolPair} = state;
   const address = props.route.params?.address ?? '';
+  const {
+    accountInfo,
+    addressSwapList,
+    addressAddLiquidityList,
+    addressRemoveLiquidityList,
+  } = useStateToProps(base => {
+    const {swap} = base;
+    return {
+      accountInfo: swap.accountInfo,
+      addressSwapList: swap.addressSwap?.[address],
+      addressAddLiquidityList: swap.addressAddLiquidity?.[address],
+      addressRemoveLiquidityList: swap.addressRemoveLiquidity?.[address],
+    };
+  });
+  const endList = useCallback(
+    (v, i) => {
+      if (v === 1) {
+        setLoadCompleted({...(loadCompleted || {}), [i]: false});
+      } else {
+        setLoadCompleted({...(loadCompleted || {}), [i]: true});
+      }
+      list.current?.endUpPullRefresh();
+      list.current?.endBottomRefresh();
+    },
+    [loadCompleted],
+  );
+  const onGetAddressSwapList = useCallback(
+    (i, loadingPaging) =>
+      dispatch(
+        swapActions.getAddressSwapList(address, loadingPaging, v =>
+          endList(v, i),
+        ),
+      ),
+    [dispatch, endList, address],
+  );
+  const onGetAddressAddLiquidityList = useCallback(
+    (i, loadingPaging) =>
+      dispatch(
+        swapActions.getAddressAddLiquidityList(address, loadingPaging, v =>
+          endList(v, i),
+        ),
+      ),
+    [address, dispatch, endList],
+  );
+  const onGetAddressRemoveLiquidityList = useCallback(
+    (i, loadingPaging) =>
+      dispatch(
+        swapActions.getAddressRemoveLiquidityList(address, loadingPaging, v =>
+          endList(v, i),
+        ),
+      ),
+    [address, dispatch, endList],
+  );
+  console.log(state, '======state');
   const addressDetails = accountInfo ? accountInfo[address] : undefined;
-  const {totalSwapped, feePaid, txsCount, pairList, liquidityInPrice} =
-    addressDetails || {};
+  const {totalSwapped, feePaid, txsCount, pairList} = addressDetails || {};
   useFocusEffect(
     useCallback(() => {
       upPullRefresh();
@@ -179,7 +135,7 @@ const AccountDetails = props => {
             titleList={[
               i18n.t('swap.pair'),
               i18n.t('swap.liquidity'),
-              i18n.t('swap.volume'),
+              `${i18n.t('swap.volume')}(24h)`,
             ]}
           />
           {pairList.map((item, i) => {
@@ -205,7 +161,12 @@ const AccountDetails = props => {
           };
         })
       : [];
-    ActionSheet.show(items, {title: i18n.t('cancel')});
+    ActionSheet.show(
+      [...items, {title: i18n.t('swap.account.allPairs'), onPress: onSelect}],
+      {
+        title: i18n.t('cancel'),
+      },
+    );
   }, [onSelect, pairList]);
   const renderHeader = useMemo(() => {
     return (
@@ -216,22 +177,23 @@ const AccountDetails = props => {
           </TextL>
         </View>
         {Item(i18n.t('account'), address)}
-        {Item(i18n.t('swap.account.totalSwapped'), `$ ${totalSwapped || ''}`)}
-        {Item(i18n.t('swap.account.feePaid'), `$ ${feePaid || ''}`)}
+        {Item(
+          i18n.t('swap.account.totalSwapped'),
+          `$ ${swapUtils.USDdigits(totalSwapped)}`,
+        )}
+        {Item(
+          i18n.t('swap.account.feePaid'),
+          `$ ${swapUtils.USDdigits(feePaid)}`,
+        )}
         {Item(i18n.t('swap.account.txsCount'), txsCount)}
         <ListItem
           onPress={onAllPairs}
           style={styles.allPairsStyle}
-          title={i18n.t('swap.account.allPairs')}
+          title={symbolPair || i18n.t('swap.account.allPairs')}
           rightElement={<AntDesign name="caretdown" color={Colors.fontGray} />}
         />
-        {Item(
-          i18n.t('swap.account.liquidityInPrice'),
-          `$ ${liquidityInPrice || ''}`,
-        )}
-        <PairCharts />
+        <AccountCharts address={address} symbolPair={symbolPair} />
         {TopPairs}
-        {/* <PairCharts {...pairData} /> */}
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.transactions')}
@@ -244,108 +206,88 @@ const AccountDetails = props => {
     TopPairs,
     address,
     feePaid,
-    liquidityInPrice,
     onAllPairs,
+    symbolPair,
     totalSwapped,
     txsCount,
   ]);
   const stickyHead = useCallback(() => {
-    return <ToolBar setIndex={setIndex} index={index} />;
+    return (
+      <ToolBar
+        setIndex={i => {
+          list.current?.scrollTo({
+            sectionIndex: 0,
+            itemIndex: 0,
+            animated: false,
+          });
+          setIndex(i);
+        }}
+        index={index}
+      />
+    );
   }, [index]);
   const renderItem = useCallback(
-    ({item}) => {
-      if (!item) {
-        return;
-      }
-      const {
-        amountIn,
-        amountOut,
-        symbolIn,
-        symbolOut,
-        sender,
-        symbolA,
-        amountA,
-        amountB,
-        symbolB,
-        priceOut,
-        priceA,
-        priceB,
-      } = item || {};
-      let leftTitle = i18n.t('swap.swap'),
-        rigthTitle = i18n.t('swap.for');
-      if (index === 1) {
-        leftTitle = i18n.t('swap.add');
-        rigthTitle = i18n.t('swap.and');
-      } else if (index === 2) {
-        leftTitle = i18n.t('swap.remove');
-        rigthTitle = i18n.t('swap.and');
-      }
-      const totalValue = priceOut
-        ? priceOut * amountOut
-        : priceA * amountA + priceB * amountB;
-      return (
-        <View style={styles.itemBox}>
-          <View style={styles.itemtitleBox}>
-            <TextM style={styles.leftTitle}>
-              {leftTitle}{' '}
-              <TextL style={{color: Colors.fontBlack}}>
-                {amountIn || amountA} {symbolIn || symbolA}
-              </TextL>{' '}
-              {rigthTitle}{' '}
-              <TextL style={{color: Colors.fontBlack}}>
-                {amountOut || amountB} {symbolOut || symbolB}
-              </TextL>
-            </TextM>
-            <TextM numberOfLines={1}>
-              ${swapUtils.getTotalValue(totalValue)}
-            </TextM>
-          </View>
-          <TextS numberOfLines={1} style={styles.timeStyle}>
-            {sender}
-          </TextS>
-          <TextS style={styles.timeStyle}>
-            {aelfUtils.timeConversion(new Date().getTime())}
-          </TextS>
-        </View>
-      );
-    },
+    ({item}) => <TransactionsItem item={item} index={index} />,
     [index],
   );
-  const onSetLoadCompleted = useCallback(value => {
-    if (isActive) {
-      setLoadCompleted(value);
-    }
-  }, []);
   const upPullRefresh = useCallback(() => {
-    getAccountInfo(address, () => {
-      list.current && list.current.endUpPullRefresh();
-      list.current && list.current.endBottomRefresh();
-    });
-  }, [address, getAccountInfo]);
+    getAccountInfo(address);
+    onGetAddressSwapList(0);
+    onGetAddressAddLiquidityList(1);
+    onGetAddressRemoveLiquidityList(2);
+  }, [
+    address,
+    getAccountInfo,
+    onGetAddressAddLiquidityList,
+    onGetAddressRemoveLiquidityList,
+    onGetAddressSwapList,
+  ]);
   const onEndReached = useCallback(() => {
-    onSetLoadCompleted(true);
+    if (index === 0) {
+      onGetAddressSwapList(0, true);
+    } else if (index === 1) {
+      onGetAddressAddLiquidityList(1, true);
+    } else {
+      onGetAddressRemoveLiquidityList(2, true);
+    }
     list.current && list.current.endBottomRefresh();
-  }, [onSetLoadCompleted]);
-  const data = index === 0 ? swapList : liquidityList;
+  }, [
+    index,
+    onGetAddressAddLiquidityList,
+    onGetAddressRemoveLiquidityList,
+    onGetAddressSwapList,
+  ]);
+  const getData = useCallback(() => {
+    if (index === 0) {
+      return addressSwapList;
+    } else if (index === 1) {
+      return addressAddLiquidityList;
+    } else {
+      return addressRemoveLiquidityList;
+    }
+  }, [
+    addressAddLiquidityList,
+    addressRemoveLiquidityList,
+    addressSwapList,
+    index,
+  ]);
   return (
     <View style={GStyle.secondContainer}>
       <CommonHeader title={`${address}`} canBack />
       {addressDetails ? (
-        <>
-          <SectionStickyList
-            data={data}
-            loadCompleted={loadCompleted}
-            upPullRefresh={upPullRefresh}
-            // onEndReached={onEndReached}
-            renderHeader={renderHeader}
-            stickyHead={stickyHead}
-            renderItem={renderItem}
-            ref={list}
-            showFooter
-            allLoadedTips=" "
-            listFooterHight={bottomBarHeigth + pTd(20)}
-          />
-        </>
+        <SectionStickyList
+          ref={list}
+          data={getData()}
+          showFooter
+          whetherAutomatic
+          stickyHead={stickyHead}
+          renderItem={renderItem}
+          listFooterHight={bottomBarHeigth}
+          onEndReached={onEndReached}
+          renderHeader={renderHeader}
+          loadCompleted={loadCompleted?.[index]}
+          upPullRefresh={upPullRefresh}
+        />
       ) : (
         <BounceSpinner type="Wave" style={styles.spinnerStyle} />
       )}

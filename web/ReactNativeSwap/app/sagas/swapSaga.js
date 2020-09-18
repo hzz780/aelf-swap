@@ -22,7 +22,12 @@ import {getFetchRequest} from '../utils/common/networkRequest';
 import config from '../config';
 import swapUtils from '../utils/pages/swapUtils';
 import SwapTransactionPopup from '../container/template/Transaction/SwapTransactionPopup';
+import {SWAP_PAGE_SIZE} from '../config/swapConstant';
 const {swapURL} = config;
+const swapRoute = '/api/test';
+const swapPath = swapURL + swapRoute;
+const liquidityType = [null, 'add', 'remove'];
+
 const Success = result => {
   if (result.Status === 'PENDING' || result.Status === 'MINED') {
     return true;
@@ -76,18 +81,18 @@ function* getPairsSaga({pair, callBack}) {
         });
         console.log(pairArr, '=====pairArr');
         if (pair) {
-          callBack && callBack(1, pairArr[0]);
+          callBack?.(1, pairArr[0]);
         } else {
-          callBack && callBack(1);
+          callBack?.(1);
           yield put(swapActions.setPairs(pairArr));
         }
       }
     } else {
-      callBack && callBack(-1);
+      callBack?.(-1);
     }
   } catch (error) {
     yield delay(500);
-    callBack && callBack(-1);
+    callBack?.(-1);
     console.log(error, '======getPairsSaga');
   }
 }
@@ -196,17 +201,17 @@ function* getAccountAssetsSaga({pair, callBack}) {
         };
       });
       if (pair) {
-        callBack && callBack(1, list[0]);
+        callBack?.(1, list[0]);
       } else {
-        callBack && callBack(1);
+        callBack?.(1);
         yield put(swapActions.setMyLiquidity(list));
       }
     } else {
-      callBack && callBack(-1);
+      callBack?.(-1);
     }
     console.log(liquidity, '=====getAccountAssetsSaga');
   } catch (error) {
-    callBack && callBack(-1);
+    callBack?.(-1);
     console.log('getAccountAssetsSaga', error);
   }
 }
@@ -231,9 +236,9 @@ function* swapTokenSaga({data, callBack}) {
       CommonToast.fail(i18n.t('swap.tryAgain'));
     }
     Loading.destroy();
-    callBack && callBack();
+    callBack?.();
   } catch (error) {
-    callBack && callBack();
+    callBack?.();
     yield delay(500);
     Loading.destroy();
     CommonToast.fail(i18n.t('swap.tryAgain'));
@@ -312,29 +317,13 @@ function* getPairChartsSaga({symbolPair, range}) {
 }
 function* getPairInfoSaga({symbolPair}) {
   try {
-    // const result = yield getFetchRequest(
-    //   `${swapURL}/api/swap/pairInfo?symbolPair=${symbolPair}`,
-    // );
-    // console.log(result, '======result');
-    const data = {
-      symbolA: 'ELF',
-      symbolB: 'AEUSD',
-      priceA: 0.01, // symbol A美元价格
-      priceB: 0.01, // symbol B美元价格
-      volumeA: 123,
-      volumeB: 123,
-      volumeInPrice: 123,
-      volumeInPriceRate: 0.01,
-      liquidityA: 123,
-      liquidityB: 123,
-      liquidityInPrice: 123123,
-      liquidityInPriceRate: 0.01,
-      txsCount: 123,
-      txsCountRate: 123,
-      feeInPrice: 1234,
-      feeInPriceRate: 0.1,
-    };
-    yield put(swapActions.setPairInfo({[symbolPair]: data}));
+    const result = yield getFetchRequest(
+      `${swapPath}/pairInfo?symbolPair=${symbolPair}`,
+    );
+    if (result.msg === 'success') {
+      yield put(swapActions.setPairInfo({[symbolPair]: result.data}));
+    }
+    console.log(result, '======result');
   } catch (error) {
     console.log(error, '=getPairInfoSagagetPairInfoSaga');
   }
@@ -354,73 +343,497 @@ function* getOverviewChartSaga() {
   }
 }
 function* getTokenInfoSaga({symbol, callBack}) {
-  console.log(symbol, '=======symbol');
-  callBack && callBack(1);
-  const data = {
-    price: 123,
-    priceRate: 0.01,
-    liquidity: 1234, // ELF的流动量，单位为ELF个数，
-    liqiodityRate: 0.01,
-    volumeInPrice: 1231,
-    volumeInPriceRate: 0.01,
-    txsCount: 12412,
-    txsCountRate: 0.01,
-    topPairs: [
-      {
-        symbolPair: 'ELF-AEUSD',
-        symbolA: 'ELF',
-        symbolB: 'AEUSD',
-        liquidityInPrice: 123, // 美元价格计算的流动性，无则为'-'
-        volumeInPrice: 123, // 美元价格计算的交易总量，无则为'-',
-        volumeA: 123, // symbol A的交易总量
-        volumeB: 123, // symbol B的交易总量
-        priceA: 123, // symbol A的美元价格，无则为'-'
-        priceB: 123, // symbol B的美元价格，无则为'-'
-      },
-    ],
-  };
-  yield put(swapActions.setTokenInfo({[symbol]: data}));
+  try {
+    console.log(symbol, '=======symbol');
+    console.log(`${swapPath}/tokenInfo?symbol=${symbol}`);
+    const result = yield getFetchRequest(
+      `${swapPath}/tokenInfo?symbol=${symbol}`,
+    );
+    console.log(result, '========result');
+    if (result.msg === 'success') {
+      callBack?.(1);
+      yield put(swapActions.setTokenInfo({[symbol]: result.data}));
+    } else {
+      callBack?.(-1);
+    }
+  } catch (error) {
+    callBack?.(-1);
+  }
 }
 
 function* getAccountInfoSaga({address, callBack}) {
-  console.log('getAccountInfoSaga', address);
-  const data = {
-    address: '1231414',
-    liquidityInPrice: 123124,
-    feePaid: 124,
-    totalSwapped: 123,
-    txsCount: 1234,
-    pairList: [
-      {
-        symbolPair: 'ELF-AEUSD',
-        symbolA: 'ELF',
-        symbolB: 'AEUSD',
-        liquidityInPrice: 123, // 美元价格计算的流动性，无则为'-'
-        volumeInPrice: 123, // 美元价格计算的交易总量，无则为'-',
-        volumeA: 123, // symbol A的交易总量
-        volumeB: 123, // symbol B的交易总量
-        priceA: 123, // symbol A的美元价格，无则为'-'
-        priceB: 123, // symbol B的美元价格，无则为'-'
-      },
-    ],
-  };
-  callBack && callBack(1);
-  yield put(swapActions.setAccountInfo({[address]: data}));
+  try {
+    yield put(swapActions.getAccountChart(address));
+    const result = yield getFetchRequest(
+      `${swapPath}/accountInfo?address=${address}`,
+    );
+    console.log(result, '=======getAccountInfoSaga');
+    if (result.msg === 'success') {
+      yield put(swapActions.setAccountInfo({[address]: result.data}));
+      callBack?.(1);
+    } else {
+      callBack?.(-1);
+    }
+  } catch (error) {
+    console.log(error, 'getAccountInfoSaga');
+  }
+}
+function* getAccountChartSaga({address, range, symbolPair}) {
+  try {
+    const sPair = symbolPair || 'all';
+    console.log(
+      `${swapPath}/accountChart?address=${address}&utcOffset=${swapUtils.getUTCOffset()}&range=${range ||
+        'week'}${symbolPair ? `&symbolPair=${symbolPair}` : ''}`,
+    );
+    const result = yield getFetchRequest(
+      `${swapPath}/accountChart?address=${address}&utcOffset=${swapUtils.getUTCOffset()}&range=${range ||
+        'week'}${symbolPair ? `&symbolPair=${symbolPair}` : ''}`,
+    );
+    if (result.msg === 'success') {
+      const accountChart = yield select(swapSelectors.accountChart);
+      const chart = accountChart?.[address];
+      const sChart = chart?.[sPair];
+      const obj = {
+        [address]: {
+          ...(chart || {}),
+          [sPair]: {...(sChart || {}), [range || 'week']: result.data},
+        },
+      };
+      console.log(obj, '======obj');
+      yield put(swapActions.setAccountChart(obj));
+    }
+    console.log(result, 'getAccount');
+  } catch (error) {
+    console.log(error, 'getAccountChartSaga');
+  }
+}
+function* getOverviewInfoSaga() {
+  try {
+    const result = yield getFetchRequest(`${swapPath}/overview`);
+    if (result.msg === 'success') {
+      const overviewInfo = yield select(swapSelectors.overviewInfo);
+      if (JSON.stringify(overviewInfo) !== JSON.stringify(result.data)) {
+        yield put(swapActions.setOverviewInfo(result.data));
+        console.log(result, 'getOverviewInfo');
+      }
+    }
+  } catch (error) {
+    console.log(error, 'getOverviewInfoSaga');
+  }
+}
+function* getAccountListSaga({loadingPaging}) {
+  console.log(loadingPaging, '======loadingPaging');
+  try {
+    let pageNum = 1;
+    const accountList = yield select(swapSelectors.accountList);
+    console.log(accountList, '=====accountList');
+    if (loadingPaging && Array.isArray(accountList)) {
+      console.log(
+        Math.ceil(accountList.length / SWAP_PAGE_SIZE),
+        '=Math.ceil(accountList.length / SWAP_PAGE_SIZE)',
+      );
+      pageNum = Math.ceil(accountList.length / SWAP_PAGE_SIZE) + 1;
+      console.log(pageNum, '=====pageNum');
+    }
+    console.log(
+      `${swapPath}/accountList?pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}`,
+    );
+    const result = yield getFetchRequest(
+      `${swapPath}/accountList?pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}`,
+    );
+    console.log(result, '==========result');
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(accountList)) {
+        list = list.concat(accountList);
+      }
+      list = list.concat(result.data?.list || []);
+      yield put(swapActions.setAccountList(list));
+    }
+  } catch (error) {
+    console.log(error, 'getAccountListSaga');
+  }
+}
+function* getTokenListSaga({loadingPaging}) {
+  console.log(loadingPaging, '======loadingPaging');
+  try {
+    let pageNum = 1;
+    const tokenList = yield select(swapSelectors.tokenList);
+    console.log(tokenList, '=====tokenList');
+    if (loadingPaging && Array.isArray(tokenList)) {
+      console.log(
+        Math.ceil(tokenList.length / SWAP_PAGE_SIZE),
+        '=Math.ceil(tokenList.length / SWAP_PAGE_SIZE)',
+      );
+      pageNum = Math.ceil(tokenList.length / SWAP_PAGE_SIZE) + 1;
+      console.log(pageNum, '=====pageNum');
+    }
+    console.log(
+      `${swapPath}/tokenList?pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}`,
+    );
+    const result = yield getFetchRequest(
+      `${swapPath}/tokenList?pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}`,
+    );
+    console.log(result, '==========getTokenListSaga');
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(tokenList)) {
+        list = list.concat(tokenList);
+      }
+      list = list.concat(result.data?.list || []);
+      yield put(swapActions.setTokenList(list));
+    }
+  } catch (error) {
+    console.log(error, 'getAccountListSaga');
+  }
+}
+function* getTokenChartSaga({symbol, range}) {
+  try {
+    const utcOffset = swapUtils.getUTCOffset();
+    const result = yield getFetchRequest(
+      `${swapPath}/tokenChart?symbol=${symbol}&range=${range}&utcOffset=${utcOffset}`,
+    );
+    if (result.msg === 'success') {
+      let obj;
+      const tokenChart = yield select(swapSelectors.tokenChart);
+      const charts = tokenChart?.[symbol];
+      obj = {
+        [symbol]: {...(charts || {}), [range]: result.data},
+      };
+      yield put(swapActions.setTokenChart(obj));
+    }
+  } catch (error) {
+    console.log(error, '======getPairChartsSaga');
+  }
+}
+function* getPairSwapListSaga({symbolPair, loadingPaging, callBack}) {
+  console.log(
+    symbolPair,
+    loadingPaging,
+    callBack,
+    '===symbolPair, loadingPaging, callBack',
+  );
+  try {
+    let pageNum = 1;
+    const pairSwap = yield select(swapSelectors.pairSwap);
+    const pairSwapList = pairSwap?.[symbolPair];
+    if (loadingPaging && Array.isArray(pairSwapList)) {
+      pageNum = Math.ceil(pairSwapList.length / SWAP_PAGE_SIZE) + 1;
+    }
+    const result = yield getFetchRequest(
+      `${swapPath}/swapList?symbolPair=${symbolPair}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}`,
+    );
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(pairSwapList)) {
+        list = list.concat(pairSwapList);
+      }
+      list = list.concat(result.data?.list || []);
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
+      yield put(swapActions.setPairSwap({[symbolPair]: list}));
+    } else {
+      callBack?.(-1);
+    }
+    console.log(result, '=======getPairSwapListSaga');
+  } catch (error) {
+    callBack?.(-1);
+    console.log(error, 'getPairSwapListSaga');
+  }
+}
+function* getPairAddLiquidityListSaga({symbolPair, loadingPaging, callBack}) {
+  console.log(
+    'getPairAddLiquidityListSaga',
+    'symbolPair, loadingPaging, callBack',
+  );
+  try {
+    let pageNum = 1;
+    const pairLiquidity = yield select(swapSelectors.pairAddLiquidity);
+    const pairLiquidityList = pairLiquidity?.[symbolPair];
+    if (loadingPaging && Array.isArray(pairLiquidityList)) {
+      pageNum = Math.ceil(pairLiquidityList.length / SWAP_PAGE_SIZE) + 1;
+    }
+    console.log(
+      `${swapPath}/liquidityList?symbolPair=${symbolPair}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=add`,
+    );
+    const result = yield getFetchRequest(
+      `${swapPath}/liquidityList?symbolPair=${symbolPair}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=add`,
+    );
+    console.log(result, 'getPairAddLiquidityListSaga');
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(pairLiquidityList)) {
+        list = list.concat(pairLiquidityList);
+      }
+      list = list.concat(result.data?.list || []);
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
+      yield put(swapActions.setPairAddLiquidity({[symbolPair]: list}));
+    } else {
+      callBack?.(-1);
+    }
+    console.log(result, '=======result');
+  } catch (error) {
+    callBack?.(-1);
+    console.log(error, 'getPairSwapListSaga');
+  }
+}
+function* getPairRemoveLiquidityListSaga({
+  symbolPair,
+  loadingPaging,
+  callBack,
+}) {
+  try {
+    let pageNum = 1;
+    const pairLiquidity = yield select(swapSelectors.pairRemoveLiquidity);
+    const pairLiquidityList = pairLiquidity?.[symbolPair];
+    if (loadingPaging && Array.isArray(pairLiquidityList)) {
+      pageNum = Math.ceil(pairLiquidityList.length / SWAP_PAGE_SIZE) + 1;
+    }
+    console.log(
+      `${swapPath}/liquidityList?symbolPair=${symbolPair}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=remove`,
+    );
+    const result = yield getFetchRequest(
+      `${swapPath}/liquidityList?symbolPair=${symbolPair}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=remove`,
+    );
+    console.log(result, 'getPairRemoveLiquidityListSaga');
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(pairLiquidityList)) {
+        list = list.concat(pairLiquidityList);
+      }
+      list = list.concat(result.data?.list || []);
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
+      yield put(swapActions.setPairRemoveLiquidity({[symbolPair]: list}));
+    } else {
+      callBack?.(-1);
+    }
+    console.log(result, '=======result');
+  } catch (error) {
+    callBack?.(-1);
+    console.log(error, 'getPairSwapListSaga');
+  }
+}
+function* getSymbolSwapListSaga({symbol, loadingPaging, callBack}) {
+  try {
+    let pageNum = 1;
+    const symbolSwap = yield select(swapSelectors.symbolSwap);
+    const symbolSwapList = symbolSwap?.[symbol];
+    if (loadingPaging && Array.isArray(symbolSwapList)) {
+      pageNum = Math.ceil(symbolSwapList.length / SWAP_PAGE_SIZE) + 1;
+    }
+    const result = yield getFetchRequest(
+      `${swapPath}/swapList?symbol=${symbol}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}`,
+    );
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(symbolSwapList)) {
+        list = list.concat(symbolSwapList);
+      }
+      list = list.concat(result.data?.list || []);
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
+      yield put(swapActions.setSymbolSwap({[symbol]: list}));
+    } else {
+      callBack?.(-1);
+    }
+    console.log(result, '=======getSymbolSwapListSaga');
+  } catch (error) {
+    callBack?.(-1);
+    console.log(error, 'getSymbolSwapListSaga');
+  }
+}
+function* getSymbolAddLiquidityListSaga({symbol, loadingPaging, callBack}) {
+  try {
+    let pageNum = 1;
+    const symbolLiquidity = yield select(swapSelectors.symbolAddLiquidity);
+    const symbolLiquidityList = symbolLiquidity?.[symbol];
+    if (loadingPaging && Array.isArray(symbolLiquidityList)) {
+      pageNum = Math.ceil(symbolLiquidityList.length / SWAP_PAGE_SIZE) + 1;
+    }
+    console.log(
+      `${swapPath}/liquidityList?symbol=${symbol}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=add`,
+    );
+    const result = yield getFetchRequest(
+      `${swapPath}/liquidityList?symbol=${symbol}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=add`,
+    );
+    console.log(result, 'getSymbolAddLiquidityListSaga');
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(symbolLiquidityList)) {
+        list = list.concat(symbolLiquidityList);
+      }
+      list = list.concat(result.data?.list || []);
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
+      yield put(swapActions.setSymbolAddLiquidity({[symbol]: list}));
+    } else {
+      callBack?.(-1);
+    }
+    console.log(result, '=======result');
+  } catch (error) {
+    callBack?.(-1);
+    console.log(error, 'getSymbolAddLiquidityListSaga');
+  }
+}
+function* getSymbolRemoveLiquidityListSaga({symbol, loadingPaging, callBack}) {
+  try {
+    let pageNum = 1;
+    const symbolLiquidity = yield select(swapSelectors.symbolRemoveLiquidity);
+    const symbolLiquidityList = symbolLiquidity?.[symbol];
+    if (loadingPaging && Array.isArray(symbolLiquidityList)) {
+      pageNum = Math.ceil(symbolLiquidityList.length / SWAP_PAGE_SIZE) + 1;
+    }
+    console.log(
+      `${swapPath}/liquidityList?symbol=${symbol}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=remove`,
+    );
+    const result = yield getFetchRequest(
+      `${swapPath}/liquidityList?symbol=${symbol}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=remove`,
+    );
+    console.log(result, 'getSymbolRemoveLiquidityListSaga');
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(symbolLiquidityList)) {
+        list = list.concat(symbolLiquidityList);
+      }
+      list = list.concat(result.data?.list || []);
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
+      yield put(swapActions.setSymbolRemoveLiquidity({[symbol]: list}));
+    } else {
+      callBack?.(-1);
+    }
+    console.log(result, '=======result');
+  } catch (error) {
+    callBack?.(-1);
+    console.log(error, 'getSymbolRemoveLiquidityListSaga');
+  }
 }
 
-function* getOverviewInfoSaga() {
-  const data = {
-    totalLiquidity: 12313,
-    totalLiquidityRate: 0.01, // 流动性变化率，此处为1%
-    volume: 12313,
-    volumeRate: 0.01, // 交易量变化率，此处为1%
-    ELFPrice: 123,
-    ELFPriceRate: 0.01,
-    txsCount: 123131,
-    txsCountRate: 0.01, //交易数变化率
-    pairsCount: 1231,
-  };
-  yield put(swapActions.setOverviewInfo(data));
+function* getAddressSwapListSaga({address, loadingPaging, callBack}) {
+  try {
+    let pageNum = 1;
+    const addressSwap = yield select(swapSelectors.addressSwap);
+    const addressSwapList = addressSwap?.[address];
+    if (loadingPaging && Array.isArray(addressSwapList)) {
+      pageNum = Math.ceil(addressSwapList.length / SWAP_PAGE_SIZE) + 1;
+    }
+    const result = yield getFetchRequest(
+      `${swapPath}/swapList?address=${address}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}`,
+    );
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(addressSwapList)) {
+        list = list.concat(addressSwapList);
+      }
+      list = list.concat(result.data?.list || []);
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
+      yield put(swapActions.setAddressSwap({[address]: list}));
+    } else {
+      callBack?.(-1);
+    }
+    console.log(result, '=======getAddressSwapListSaga');
+  } catch (error) {
+    callBack?.(-1);
+    console.log(error, 'getAddressSwapListSaga');
+  }
+}
+function* getAddressAddLiquidityListSaga({address, loadingPaging, callBack}) {
+  try {
+    let pageNum = 1;
+    const addressLiquidity = yield select(swapSelectors.addressAddLiquidity);
+    const addressLiquidityList = addressLiquidity?.[address];
+    if (loadingPaging && Array.isArray(addressLiquidityList)) {
+      pageNum = Math.ceil(addressLiquidityList.length / SWAP_PAGE_SIZE) + 1;
+    }
+    console.log(
+      `${swapPath}/liquidityList?address=${address}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=add`,
+    );
+    const result = yield getFetchRequest(
+      `${swapPath}/liquidityList?address=${address}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=add`,
+    );
+    console.log(result, 'getAddressAddLiquidityListSaga');
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(addressLiquidityList)) {
+        list = list.concat(addressLiquidityList);
+      }
+      list = list.concat(result.data?.list || []);
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
+      yield put(swapActions.setAddressAddLiquidity({[address]: list}));
+    } else {
+      callBack?.(-1);
+    }
+  } catch (error) {
+    callBack?.(-1);
+    console.log(error, 'getAddressAddLiquidityListSaga');
+  }
+}
+function* getAddressRemoveLiquidityListSaga({
+  address,
+  loadingPaging,
+  callBack,
+}) {
+  try {
+    let pageNum = 1;
+    const addressLiquidity = yield select(swapSelectors.addressRemoveLiquidity);
+    const addressLiquidityList = addressLiquidity?.[address];
+    if (loadingPaging && Array.isArray(addressLiquidityList)) {
+      pageNum = Math.ceil(addressLiquidityList.length / SWAP_PAGE_SIZE) + 1;
+    }
+    console.log(
+      `${swapPath}/liquidityList?address=${address}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=remove`,
+    );
+    const result = yield getFetchRequest(
+      `${swapPath}/liquidityList?address=${address}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=remove`,
+    );
+    console.log(result, 'getAddressRemoveLiquidityListSaga');
+    if (result.msg === 'success') {
+      let list = [];
+      if (loadingPaging && Array.isArray(addressLiquidityList)) {
+        list = list.concat(addressLiquidityList);
+      }
+      list = list.concat(result.data?.list || []);
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
+      yield put(swapActions.setAddressRemoveLiquidity({[address]: list}));
+    } else {
+      callBack?.(-1);
+    }
+  } catch (error) {
+    callBack?.(-1);
+    console.log(error, 'getAddressAddLiquidityListSaga');
+  }
 }
 export default function* SwapSaga() {
   yield all([
@@ -436,6 +849,45 @@ export default function* SwapSaga() {
     yield takeLatest(swapTypes.GET_OVERVIEW_CHART, getOverviewChartSaga),
     yield takeLatest(swapTypes.GET_TOKEN_INFO, getTokenInfoSaga),
     yield takeLatest(swapTypes.GET_ACCOUNT_INFO, getAccountInfoSaga),
+    yield takeLatest(swapTypes.GET_ACCOUNT_CHART, getAccountChartSaga),
+
     yield takeLatest(swapTypes.GET_OVERVIEW_INFO, getOverviewInfoSaga),
+    yield takeLatest(swapTypes.GET_ACCOUNT_LIST, getAccountListSaga),
+
+    yield takeLatest(swapTypes.GET_TOKEN_LIST, getTokenListSaga),
+    yield takeLatest(swapTypes.GET_TOKEN_CHART, getTokenChartSaga),
+
+    //pair transactions
+    yield takeLatest(swapTypes.GET_PAIR_SWAP_LIST, getPairSwapListSaga),
+    yield takeLatest(
+      swapTypes.GET_PAIR_ADD_LIQUIDITY_LIST,
+      getPairAddLiquidityListSaga,
+    ),
+    yield takeLatest(
+      swapTypes.GET_PAIR_REMOVE_LIQUIDITY_LIST,
+      getPairRemoveLiquidityListSaga,
+    ),
+
+    //symbol  transactions
+    yield takeLatest(swapTypes.GET_SYMBOL_SWAP_LIST, getSymbolSwapListSaga),
+    yield takeLatest(
+      swapTypes.GET_SYMBOL_ADD_LIQUIDITY_LIST,
+      getSymbolAddLiquidityListSaga,
+    ),
+    yield takeLatest(
+      swapTypes.GET_SYMBOL_REMOVE_LIQUIDITY_LIST,
+      getSymbolRemoveLiquidityListSaga,
+    ),
+
+    //address  transactions
+    yield takeLatest(swapTypes.GET_ADDRESS_SWAP_LIST, getAddressSwapListSaga),
+    yield takeLatest(
+      swapTypes.GET_ADDRESS_ADD_LIQUIDITY_LIST,
+      getAddressAddLiquidityListSaga,
+    ),
+    yield takeLatest(
+      swapTypes.GET_ADDRESS_REMOVE_LIQUIDITY_LIST,
+      getAddressRemoveLiquidityListSaga,
+    ),
   ]);
 }

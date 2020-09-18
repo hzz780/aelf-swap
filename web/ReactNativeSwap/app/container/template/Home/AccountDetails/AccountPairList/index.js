@@ -27,7 +27,7 @@ const AccountPairList = props => {
         titleList={[
           i18n.t('swap.pair'),
           i18n.t('swap.liquidity'),
-          i18n.t('swap.volume'),
+          `${i18n.t('swap.volume')}(24h)`,
         ]}
       />
       <ListComponent data={pairList} renderItem={renderItem} />

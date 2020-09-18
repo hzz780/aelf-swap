@@ -19,6 +19,14 @@ const digits = (count, num = 8) => {
   }
   return '0';
 };
+const USDdigits = (count, num = USD_DECIMALS) => {
+  const a = Number(digits(count, num));
+  if (isNaN(a)) {
+    return 0;
+  } else {
+    return Number(a);
+  }
+};
 const swapDigits = (count, num = 8) => {
   if (!count) {
     return '';
@@ -89,8 +97,8 @@ const getSwapUSD = (item, USDS) => {
       } else if (USDB) {
         number = USDB * item.reserveB * 2;
       }
-      number = digits(number, USD_DECIMALS);
     }
+    number = digits(number, USD_DECIMALS);
     text = `$ ${number || '0'}`;
   }
   return text;
@@ -365,8 +373,16 @@ const getPercentage = rate => {
   let s = Math.round(rate * 10000) / 100;
   return (judgmentNaN(s) || '0') + '%';
 };
-const getTotalValue = value => {
-  return judgmentNaN(digits(value, USD_DECIMALS));
+const replaceNegative = str => {
+  return typeof str === 'string' ? str.replace('-', '') : str;
+};
+const getTotalValue = item => {
+  let {amountOut, amountA, amountB, priceOut, priceA, priceB} = item || {};
+  const totalValue = priceOut
+    ? replaceNegative(priceOut) * replaceNegative(amountOut)
+    : replaceNegative(priceA) * replaceNegative(amountA) +
+      replaceNegative(priceB) * replaceNegative(amountB);
+  return judgmentNaN(digits(totalValue, USD_DECIMALS));
 };
 const getRateStyle = rate => {
   let color = Colors.kGreen;
@@ -409,4 +425,6 @@ export default {
   getTotalValue,
   getRateStyle,
   swapDigits,
+  USDdigits,
+  replaceNegative,
 };

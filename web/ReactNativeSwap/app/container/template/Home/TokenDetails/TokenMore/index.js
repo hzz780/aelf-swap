@@ -1,11 +1,11 @@
 import React, {memo, useCallback} from 'react';
 import {ListComponent, CommonHeader} from '../../../../../components/template';
 import {useStateToProps} from '../../../../../utils/pages/hooks';
-import PairsItem from '../../PairsItem';
 import {View} from 'react-native';
 import {GStyle} from '../../../../../assets/theme';
 import TitleTool from '../../TitleTool';
 import i18n from 'i18n-js';
+import PairItem from '../../components/PairItem';
 const TokenMore = props => {
   const {tokenInfo} = useStateToProps(base => {
     const {user, swap} = base;
@@ -18,7 +18,7 @@ const TokenMore = props => {
   const tokenDetails = tokenInfo[symbol];
   const {topPairs} = tokenDetails || {};
   const renderItem = useCallback(({item}) => {
-    return <PairsItem item={item} />;
+    return <PairItem item={item} />;
   }, []);
   return (
     <View style={GStyle.container}>
@@ -27,7 +27,7 @@ const TokenMore = props => {
         titleList={[
           i18n.t('swap.pair'),
           i18n.t('swap.liquidity'),
-          i18n.t('swap.volume'),
+          `${i18n.t('swap.volume')}(24h)`,
         ]}
       />
       <ListComponent data={topPairs} renderItem={renderItem} />

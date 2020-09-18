@@ -458,7 +458,7 @@ const AddLiquidity = props => {
   const upPullRefresh = useCallback(
     callBack => {
       getPairs(undefined, () => {
-        callBack && callBack();
+        callBack?.();
       });
     },
     [getPairs],
