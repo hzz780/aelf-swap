@@ -26,8 +26,6 @@ import {SWAP_PAGE_SIZE} from '../config/swapConstant';
 const {swapURL} = config;
 const swapRoute = '/api/test';
 const swapPath = swapURL + swapRoute;
-const liquidityType = [null, 'add', 'remove'];
-
 const Success = result => {
   if (result.Status === 'PENDING' || result.Status === 'MINED') {
     return true;
@@ -46,15 +44,12 @@ function* getPairsSaga({pair, callBack}) {
       } else {
         pairs = yield swapContract.GetPairs.call();
       }
-      console.log(pairs, swapContract, '=====pairs');
+      yield put(swapActions.getTotalSupply(pairs));
       const reserves = yield swapContract.GetReserves.call(pairs);
-      const {results: supplyResults} = yield swapContract.GetTotalSupply.call(
-        pairs,
-      );
       const {results} = reserves;
       if (Array.isArray(results)) {
         const allTokens = yield select(userSelectors.allTokens);
-        const pairArr = results.map((item, index) => {
+        const pairArr = results.map(item => {
           let tokenA, tokenB;
           if (Array.isArray(allTokens)) {
             tokenA = allTokens.find(i => {
@@ -66,9 +61,6 @@ function* getPairsSaga({pair, callBack}) {
           }
           return {
             ...item,
-            totalSupply: unitConverter.toDecimalLower(
-              (supplyResults[index] || {}).totalSupply,
-            ),
             reserveA: unitConverter.toDecimalLower(
               item.reserveA,
               tokenA?.decimals,
@@ -94,6 +86,43 @@ function* getPairsSaga({pair, callBack}) {
     yield delay(500);
     callBack?.(-1);
     console.log(error, '======getPairsSaga');
+  }
+}
+function* getTotalSupplySaga({pairs}) {
+  try {
+    const contracts = yield select(contractsSelectors.getContracts);
+    const {swapContract} = contracts || {};
+    if (swapContract) {
+      const {results} = yield swapContract.GetTotalSupply.call(pairs);
+      if (Array.isArray(results)) {
+        const totalSupplys = yield select(swapSelectors.totalSupplys);
+        let obj = {};
+        for (let i = 0, j = results.length; i < j; i++) {
+          const element = results[i];
+          obj[element.symbolPair] = unitConverter.toDecimalLower(
+            element.totalSupply,
+          );
+        }
+        console.log(totalSupplys, '=====totalSupplys');
+        if (JSON.stringify(totalSupplys) !== JSON.stringify(obj)) {
+          console.log(obj, '======obj');
+          yield put(swapActions.setTotalSupply(obj));
+        }
+      }
+      console.log(results, '=====getTotalSupplySaga');
+    }
+  } catch (error) {
+    console.log(error, 'getTotalSupplySaga');
+  }
+}
+function* getPairListSaga({}) {
+  try {
+    const result = yield getFetchRequest(
+      `${swapPath}/pairList?pageNum=${1}&pageSize=${SWAP_PAGE_SIZE}`,
+    );
+    console.log(result, '======getPairListSaga');
+  } catch (error) {
+    console.log(error, 'getPairListSaga');
   }
 }
 function* createPairSaga({symbolPair}) {
@@ -159,7 +188,6 @@ function* getAccountAssetsSaga({pair, callBack}) {
         return;
       }
     }
-    console.log(pairs, '=====symbolPair');
     const liquidity = yield swapContract.GetLiquidityTokenBalance.call(pairs);
     const {results: supplyResults} = yield swapContract.GetTotalSupply.call(
       pairs,
@@ -167,12 +195,10 @@ function* getAccountAssetsSaga({pair, callBack}) {
     const {results: reservesResults} = yield swapContract.GetReserves.call(
       pairs,
     );
-    console.log(supplyResults, '====supplyResults');
     const {results} = liquidity || {};
     if (Array.isArray(results)) {
       const allTokens = yield select(userSelectors.allTokens);
       const list = results.map((item, index) => {
-        console.log(item, 'liquidity');
         const reserves = reservesResults[index];
         let tokenA, tokenB;
         if (Array.isArray(allTokens)) {
@@ -344,7 +370,6 @@ function* getOverviewChartSaga() {
 }
 function* getTokenInfoSaga({symbol, callBack}) {
   try {
-    console.log(symbol, '=======symbol');
     console.log(`${swapPath}/tokenInfo?symbol=${symbol}`);
     const result = yield getFetchRequest(
       `${swapPath}/tokenInfo?symbol=${symbol}`,
@@ -421,19 +446,12 @@ function* getOverviewInfoSaga() {
     console.log(error, 'getOverviewInfoSaga');
   }
 }
-function* getAccountListSaga({loadingPaging}) {
-  console.log(loadingPaging, '======loadingPaging');
+function* getAccountListSaga({loadingPaging, callBack}) {
   try {
     let pageNum = 1;
     const accountList = yield select(swapSelectors.accountList);
-    console.log(accountList, '=====accountList');
     if (loadingPaging && Array.isArray(accountList)) {
-      console.log(
-        Math.ceil(accountList.length / SWAP_PAGE_SIZE),
-        '=Math.ceil(accountList.length / SWAP_PAGE_SIZE)',
-      );
       pageNum = Math.ceil(accountList.length / SWAP_PAGE_SIZE) + 1;
-      console.log(pageNum, '=====pageNum');
     }
     console.log(
       `${swapPath}/accountList?pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}`,
@@ -447,26 +465,27 @@ function* getAccountListSaga({loadingPaging}) {
       if (loadingPaging && Array.isArray(accountList)) {
         list = list.concat(accountList);
       }
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
       list = list.concat(result.data?.list || []);
       yield put(swapActions.setAccountList(list));
+    } else {
+      callBack?.(-1);
     }
   } catch (error) {
+    callBack?.(-1);
     console.log(error, 'getAccountListSaga');
   }
 }
-function* getTokenListSaga({loadingPaging}) {
-  console.log(loadingPaging, '======loadingPaging');
+function* getTokenListSaga({loadingPaging, callBack}) {
   try {
     let pageNum = 1;
     const tokenList = yield select(swapSelectors.tokenList);
-    console.log(tokenList, '=====tokenList');
     if (loadingPaging && Array.isArray(tokenList)) {
-      console.log(
-        Math.ceil(tokenList.length / SWAP_PAGE_SIZE),
-        '=Math.ceil(tokenList.length / SWAP_PAGE_SIZE)',
-      );
       pageNum = Math.ceil(tokenList.length / SWAP_PAGE_SIZE) + 1;
-      console.log(pageNum, '=====pageNum');
     }
     console.log(
       `${swapPath}/tokenList?pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}`,
@@ -480,10 +499,18 @@ function* getTokenListSaga({loadingPaging}) {
       if (loadingPaging && Array.isArray(tokenList)) {
         list = list.concat(tokenList);
       }
+      if (result.data?.list?.length < SWAP_PAGE_SIZE) {
+        callBack?.(0);
+      } else {
+        callBack?.(1);
+      }
       list = list.concat(result.data?.list || []);
       yield put(swapActions.setTokenList(list));
+    } else {
+      callBack?.(-1);
     }
   } catch (error) {
+    callBack?.(-1);
     console.log(error, 'getAccountListSaga');
   }
 }
@@ -507,12 +534,6 @@ function* getTokenChartSaga({symbol, range}) {
   }
 }
 function* getPairSwapListSaga({symbolPair, loadingPaging, callBack}) {
-  console.log(
-    symbolPair,
-    loadingPaging,
-    callBack,
-    '===symbolPair, loadingPaging, callBack',
-  );
   try {
     let pageNum = 1;
     const pairSwap = yield select(swapSelectors.pairSwap);
@@ -839,6 +860,10 @@ export default function* SwapSaga() {
   yield all([
     yield takeLatest(swapTypes.GET_PAIRS, getPairsSaga),
     yield takeLatest(swapTypes.CREATE_PAIR, createPairSaga),
+    yield takeLatest(swapTypes.GET_TOTAL_SUPPLY, getTotalSupplySaga),
+
+    yield takeLatest(swapTypes.GET_PAIR_LIST, getPairListSaga),
+
     yield takeLatest(swapTypes.ADD_LIQUIDITY, addLiquiditySaga),
     yield takeLatest(swapTypes.GET_ACCOUNT_ASSETS, getAccountAssetsSaga),
     yield takeLatest(swapTypes.SWAP_TOKEN, swapTokenSaga),

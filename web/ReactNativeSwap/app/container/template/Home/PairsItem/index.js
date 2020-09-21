@@ -27,6 +27,7 @@ const PairsItem = props => {
   });
   const {item} = props;
   const subtitle = swapUtils.getSwapUSD(item, tokenUSD);
+  const {symbolA, symbolB, reserveA, reserveB, symbolPair} = item || {};
   return (
     <Touchable
       onPress={() =>
@@ -34,18 +35,26 @@ const PairsItem = props => {
       }
       style={styles.listItemBox}>
       <TextM numberOfLines={1} style={styles.titleStyle}>
-        {item.symbolPair}
+        {symbolPair}
       </TextM>
-      <View style={styles.flexBox}>
+      <View style={styles.NFlexBox}>
         <TextS numberOfLines={1}>{subtitle}</TextS>
-        <SymbolText margin>123 {item.symbolA}</SymbolText>
-        <SymbolText>123 {item.symbolB}</SymbolText>
+        <SymbolText margin>
+          {reserveA} {symbolA}
+        </SymbolText>
+        <SymbolText>
+          {reserveB} {symbolB}
+        </SymbolText>
       </View>
-      <View style={styles.flexBox}>
+      {/* <View style={styles.flexBox}>
         <TextS numberOfLines={1}>{subtitle}</TextS>
-        <SymbolText margin>123 {item.symbolA}</SymbolText>
-        <SymbolText>123 {item.symbolB}</SymbolText>
-      </View>
+        <SymbolText margin>
+          {reserveA} {symbolA}
+        </SymbolText>
+        <SymbolText>
+          {reserveB} {symbolB}
+        </SymbolText>
+      </View> */}
     </Touchable>
   );
 };

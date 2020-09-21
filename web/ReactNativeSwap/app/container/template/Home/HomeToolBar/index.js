@@ -8,7 +8,11 @@ import styles from '../styles';
 import TitleTool from '../TitleTool';
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
-  const toolList = ['Tokens', 'Pairs', 'Accounts'];
+  const toolList = [
+    i18n.t('swap.tokens'),
+    i18n.t('swap.pairs'),
+    i18n.t('swap.accounts'),
+  ];
   return (
     <>
       <View style={styles.toolBarBox}>
@@ -31,21 +35,17 @@ const ToolBar = memo(props => {
       </View>
       {index === 1 ? (
         <TitleTool
-          titleList={[
-            i18n.t('swap.pair'),
-            i18n.t('swap.liquidity'),
-            `${i18n.t('swap.volume')}(24h)`,
-          ]}
+          titleList={[i18n.t('swap.pair'), i18n.t('swap.liquidity')]}
         />
       ) : index === 2 ? (
-        <TitleTool titleList={[i18n.t('account'), 'Value']} />
+        <TitleTool titleList={[i18n.t('account'), i18n.t('swap.value')]} />
       ) : (
         <TitleTool
           titleList={[
-            'Tokens',
+            i18n.t('swap.tokenT'),
             i18n.t('swap.liquidity'),
-            'Price',
-            'Price Change',
+            i18n.t('swap.price'),
+            i18n.t('swap.priceChange'),
           ]}
         />
       )}

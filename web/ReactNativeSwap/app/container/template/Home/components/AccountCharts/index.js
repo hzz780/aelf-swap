@@ -33,7 +33,7 @@ const AccountCharts = props => {
     };
   });
   const periodList = ['1W', '1M', 'All'];
-  const list = ['Liquidity', 'Volume'];
+  const list = ['Liquidity'];
   const [toolIndex, setToolIndex] = useState(0);
   const [period, setPeriod] = useState(0);
   const onSetToolIndex = useCallback(

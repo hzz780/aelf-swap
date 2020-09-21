@@ -22,7 +22,7 @@ const TokenMore = props => {
   }, []);
   return (
     <View style={GStyle.container}>
-      <CommonHeader title="Top Pairs" canBack />
+      <CommonHeader title={i18n.t('swap.token.topPairs')} canBack />
       <TitleTool
         titleList={[
           i18n.t('swap.pair'),

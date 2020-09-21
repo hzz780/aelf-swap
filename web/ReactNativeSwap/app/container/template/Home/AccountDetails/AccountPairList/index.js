@@ -1,16 +1,15 @@
 import React, {useCallback, memo} from 'react';
 import {ListComponent, CommonHeader} from '../../../../../components/template';
 import {useStateToProps} from '../../../../../utils/pages/hooks';
-import PairsItem from '../../PairsItem';
 import {View} from 'react-native';
 import {GStyle} from '../../../../../assets/theme';
 import TitleTool from '../../TitleTool';
 import i18n from 'i18n-js';
+import PairItem from '../../components/PairItem';
 const AccountPairList = props => {
   const {accountInfo} = useStateToProps(base => {
-    const {user, swap} = base;
+    const {swap} = base;
     return {
-      tokenUSD: user.tokenUSD,
       accountInfo: swap.accountInfo,
     };
   });
@@ -18,7 +17,7 @@ const AccountPairList = props => {
   const addressDetails = accountInfo ? accountInfo[address] : undefined;
   const {pairList} = addressDetails || {};
   const renderItem = useCallback(({item}) => {
-    return <PairsItem item={item} />;
+    return <PairItem item={item} />;
   }, []);
   return (
     <View style={GStyle.container}>

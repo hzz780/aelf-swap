@@ -23,6 +23,7 @@ import RateItem from '../RateItem';
 import TransactionsItem from '../components/TransactionsItem';
 import ToolBar from '../components/ToolBar';
 import PairItem from '../components/PairItem';
+let isActive = false;
 const TokenDetails = props => {
   const dispatch = useDispatch();
   const getTokenInfo = useCallback(
@@ -50,6 +51,9 @@ const TokenDetails = props => {
   const list = useRef();
   const endList = useCallback(
     (v, i) => {
+      if (!isActive) {
+        return;
+      }
       if (v === 1) {
         setLoadCompleted({...(loadCompleted || {}), [i]: false});
       } else {
@@ -90,7 +94,11 @@ const TokenDetails = props => {
   console.log(tokenDetails, '=====tokenDetails');
   useFocusEffect(
     useCallback(() => {
+      isActive = true;
       upPullRefresh();
+      return () => {
+        isActive = false;
+      };
     }, [upPullRefresh]),
   );
   const TopPairs = useMemo(() => {

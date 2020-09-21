@@ -4,8 +4,13 @@ import Immutable from 'seamless-immutable';
 /* ------------- Types and Action Creators ------------- */
 const {Types, Creators} = createActions({
   getPairs: ['pair', 'callBack'],
-  createPair: ['symbolPair'],
   setPairs: ['pairs'],
+  createPair: ['symbolPair'],
+  getTotalSupply: ['pairs'],
+  setTotalSupply: ['totalSupplys'],
+
+  getPairList: ['loadingPaging'],
+
   addLiquidity: ['data'],
   getAccountAssets: ['pair', 'callBack'],
   swapToken: ['data', 'callBack'],
@@ -36,10 +41,10 @@ const {Types, Creators} = createActions({
   getOverviewInfo: [],
   setOverviewInfo: ['overviewInfo'],
 
-  getAccountList: ['loadingPaging'],
+  getAccountList: ['loadingPaging', 'callBack'],
   setAccountList: ['accountList'],
 
-  getTokenList: ['loadingPaging'],
+  getTokenList: ['loadingPaging', 'callBack'],
   setTokenList: ['tokenList'],
 
   getTokenChart: ['symbol', 'range'],
@@ -77,6 +82,8 @@ export default Creators;
 
 export const INITIAL_STATE = Immutable({
   pairs: null,
+  totalSupplys: null,
+
   myLiquidity: [],
   pairCandleStick: {},
   pairCharts: {},
@@ -108,6 +115,10 @@ export const INITIAL_STATE = Immutable({
 const _baseSelector = state => state.swap;
 
 export const swapSelectors = {
+  totalSupplys: createSelector(
+    _baseSelector,
+    base => base.totalSupplys,
+  ),
   pairCandleStick: createSelector(
     _baseSelector,
     base => base.pairCandleStick,
@@ -184,6 +195,16 @@ export const setPairs = (state, {pairs}) => {
   return state.merge({pairs});
 };
 export const createPair = state => {
+  return state.merge();
+};
+export const getTotalSupply = state => {
+  return state.merge();
+};
+export const setTotalSupply = (state, {totalSupplys}) => {
+  return state.merge({totalSupplys});
+};
+
+export const getPairList = state => {
   return state.merge();
 };
 export const addLiquidity = state => {
@@ -406,6 +427,11 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_PAIRS]: getPairs,
   [Types.SET_PAIRS]: setPairs,
   [Types.CREATE_PAIR]: createPair,
+  [Types.GET_TOTAL_SUPPLY]: getTotalSupply,
+  [Types.SET_TOTAL_SUPPLY]: setTotalSupply,
+
+  [Types.GET_PAIR_LIST]: getPairList,
+
   [Types.ADD_LIQUIDITY]: addLiquidity,
   [Types.GET_ACCOUNT_ASSETS]: getAccountAssets,
   [Types.SWAP_TOKEN]: swapToken,

@@ -26,14 +26,17 @@ import styles from './styles';
 import MySingleLiquidity from '../MySingleLiquidity';
 const AddLiquidity = props => {
   const dispatch = useDispatch();
-  const {userBalances, pairs, tokenUSD} = useStateToProps(base => {
-    const {user, swap} = base;
-    return {
-      userBalances: user.userBalances,
-      pairs: swap.pairs,
-      tokenUSD: user.tokenUSD,
-    };
-  });
+  const {userBalances, pairs, tokenUSD, totalSupplys} = useStateToProps(
+    base => {
+      const {user, swap} = base;
+      return {
+        userBalances: user.userBalances,
+        pairs: swap.pairs,
+        tokenUSD: user.tokenUSD,
+        totalSupplys: swap.totalSupplys,
+      };
+    },
+  );
   const {pairData} = props.route.params || {};
   const [state, setState] = useSetState({
     firstToken: {
@@ -53,6 +56,7 @@ const AddLiquidity = props => {
   const firstBalance = userBalances[(firstToken?.token)] || 0;
   const secondBalance = userBalances[(secondToken?.token)] || 0;
   const currentPair = swapUtils.getPair(firstToken, secondToken, pairs);
+  const totalSupply = totalSupplys?.[currentPair?.symbolPair];
   const addLiquidity = useCallback(
     data => dispatch(swapActions.addLiquidity(data)),
     [dispatch],
@@ -418,12 +422,10 @@ const AddLiquidity = props => {
     );
   }, [currentPair, firstToken, secondToken, tokenUSD]);
   const willReceive = useMemo(() => {
-    const poolToken = swapUtils.willPoolTokens(
-      firstToken,
-      secondToken,
-      currentPair,
-    );
-    console.log(swapUtils.getSharePool(poolToken, currentPair?.totalSupply));
+    const poolToken = swapUtils.willPoolTokens(firstToken, secondToken, {
+      ...(currentPair || {}),
+      totalSupply,
+    });
     return (
       <>
         <TextL style={[styles.themeColor, styles.mrginText]}>
@@ -443,15 +445,13 @@ const AddLiquidity = props => {
           disabled
           title={i18n.t('swap.sharePool')}
           style={styles.itemBox}
-          subtitle={
-            swapUtils.getSharePool(poolToken, currentPair?.totalSupply) || '-'
-          }
+          subtitle={swapUtils.getSharePool(poolToken, totalSupply) || '-'}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
       </>
     );
-  }, [firstToken, currentPair, secondToken]);
+  }, [firstToken, secondToken, currentPair, totalSupply]);
   const MyLiquidity = useMemo(() => {
     return <MySingleLiquidity pair={currentPair} />;
   }, [currentPair]);

@@ -17,7 +17,6 @@ import {useStateToProps, useSetState} from '../../../../utils/pages/hooks';
 import AccountCharts from '../components/AccountCharts';
 import styles from './styles';
 import TitleTool from '../TitleTool';
-import PairsItem from '../PairsItem';
 import {useFocusEffect} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import navigationService from '../../../../utils/common/navigationService';
@@ -25,6 +24,8 @@ import {bottomBarHeigth} from '../../../../utils/common/device';
 import TransactionsItem from '../components/TransactionsItem';
 import swapUtils from '../../../../utils/pages/swapUtils';
 import ToolBar from '../components/ToolBar';
+import PairItem from '../components/PairItem';
+let isActive = false;
 const AccountDetails = props => {
   const dispatch = useDispatch();
   const getAccountInfo = useCallback(
@@ -32,12 +33,7 @@ const AccountDetails = props => {
       dispatch(swapActions.getAccountInfo(address, callBack)),
     [dispatch],
   );
-  const [state, setState] = useSetState(
-    {
-      symbolPair: null,
-    },
-    true,
-  );
+  const [state, setState] = useSetState({symbolPair: null}, true);
   const {symbolPair} = state;
   const address = props.route.params?.address ?? '';
   const {
@@ -56,6 +52,9 @@ const AccountDetails = props => {
   });
   const endList = useCallback(
     (v, i) => {
+      if (!isActive) {
+        return;
+      }
       if (v === 1) {
         setLoadCompleted({...(loadCompleted || {}), [i]: false});
       } else {
@@ -98,7 +97,11 @@ const AccountDetails = props => {
   const {totalSwapped, feePaid, txsCount, pairList} = addressDetails || {};
   useFocusEffect(
     useCallback(() => {
+      isActive = true;
       upPullRefresh();
+      return () => {
+        isActive = false;
+      };
     }, [upPullRefresh]),
   );
   const [index, setIndex] = useState(0);
@@ -139,7 +142,7 @@ const AccountDetails = props => {
             ]}
           />
           {pairList.map((item, i) => {
-            return <PairsItem item={item} key={i} />;
+            return <PairItem item={item} key={i} />;
           })}
         </>
       );
@@ -185,7 +188,7 @@ const AccountDetails = props => {
           i18n.t('swap.account.feePaid'),
           `$ ${swapUtils.USDdigits(feePaid)}`,
         )}
-        {Item(i18n.t('swap.account.txsCount'), txsCount)}
+        {Item(i18n.t('swap.account.TXSCount'), txsCount)}
         <ListItem
           onPress={onAllPairs}
           style={styles.allPairsStyle}
@@ -277,8 +280,8 @@ const AccountDetails = props => {
       {addressDetails ? (
         <SectionStickyList
           ref={list}
-          data={getData()}
           showFooter
+          data={getData()}
           whetherAutomatic
           stickyHead={stickyHead}
           renderItem={renderItem}

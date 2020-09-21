@@ -19,107 +19,69 @@ import HomeToolBar from './HomeToolBar';
 import PairsItem from './PairsItem';
 import Overview from './Overview';
 let isActive = true;
-const tokenList = [
-  {
-    symbol: 'ELF',
-    liquidityInPrice: 1214, // 流通量，为美元，无则为'-'
-    liquidity: 123,
-    price: 12, // 价格，为美元，无则为'-'
-    priceRate: 0.01, // 价格变化率
-  },
-  {
-    symbol: 'ELF',
-    liquidityInPrice: 1214, // 流通量，为美元，无则为'-'
-    liquidity: 123,
-    price: 12, // 价格，为美元，无则为'-'
-    priceRate: 0.01, // 价格变化率
-  },
-  {
-    symbol: 'ELF',
-    liquidityInPrice: 1214, // 流通量，为美元，无则为'-'
-    liquidity: 123,
-    price: 12, // 价格，为美元，无则为'-'
-    priceRate: 0.01, // 价格变化率
-  },
-];
-// const accountList = [
-//   {
-//     address: 'aDTDFwfZxkMwYqCxndue9YU9xAF5wskSekdKQXHdPAEyynbEv',
-//     totalBalanceInPrice: 12313, // 美元价格计算的总市值
-//   },
-//   {
-//     address: '12313213',
-//     totalBalanceInPrice: 12313, // 美元价格计算的总市值
-//   },
-//   {
-//     address: '12313213',
-//     totalBalanceInPrice: 12313, // 美元价格计算的总市值
-//   },
-// ];
 const Home = () => {
   const dispatch = useDispatch();
   const list = useRef();
-  const [loadCompleted, setLoadCompleted] = useState({});
+  const [loadCompleted, setLoadCompleted] = useState(null);
   const [index, setIndex] = useState(1);
   const getPairs = useCallback(
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
     [dispatch],
   );
-  const getAccountList = useCallback(
-    loadingPaging => dispatch(swapActions.getAccountList(loadingPaging)),
-    [dispatch],
+  const endList = useCallback(
+    (v, i) => {
+      if (!isActive) {
+        return;
+      }
+      if (v === 1) {
+        setLoadCompleted({...(loadCompleted || {}), [i]: false});
+      } else {
+        setLoadCompleted({...(loadCompleted || {}), [i]: true});
+      }
+      list.current?.endBottomRefresh();
+    },
+    [loadCompleted],
   );
-  const getTokenList = useCallback(
-    loadingPaging => dispatch(swapActions.getTokenList(loadingPaging)),
-    [dispatch],
+  const onGetAccountList = useCallback(
+    (i, loadingPaging) =>
+      dispatch(swapActions.getAccountList(loadingPaging, v => endList(v, i))),
+    [dispatch, endList],
   );
-  const {pairs, accountList} = useStateToProps(base => {
+  const onGetTokenList = useCallback(
+    (i, loadingPaging) =>
+      dispatch(swapActions.getTokenList(loadingPaging, v => endList(v, i))),
+    [dispatch, endList],
+  );
+  const {pairs, accountList, tokenList} = useStateToProps(base => {
     const {settings, swap} = base;
     return {
       language: settings.language,
       pairs: swap.pairs,
       accountList: swap.accountList,
+      tokenList: swap.tokenList,
     };
   });
-  console.log(accountList, '======accountList');
-  const onGetAccountList = useCallback(
-    loadingPaging => {
-      getAccountList(loadingPaging);
-    },
-    [getAccountList],
-  );
-  const onGetTokenList = useCallback(
-    loadingPaging => {
-      getTokenList(loadingPaging);
-    },
-    [getTokenList],
-  );
   useFocusEffect(
     useCallback(() => {
-      getPairs();
-      onGetAccountList();
-      onGetTokenList();
-    }, [getPairs, onGetAccountList, onGetTokenList]),
+      upPullRefresh();
+    }, [upPullRefresh]),
   );
-  const onSetLoadCompleted = useCallback(value => {
-    if (isActive) {
-      setLoadCompleted(value);
-    }
-  }, []);
   const upPullRefresh = useCallback(() => {
     getPairs(undefined, () => {
-      list.current && list.current.endUpPullRefresh();
-      list.current && list.current.endBottomRefresh();
+      list.current?.endUpPullRefresh();
+      list.current?.endBottomRefresh();
     });
-    onSetLoadCompleted(true);
-  }, [getPairs, onSetLoadCompleted]);
+    getPairs();
+    onGetAccountList(2);
+    onGetTokenList(0);
+  }, [getPairs, onGetAccountList, onGetTokenList]);
   const onEndReached = useCallback(() => {
-    // onSetLoadCompleted(true);
     if (index === 2) {
-      onGetAccountList(true);
+      onGetAccountList(2, true);
+    } else if (index === 0) {
+      onGetTokenList(0, true);
     }
-    list.current && list.current.endBottomRefresh();
-  }, [index, onGetAccountList]);
+  }, [index, onGetAccountList, onGetTokenList]);
   const renderItem = useCallback(
     ({item}) => {
       if (!item) {
@@ -140,12 +102,12 @@ const Home = () => {
             <TextS
               style={[styles.tokenTopSubtitle, styles.flexBox]}
               numberOfLines={1}>
-              ${liquidityInPrice}
+              ${swapUtils.USDdigits(liquidityInPrice)}
             </TextS>
             <TextS
               style={[styles.tokenTopSubtitle, styles.flexBox]}
               numberOfLines={1}>
-              ${price}
+              ${swapUtils.USDdigits(price)}
             </TextS>
             <TextS
               style={[styles.tokenTopSubtitle, styles.flexBox, {color}]}
@@ -159,9 +121,7 @@ const Home = () => {
         return (
           <Touchable
             onPress={() =>
-              navigationService.navigate('AccountDetails', {
-                address: 'aDTDFwfZxkMwYqCxndue9YU9xAF5wskSekdKQXHdPAEyynbEv',
-              })
+              navigationService.navigate('AccountDetails', {address})
             }
             style={styles.listItem2Box}>
             <TextM
@@ -199,20 +159,28 @@ const Home = () => {
       />
     );
   }, [index]);
-  const data = index === 1 ? pairs : index === 2 ? accountList : tokenList;
+  const getData = useCallback(() => {
+    if (index === 1) {
+      return pairs;
+    } else if (index === 2) {
+      return accountList;
+    } else {
+      return tokenList;
+    }
+  }, [accountList, index, pairs, tokenList]);
   return (
     <View style={GStyle.secondContainer}>
       <CommonHeader title={i18n.t('swap.market')} />
       <SectionStickyList
         ref={list}
-        data={data}
+        data={getData()}
         showFooter
         whetherAutomatic
         stickyHead={stickyHead}
         renderItem={renderItem}
         renderHeader={renderHeader}
         onEndReached={onEndReached}
-        loadCompleted={loadCompleted[index]}
+        loadCompleted={index === 1 || loadCompleted?.[index]}
         upPullRefresh={upPullRefresh}
         bottomLoadTip={i18n.t('swap.loadMore')}
       />

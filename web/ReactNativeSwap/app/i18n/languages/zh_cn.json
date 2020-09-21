@@ -319,7 +319,7 @@
       "allPairs": "All Pairs",
       "totalSwapped": "Total Value Swapped",
       "feePaid": "Total Fees Paid",
-      "txsCount": "Total Transactions",
+      "TXSCount": "Total Transactions",
       "liquidityInPrice": "Liquidity (Including Fees)",
       "pairList": "Pair List"
     },
@@ -331,6 +331,11 @@
       "txId": "TxId",
       "explorer": "View on aelf Block Explorer",
       "OK": "OK"
-    }
+    },
+    "tokens": "Tokens",
+    "accounts": "Accounts",
+    "tokenT": "Token",
+    "priceChange": "Price Change",
+    "value": "Value"
   }
 }

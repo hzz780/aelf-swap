@@ -119,6 +119,10 @@ const styles = StyleSheet.create({
     color: Colors.kRed,
     fontWeight: 'bold',
   },
+  NFlexBox: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
 });
 
 export default styles;

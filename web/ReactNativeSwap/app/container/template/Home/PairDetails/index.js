@@ -21,6 +21,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import RateItem from './RateItem';
 import TransactionsItem from '../components/TransactionsItem';
 import ToolBar from '../components/ToolBar';
+let isActive = false;
 const PairDetails = props => {
   const list = useRef();
   const [pairData, setPairData] = useState(props.route.params?.pairData || {});
@@ -54,6 +55,9 @@ const PairDetails = props => {
   const [loadCompleted, setLoadCompleted] = useState(null);
   const endList = useCallback(
     (v, i) => {
+      if (!isActive) {
+        return;
+      }
       if (v === 1) {
         setLoadCompleted({...(loadCompleted || {}), [i]: false});
       } else {
@@ -95,14 +99,17 @@ const PairDetails = props => {
   const [index, setIndex] = useState(0);
   useFocusEffect(
     useCallback(() => {
+      isActive = true;
       upPullRefresh();
+      return () => {
+        isActive = false;
+      };
     }, [upPullRefresh]),
   );
   const renderHeader = useMemo(() => {
     const {symbolA, symbolB, reserveA, reserveB} = pairData || {};
     const subtitle = swapUtils.getSwapUSD(pairData, tokenUSD);
     const {
-      liquidityInPrice,
       volumeInPrice,
       volumeInPriceRate,
       volumeA,

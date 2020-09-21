@@ -4,6 +4,7 @@ import {StyleSheet, View} from 'react-native';
 import {TextM, TextS} from '../../../../../components/template/CommonText';
 import aelfUtils from '../../../../../utils/pages/aelfUtils';
 import swapUtils from '../../../../../utils/pages/swapUtils';
+import {Communication, Touchable} from '../../../../../components/template';
 const TransactionsItem = props => {
   const {item, index} = props;
   if (!item) {
@@ -19,6 +20,7 @@ const TransactionsItem = props => {
     amountA,
     amountB,
     symbolB,
+    txId,
   } = item || {};
   let leftTitle = i18n.t('swap.swap'),
     rigthTitle = i18n.t('swap.for');
@@ -30,7 +32,9 @@ const TransactionsItem = props => {
     rigthTitle = i18n.t('swap.and');
   }
   return (
-    <View style={styles.itemBox}>
+    <Touchable
+      onPress={() => Communication.web(aelfUtils.webURLTx(txId))}
+      style={styles.itemBox}>
       <View style={styles.itemtitleBox}>
         <TextM style={styles.leftTitle}>
           {leftTitle}{' '}
@@ -55,7 +59,7 @@ const TransactionsItem = props => {
       <TextS style={styles.timeStyle}>
         {aelfUtils.timeConversion(new Date().getTime())}
       </TextS>
-    </View>
+    </Touchable>
   );
 };
 
