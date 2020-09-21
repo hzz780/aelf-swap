@@ -71,7 +71,6 @@ const Home = () => {
       list.current?.endUpPullRefresh();
       list.current?.endBottomRefresh();
     });
-    getPairs();
     onGetAccountList(2);
     onGetTokenList(0);
   }, [getPairs, onGetAccountList, onGetTokenList]);

@@ -281,7 +281,7 @@ const PairDetails = props => {
         whetherAutomatic
         stickyHead={stickyHead}
         renderItem={renderItem}
-        listFooterHight={pTd(200)}
+        listFooterHight={pTd(180)}
         onEndReached={onEndReached}
         renderHeader={renderHeader}
         loadCompleted={loadCompleted?.[index]}
