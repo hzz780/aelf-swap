@@ -21,6 +21,7 @@ export default class SectionStickyList extends Component {
   static propTypes = {
     renderHeader: PropTypes.element, //Head element above the ceiling
     stickyHead: PropTypes.func, //Ceiling element
+    data: PropTypes.array, //Data source array
     onLoading: PropTypes.func, //Pull up loading callback
     loadCompleted: PropTypes.bool, //Whether the data is all loaded
     upPullRefresh: PropTypes.func, //Pull-down refresh callback
@@ -140,7 +141,6 @@ export default class SectionStickyList extends Component {
       showScrollTop && this.setState({showScrollTop: false});
     }
   };
-  sc;
   renderScrollToTopWrapper = () => {
     const {listFooterHight} = this.props;
     const {showScrollTop} = this.state;
@@ -210,23 +210,23 @@ export default class SectionStickyList extends Component {
 }
 const styles = StyleSheet.create({
   FooterStyles: {
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: pTd(20),
     marginBottom: bottomBarHeigth,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   scrollToTopStyle: {
-    opacity: 0.8,
-    position: 'absolute',
     right: 10,
-    bottom: scrollToTopBottom,
-    zIndex: 999,
-    height: 40,
     width: 40,
+    height: 40,
+    zIndex: 999,
+    opacity: 0.8,
     borderRadius: 20,
-    backgroundColor: 'white',
+    position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'white',
+    bottom: scrollToTopBottom,
     ...Platform.select({
       ios: {
         shadowColor: Colors.fontBlack,

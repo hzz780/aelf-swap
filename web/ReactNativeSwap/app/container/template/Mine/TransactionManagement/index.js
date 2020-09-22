@@ -3,7 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import {GStyle} from '../../../../assets/theme';
 import {CommonHeader, BounceSpinner} from '../../../../components/template';
 import i18n from 'i18n-js';
-import {WebView} from 'react-native-webview';
+import WebView from 'react-native-webview';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
 import {useStateToProps} from '../../../../utils/pages/hooks';
 const TransactionManagement = () => {
@@ -15,11 +15,9 @@ const TransactionManagement = () => {
   });
   const Components = useMemo(() => {
     const uri = aelfUtils.webURLAddress(address);
-    console.log(uri);
     return (
       <View style={GStyle.secondContainer}>
         <CommonHeader
-          titleBox={styles.titleBox}
           title={i18n.t('mineModule.transactionManagementT')}
           canBack
         />
@@ -32,7 +30,8 @@ const TransactionManagement = () => {
             </View>
           )}
           onNavigationStateChange={navState => {
-            console.log(navState.url, '======navState');
+            const {url} = navState || {};
+            this.url = url;
           }}
         />
       </View>
@@ -47,8 +46,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     marginTop: '50%',
-  },
-  titleBox: {
-    flex: 3,
   },
 });

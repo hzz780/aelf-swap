@@ -1,9 +1,15 @@
-import {Dimensions, Platform, PixelRatio} from 'react-native';
+import {Dimensions, Platform, PixelRatio, UIManager} from 'react-native';
 import Constants from 'expo-constants';
 const X_WIDTH = 375;
 const X_HEIGHT = 812;
 
 const isIos = Platform.OS === 'ios';
+
+//Turn on Android layout animation
+if (!isIos && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 const sreenWidth = Dimensions.get('screen').width;
 const sreenHeight = Dimensions.get('screen').height;
 const windowHeight = Dimensions.get('window').height;

@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {memo, useCallback} from 'react';
 import {StyleSheet, View, Keyboard} from 'react-native';
 import {pTd} from '../../../../utils/common';
 import {Colors} from '../../../../assets/theme';
@@ -14,6 +14,10 @@ import aelfUtils from '../../../../utils/pages/aelfUtils';
 import navigationService from '../../../../utils/common/navigationService';
 const Components = memo(props => {
   const {txId, goBack} = props;
+  const onHide = useCallback(() => {
+    OverlayModal.hide();
+    goBack && navigationService.goBack();
+  }, [goBack]);
   return (
     <View style={styles.chooseTokenModal}>
       <TextL>{i18n.t('swap.transactionPop.transactionSubmitted')}</TextL>
@@ -25,19 +29,13 @@ const Components = memo(props => {
       </CopyText>
       <TextL
         onPress={() => {
-          OverlayModal.hide();
           Communication.web(aelfUtils.webURLTx(txId));
-          goBack && navigationService.goBack();
+          onHide();
         }}
         style={styles.explorer}>
         {i18n.t('swap.transactionPop.explorer')}
       </TextL>
-      <Touchable
-        onPress={() => {
-          OverlayModal.hide();
-          goBack && navigationService.goBack();
-        }}
-        style={styles.okStyle}>
+      <Touchable onPress={onHide} style={styles.okStyle}>
         <TextL style={styles.okText}>{i18n.t('swap.transactionPop.OK')}</TextL>
       </Touchable>
     </View>

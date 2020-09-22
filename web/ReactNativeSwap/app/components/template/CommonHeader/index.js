@@ -112,7 +112,11 @@ const Header = props => {
         {titleElement ? (
           titleElement
         ) : (
-          <View style={[styles.titleBox, titleBox]}>
+          <View
+            style={[
+              [styles.titleBox, {flex: rightElement || rightTitle ? 2 : 3}],
+              titleBox,
+            ]}>
             <Text
               numberOfLines={1}
               ellipsizeMode="middle"

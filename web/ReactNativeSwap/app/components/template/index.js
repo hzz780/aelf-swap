@@ -1,4 +1,5 @@
 'use strict';
+
 import Input from './Input';
 import Loading from './Loading';
 import Password from './Password';
@@ -19,9 +20,7 @@ import VerifyPassword from './VerifyPassword';
 import SectionStickyList from './SectionStickyList';
 import KeyboardScrollView from './KeyboardScrollView';
 import Candlestick from './Charts/Candlestick';
-import Areachart from './Charts/Areachart';
-import BarChart from './Charts/BarChart';
-import Echarts from './Echarts';
+import ECharts from './ECharts';
 import Charts from './Charts';
 export {
   Input,
@@ -44,8 +43,6 @@ export {
   SectionStickyList,
   KeyboardScrollView,
   Candlestick,
-  Areachart,
-  BarChart,
-  Echarts,
+  ECharts,
   Charts,
 };

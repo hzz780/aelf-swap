@@ -1,9 +1,9 @@
 import React, {memo} from 'react';
-import Echarts from '../../Echarts';
+import ECharts from '../../ECharts';
 import config from '../config';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
 const {dataZoom, grid, chartsHeigth, colorList, tooltip, xAxis, yAxis} = config;
-const Areachart = props => {
+const AreaChart = props => {
   const {data} = props;
   let dates = [],
     chartData = [];
@@ -33,7 +33,7 @@ const Areachart = props => {
       },
     ],
   };
-  return <Echarts height={chartsHeigth} option={option} />;
+  return <ECharts height={chartsHeigth} option={option} />;
 };
 
-export default memo(Areachart);
+export default memo(AreaChart);

@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import Echarts from '../Echarts';
+import ECharts from '../ECharts';
 import config from './config';
 const showNumber = 30;
 const {
@@ -12,7 +12,7 @@ const {
   yAxis,
   legend,
 } = config;
-const Areachart = props => {
+const AreaChart = props => {
   const {series, dates, coverTooltip, boundaryGap} = props;
   let start = 0;
   const KLine = Array.isArray(series) && series[0]?.type === 'candlestick';
@@ -36,7 +36,7 @@ const Areachart = props => {
     series,
     ...(KLine ? {legend} : {}),
   };
-  return <Echarts height={chartsHeigth} option={option} />;
+  return <ECharts height={chartsHeigth} option={option} />;
 };
 
-export default memo(Areachart);
+export default memo(AreaChart);

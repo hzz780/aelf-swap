@@ -18,20 +18,19 @@ function setTopLevelNavigator(navigatorRef) {
  * @param params
  */
 function navigate(name, params) {
-  _navigator &&
-    _navigator.dispatch(
-      CommonActions.navigate({
-        name,
-        params,
-      }),
-    );
+  _navigator?.dispatch(
+    CommonActions.navigate({
+      name,
+      params,
+    }),
+  );
 }
 
 /**
  * goBack
  */
 function goBack() {
-  _navigator && _navigator.dispatch(CommonActions.goBack());
+  _navigator?.dispatch(CommonActions.goBack());
 }
 
 /**
@@ -50,17 +49,17 @@ function reset(name) {
       routes: [{name}],
     });
   }
-  _navigator && _navigator.dispatch(resetAction);
+  _navigator?.dispatch(resetAction);
 }
 
 function push(routeName, params) {
   const pushAction = StackActions.push(routeName, params);
-  _navigator.dispatch(pushAction);
+  _navigator?.dispatch(pushAction);
 }
 
 function pop(count) {
   const pushAction = StackActions.pop(count);
-  _navigator.dispatch(pushAction);
+  _navigator?.dispatch(pushAction);
 }
 
 export default {

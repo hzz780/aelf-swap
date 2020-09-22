@@ -314,28 +314,28 @@
     "totalValue": "总价值",
     "TXS": "交易数",
     "decimalTip": "(仅支持{{decimals}}位小数)",
-    "pairs": "Pairs",
+    "pairs": "交易对",
     "account": {
-      "allPairs": "All Pairs",
-      "totalSwapped": "Total Value Swapped",
-      "feePaid": "Total Fees Paid",
-      "TXSCount": "Total Transactions",
-      "liquidityInPrice": "Liquidity (Including Fees)",
-      "pairList": "Pair List"
+      "allPairs": "所有交易对",
+      "totalSwapped": "总交换价值",
+      "feePaid": "已付手续费",
+      "TXSCount": "总交易额",
+      "liquidityInPrice": "流动性(包括费用)",
+      "pairList": "交易对列表"
     },
     "token": {
-      "topPairs": "Top Pairs"
+      "topPairs": "交易对列表"
     },
     "transactionPop": {
-      "transactionSubmitted": "Transaction Submitted",
+      "transactionSubmitted": "交易已提交",
       "txId": "TxId",
-      "explorer": "View on aelf Block Explorer",
+      "explorer": "在aelf浏览器上查看",
       "OK": "OK"
     },
     "tokens": "Tokens",
-    "accounts": "Accounts",
+    "accounts": "账户",
     "tokenT": "Token",
-    "priceChange": "Price Change",
+    "priceChange": "价格变化",
     "value": "Value"
   }
 }

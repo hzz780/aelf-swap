@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import Echarts from '../../Echarts';
+import ECharts from '../../ECharts';
 import config from './config';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
 const {
@@ -36,7 +36,7 @@ const Candlestick = props => {
       itemStyle: candlestickItemStyle,
     },
   };
-  return <Echarts height={chartsHeigth} option={option} />;
+  return <ECharts height={chartsHeigth} option={option} />;
 };
 
 export default memo(Candlestick);
