@@ -14,12 +14,12 @@ import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import swapUtils from '../../../../utils/pages/swapUtils';
-import {useStateToProps} from '../../../../utils/pages/hooks';
+import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import TokenCharts from '../components/TokenCharts';
 import styles from './styles';
-import TitleTool from '../TitleTool';
+import TitleTool from '../components/TitleTool';
 import {useFocusEffect} from '@react-navigation/native';
-import RateItem from '../RateItem';
+import RateItem from '../components/RateItem';
 import TransactionsItem from '../components/TransactionsItem';
 import ToolBar from '../components/ToolBar';
 import PairItem from '../components/PairItem';
@@ -47,7 +47,7 @@ const TokenDetails = props => {
   });
   const tokenDetails = tokenInfo[symbol];
   const [index, setIndex] = useState(0);
-  const [loadCompleted, setLoadCompleted] = useState(null);
+  const [loadCompleted, setLoadCompleted] = useSetState(null, true);
   const list = useRef();
   const endList = useCallback(
     (v, i) => {
@@ -55,14 +55,14 @@ const TokenDetails = props => {
         return;
       }
       if (v === 1) {
-        setLoadCompleted({...(loadCompleted || {}), [i]: false});
+        setLoadCompleted({[i]: false});
       } else {
-        setLoadCompleted({...(loadCompleted || {}), [i]: true});
+        setLoadCompleted({[i]: true});
       }
       list.current?.endUpPullRefresh();
       list.current?.endBottomRefresh();
     },
-    [loadCompleted],
+    [setLoadCompleted],
   );
   const onGetSymbolSwapList = useCallback(
     (i, loadingPaging) =>
@@ -219,6 +219,7 @@ const TokenDetails = props => {
     onGetSymbolAddLiquidityList,
     onGetSymbolRemoveLiquidityList,
     onGetSymbolSwapList,
+    setLoadCompleted,
     symbol,
   ]);
   const onEndReached = useCallback(() => {

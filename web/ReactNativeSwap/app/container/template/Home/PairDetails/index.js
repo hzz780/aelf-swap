@@ -15,7 +15,7 @@ import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import swapUtils from '../../../../utils/pages/swapUtils';
-import {useStateToProps} from '../../../../utils/pages/hooks';
+import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import PairCharts from '../components/PairCharts';
 import {useFocusEffect} from '@react-navigation/native';
 import RateItem from './RateItem';
@@ -52,21 +52,21 @@ const PairDetails = props => {
     [dispatch],
   );
   const {symbolPair} = pairData || {};
-  const [loadCompleted, setLoadCompleted] = useState(null);
+  const [loadCompleted, setLoadCompleted] = useSetState(null, true);
   const endList = useCallback(
     (v, i) => {
       if (!isActive) {
         return;
       }
       if (v === 1) {
-        setLoadCompleted({...(loadCompleted || {}), [i]: false});
+        setLoadCompleted({[i]: false});
       } else {
-        setLoadCompleted({...(loadCompleted || {}), [i]: true});
+        setLoadCompleted({[i]: true});
       }
       list.current?.endUpPullRefresh();
       list.current?.endBottomRefresh();
     },
-    [loadCompleted],
+    [setLoadCompleted],
   );
   const onGetPairSwapList = useCallback(
     (i, loadingPaging) =>
@@ -222,6 +222,7 @@ const PairDetails = props => {
     onGetPairAddLiquidityList,
     onGetPairRemoveLiquidityList,
     onGetPairSwapList,
+    setLoadCompleted,
     symbolPair,
   ]);
   const onEndReached = useCallback(() => {

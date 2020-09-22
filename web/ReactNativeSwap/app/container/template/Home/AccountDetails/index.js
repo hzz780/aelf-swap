@@ -16,7 +16,7 @@ import {useDispatch} from 'react-redux';
 import {useStateToProps, useSetState} from '../../../../utils/pages/hooks';
 import AccountCharts from '../components/AccountCharts';
 import styles from './styles';
-import TitleTool from '../TitleTool';
+import TitleTool from '../components/TitleTool';
 import {useFocusEffect} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import navigationService from '../../../../utils/common/navigationService';
@@ -34,6 +34,7 @@ const AccountDetails = props => {
     [dispatch],
   );
   const [state, setState] = useSetState({symbolPair: null}, true);
+  const [loadCompleted, setLoadCompleted] = useSetState(null, true);
   const {symbolPair} = state;
   const address = props.route.params?.address ?? '';
   const {
@@ -56,14 +57,14 @@ const AccountDetails = props => {
         return;
       }
       if (v === 1) {
-        setLoadCompleted({...(loadCompleted || {}), [i]: false});
+        setLoadCompleted({[i]: false});
       } else {
-        setLoadCompleted({...(loadCompleted || {}), [i]: true});
+        setLoadCompleted({[i]: true});
       }
       list.current?.endUpPullRefresh();
       list.current?.endBottomRefresh();
     },
-    [loadCompleted],
+    [setLoadCompleted],
   );
   const onGetAddressSwapList = useCallback(
     (i, loadingPaging) =>
@@ -105,7 +106,6 @@ const AccountDetails = props => {
     }, [upPullRefresh]),
   );
   const [index, setIndex] = useState(0);
-  const [loadCompleted, setLoadCompleted] = useState(true);
   const list = useRef();
   const Item = useCallback((title, subtitle) => {
     return (
@@ -234,6 +234,7 @@ const AccountDetails = props => {
     [index],
   );
   const upPullRefresh = useCallback(() => {
+    setLoadCompleted(null);
     getAccountInfo(address);
     onGetAddressSwapList(0);
     onGetAddressAddLiquidityList(1);
@@ -244,6 +245,7 @@ const AccountDetails = props => {
     onGetAddressAddLiquidityList,
     onGetAddressRemoveLiquidityList,
     onGetAddressSwapList,
+    setLoadCompleted,
   ]);
   const onEndReached = useCallback(() => {
     if (index === 0) {
@@ -274,6 +276,7 @@ const AccountDetails = props => {
     addressSwapList,
     index,
   ]);
+  console.log(loadCompleted, '=====loadCompleted');
   return (
     <View style={GStyle.secondContainer}>
       <CommonHeader title={`${address}`} canBack />

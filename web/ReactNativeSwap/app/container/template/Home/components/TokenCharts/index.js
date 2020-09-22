@@ -9,7 +9,7 @@ import swapUtils from '../../../../../utils/pages/swapUtils';
 import {useDispatch} from 'react-redux';
 import swapActions from '../../../../../redux/swapRedux';
 import {useFocusEffect} from '@react-navigation/native';
-import ToolMemo from '../../ToolMemo';
+import ToolMemo from '../../components/ToolMemo';
 import LoadView from '../LoadView';
 const periodConfig = ['week', 'month', 'all'];
 const defaultPeriod = periodConfig[0];
@@ -49,7 +49,6 @@ const TokenCharts = props => {
     [onGetTokenChart, period],
   );
   const charts = tokenChart?.[symbol]?.[periodConfig[period]];
-  console.log(charts, '======charts');
   const toolMemo = useMemo(() => {
     return (
       <ToolMemo

@@ -10,7 +10,7 @@ import {Colors} from '../../../../../assets/theme';
 import {pTd} from '../../../../../utils/common';
 import config from '../../../../../components/template/Charts/config';
 import swapUtils from '../../../../../utils/pages/swapUtils';
-import ToolMemo from '../../ToolMemo';
+import ToolMemo from '../../components/ToolMemo';
 import LoadView from '../LoadView';
 const {candlestickItemStyle} = config;
 const periodConfig = ['week', 'month', 'all'];

@@ -3,7 +3,7 @@ import {ListComponent, CommonHeader} from '../../../../../components/template';
 import {useStateToProps} from '../../../../../utils/pages/hooks';
 import {View} from 'react-native';
 import {GStyle} from '../../../../../assets/theme';
-import TitleTool from '../../TitleTool';
+import TitleTool from '../../components/TitleTool';
 import i18n from 'i18n-js';
 import PairItem from '../../components/PairItem';
 const TokenMore = props => {

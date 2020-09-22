@@ -1,14 +1,13 @@
 import React, {memo} from 'react';
-import {View} from 'react-native';
-import {TextL} from '../../../../components/template/CommonText';
-import {Colors} from '../../../../assets/theme';
-import styles from '../styles';
+import {StyleSheet, View} from 'react-native';
+import {TextL} from '../../../../../components/template/CommonText';
+import {Colors} from '../../../../../assets/theme';
 import i18n from 'i18n-js';
 import RateItem from '../RateItem';
-import OverviewCharts from '../components/OverviewCharts';
-import {useStateToProps} from '../../../../utils/pages/hooks';
-import {BounceSpinner, ListItem} from '../../../../components/template';
-import swapUtils from '../../../../utils/pages/swapUtils';
+import OverviewCharts from '../../components/OverviewCharts';
+import {useStateToProps} from '../../../../../utils/pages/hooks';
+import {BounceSpinner, ListItem} from '../../../../../components/template';
+import swapUtils from '../../../../../utils/pages/swapUtils';
 const Overview = () => {
   const {overviewInfo} = useStateToProps(base => {
     const {settings, swap} = base;
@@ -78,3 +77,15 @@ const Overview = () => {
 };
 
 export default memo(Overview);
+const styles = StyleSheet.create({
+  subtitleStyle: {
+    fontSize: pTd(26),
+    fontWeight: 'bold',
+    color: Colors.fontBlack,
+  },
+  overviewBox: {
+    paddingTop: pTd(15),
+    paddingBottom: pTd(10),
+    paddingLeft: pTd(30),
+  },
+});

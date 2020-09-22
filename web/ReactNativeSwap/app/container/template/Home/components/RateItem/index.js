@@ -1,9 +1,9 @@
 import React, {memo} from 'react';
-import swapUtils from '../../../../utils/pages/swapUtils';
-import {ListItem} from '../../../../components/template';
+import swapUtils from '../../../../../utils/pages/swapUtils';
+import {ListItem} from '../../../../../components/template';
 import {StyleSheet} from 'react-native';
-import {pTd} from '../../../../utils/common';
-import {Colors} from '../../../../assets/theme';
+import {pTd} from '../../../../../utils/common';
+import {Colors} from '../../../../../assets/theme';
 const RateItem = props => {
   const {title, subtitle, rate} = props;
   const {color, sign} = swapUtils.getRateStyle(rate);

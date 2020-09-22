@@ -1,9 +1,7 @@
 import React, {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Colors} from '../../../../assets/theme';
-import {Touchable} from '../../../../components/template';
-import {TextM} from '../../../../components/template/CommonText';
-import {pTd} from '../../../../utils/common';
+import {Touchable} from '../../../../../components/template';
+import {TextM} from '../../../../../components/template/CommonText';
 const ToolMemo = props => {
   const {list, toolIndex, onSetToolIndex} = props;
   const rigthIndex = list.length - 1;

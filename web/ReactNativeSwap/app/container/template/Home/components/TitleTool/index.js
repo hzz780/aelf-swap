@@ -1,7 +1,6 @@
 import React, {memo} from 'react';
-import {View} from 'react-native';
-import styles from '../styles';
-import {TextM} from '../../../../components/template/CommonText';
+import {StyleSheet, View} from 'react-native';
+import {TextM} from '../../../../../components/template/CommonText';
 const TitleTool = props => {
   const {titleList} = props;
   if (titleList.length === 2) {
@@ -64,3 +63,40 @@ const TitleTool = props => {
 };
 
 export default memo(TitleTool);
+
+const styles = StyleSheet.create({
+  topTitle: {
+    color: Colors.fontGray,
+    fontSize: pTd(28),
+  },
+  topSubtitle: {
+    fontSize: pTd(28),
+    color: Colors.fontGray,
+  },
+  tokenTopSubtitle: {
+    fontSize: pTd(26),
+    color: Colors.fontGray,
+  },
+  titleStyle: {
+    flex: 1,
+    color: Colors.primaryColor,
+  },
+  listItemBox: {
+    paddingHorizontal: pTd(30),
+    paddingVertical: pTd(20),
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderColor,
+  },
+  flexBox: {
+    flex: 1,
+    marginLeft: pTd(10),
+  },
+  accountSubtitle: {
+    textAlign: 'right',
+  },
+  accountTitleStyle: {
+    flex: 2,
+  },
+});

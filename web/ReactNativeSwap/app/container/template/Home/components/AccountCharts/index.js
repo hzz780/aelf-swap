@@ -9,7 +9,7 @@ import swapUtils from '../../../../../utils/pages/swapUtils';
 import {useDispatch} from 'react-redux';
 import swapActions from '../../../../../redux/swapRedux';
 import {useFocusEffect} from '@react-navigation/native';
-import ToolMemo from '../../ToolMemo';
+import ToolMemo from '../../components/ToolMemo';
 import LoadView from '../LoadView';
 import i18n from 'i18n-js';
 const periodConfig = ['week', 'month', 'all'];

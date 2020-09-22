@@ -8,7 +8,7 @@ import BounceSpinner from '../BounceSpinner';
 import i18n from 'i18n-js';
 const {renderChart, defaultHeight, setOpctios} = config;
 const source = isIos ? charts : {uri: 'file:///android_asset/HTML/charts.html'};
-export default class ECharts extends Component {
+export default class Echarts extends Component {
   constructor(props) {
     super(props);
     this.lodEnd = false;

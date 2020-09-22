@@ -4,7 +4,7 @@ import {useStateToProps} from '../../../../../utils/pages/hooks';
 import {Charts} from '../../../../../components/template';
 import {pTd} from '../../../../../utils/common';
 import swapUtils from '../../../../../utils/pages/swapUtils';
-import ToolMemo from '../../ToolMemo';
+import ToolMemo from '../../components/ToolMemo';
 import LoadView from '../LoadView';
 const OverviewCharts = () => {
   const {overviewChart} = useStateToProps(base => {

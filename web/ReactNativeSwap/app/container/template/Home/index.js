@@ -1,28 +1,20 @@
 import i18n from 'i18n-js';
 import React, {memo, useRef, useCallback, useState, useMemo} from 'react';
-import {
-  CommonHeader,
-  SectionStickyList,
-  Touchable,
-} from '../../../components/template';
+import {CommonHeader, SectionStickyList} from '../../../components/template';
 import {View} from 'react-native';
-import {useStateToProps} from '../../../utils/pages/hooks';
+import {useSetState, useStateToProps} from '../../../utils/pages/hooks';
 import {GStyle} from '../../../assets/theme';
-import navigationService from '../../../utils/common/navigationService';
 import swapActions from '../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
-import swapUtils from '../../../utils/pages/swapUtils';
 import {useFocusEffect} from '@react-navigation/native';
-import {TextM, TextS} from '../../../components/template/CommonText';
-import styles from './styles';
-import HomeToolBar from './HomeToolBar';
-import PairsItem from './PairsItem';
-import Overview from './Overview';
+import HomeToolBar from './components/HomeToolBar';
+import Overview from './components/Overview';
+import {AccountsItem, PairsItem, TokensItem} from './components/HomeItems';
 let isActive = true;
 const Home = () => {
   const dispatch = useDispatch();
   const list = useRef();
-  const [loadCompleted, setLoadCompleted] = useState(null);
+  const [loadCompleted, setLoadCompleted] = useSetState(null, true);
   const [index, setIndex] = useState(1);
   const getPairs = useCallback(
     (pair, callBack) => dispatch(swapActions.getPairs(pair, callBack)),
@@ -34,13 +26,13 @@ const Home = () => {
         return;
       }
       if (v === 1) {
-        setLoadCompleted({...(loadCompleted || {}), [i]: false});
+        setLoadCompleted({[i]: false});
       } else {
-        setLoadCompleted({...(loadCompleted || {}), [i]: true});
+        setLoadCompleted({[i]: true});
       }
       list.current?.endBottomRefresh();
     },
-    [loadCompleted],
+    [setLoadCompleted],
   );
   const onGetAccountList = useCallback(
     (i, loadingPaging) =>
@@ -67,13 +59,14 @@ const Home = () => {
     }, [upPullRefresh]),
   );
   const upPullRefresh = useCallback(() => {
+    setLoadCompleted(null);
     getPairs(undefined, () => {
       list.current?.endUpPullRefresh();
       list.current?.endBottomRefresh();
     });
-    onGetAccountList(2);
     onGetTokenList(0);
-  }, [getPairs, onGetAccountList, onGetTokenList]);
+    onGetAccountList(2);
+  }, [getPairs, onGetAccountList, onGetTokenList, setLoadCompleted]);
   const onEndReached = useCallback(() => {
     if (index === 2) {
       onGetAccountList(2, true);
@@ -89,54 +82,9 @@ const Home = () => {
       if (index === 1) {
         return <PairsItem item={item} />;
       } else if (index === 0) {
-        const {symbol, liquidityInPrice, price, priceRate} = item;
-        const {color, sign} = swapUtils.getRateStyle(priceRate);
-        return (
-          <Touchable
-            onPress={() => navigationService.navigate('TokenDetails', {symbol})}
-            style={styles.listItem2Box}>
-            <TextM numberOfLines={1} style={[styles.titleStyle]}>
-              {symbol}
-            </TextM>
-            <TextS
-              style={[styles.tokenTopSubtitle, styles.flexBox]}
-              numberOfLines={1}>
-              ${swapUtils.USDdigits(liquidityInPrice)}
-            </TextS>
-            <TextS
-              style={[styles.tokenTopSubtitle, styles.flexBox]}
-              numberOfLines={1}>
-              ${swapUtils.USDdigits(price)}
-            </TextS>
-            <TextS
-              style={[styles.tokenTopSubtitle, styles.flexBox, {color}]}
-              numberOfLines={1}>
-              {sign + swapUtils.getPercentage(priceRate)}
-            </TextS>
-          </Touchable>
-        );
-      } else {
-        const {address, totalBalanceInPrice} = item;
-        return (
-          <Touchable
-            onPress={() =>
-              navigationService.navigate('AccountDetails', {address})
-            }
-            style={styles.listItem2Box}>
-            <TextM
-              numberOfLines={1}
-              ellipsizeMode="middle"
-              style={[styles.titleStyle, styles.accountTitleStyle]}>
-              {address}
-            </TextM>
-            <TextS
-              style={[styles.accountSubtitle, styles.flexBox]}
-              numberOfLines={1}>
-              ${swapUtils.USDdigits(totalBalanceInPrice)}
-            </TextS>
-          </Touchable>
-        );
+        return <TokensItem item={item} />;
       }
+      return <AccountsItem item={item} />;
     },
     [index],
   );

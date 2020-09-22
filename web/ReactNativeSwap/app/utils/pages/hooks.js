@@ -7,6 +7,9 @@ const useSetState = (initial = {}, difference) => {
   const setState = useCallback(
     newState => {
       saveState(prev => {
+        if (newState === null) {
+          return newState;
+        }
         const NewState = Object.assign({}, prev || {}, newState || {});
         if (difference && JSON.stringify(newState) === JSON.stringify(prev)) {
           return prev;

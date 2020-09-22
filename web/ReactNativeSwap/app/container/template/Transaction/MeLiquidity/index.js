@@ -26,13 +26,13 @@ const MeLiquidity = () => {
     };
   });
   const getAccountAssets = useCallback(
-    () => dispatch(swapActions.getAccountAssets()),
+    (pair, callBack) => dispatch(swapActions.getAccountAssets(pair, callBack)),
     [dispatch],
   );
   useFocusEffect(
     useCallback(() => {
-      getAccountAssets();
-    }, [getAccountAssets]),
+      upPullRefresh();
+    }, [upPullRefresh]),
   );
   const renderItem = useCallback(({item}) => {
     const {reserveA, reserveB, symbolA, symbolB, balance, totalSupply} =
@@ -95,10 +95,11 @@ const MeLiquidity = () => {
     );
   }, []);
   const upPullRefresh = useCallback(() => {
-    getAccountAssets();
+    getAccountAssets(false, () => {
+      list.current && list.current.endUpPullRefresh();
+      list.current && list.current.endBottomRefresh();
+    });
     setLoadCompleted(true);
-    list.current && list.current.endUpPullRefresh();
-    list.current && list.current.endBottomRefresh();
   }, [getAccountAssets]);
   return (
     <ListComponent

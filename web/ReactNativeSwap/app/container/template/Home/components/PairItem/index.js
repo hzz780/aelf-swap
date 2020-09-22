@@ -1,9 +1,8 @@
 import React, {memo} from 'react';
 import {Touchable} from '../../../../../components/template';
 import navigationService from '../../../../../utils/common/navigationService';
-import styles from '../../styles';
 import {TextM, TextS} from '../../../../../components/template/CommonText';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import swapUtils from '../../../../../utils/pages/swapUtils';
 const SymbolText = memo(props => {
   const {children, margin} = props;
@@ -57,3 +56,29 @@ const PairItem = props => {
 };
 
 export default memo(PairItem);
+
+const styles = StyleSheet.create({
+  titleStyle: {
+    flex: 1,
+    color: Colors.primaryColor,
+  },
+  listItemBox: {
+    paddingHorizontal: pTd(30),
+    paddingVertical: pTd(20),
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderColor,
+  },
+  flexBox: {
+    flex: 1,
+    marginLeft: pTd(10),
+  },
+  marginGray: {
+    marginTop: pTd(10),
+    color: Colors.fontGray,
+  },
+  colorGray: {
+    color: Colors.fontGray,
+  },
+});
