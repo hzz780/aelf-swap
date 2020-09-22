@@ -5,8 +5,15 @@ import {StyleSheet, View} from 'react-native';
 import {Colors} from '../../../../../assets/theme';
 import {TextL} from '../../../../../components/template/CommonText';
 import TitleTool from '../../components/TitleTool';
+import {useStateToProps} from '../../../../../utils/pages/hooks';
 const HomeToolBar = memo(props => {
   const {index, setIndex} = props;
+  const {language} = useStateToProps(base => {
+    const {settings} = base;
+    return {
+      language: settings.language,
+    };
+  });
   const toolList = [
     i18n.t('swap.tokens'),
     i18n.t('swap.pairs'),
@@ -47,7 +54,9 @@ const HomeToolBar = memo(props => {
       ];
     }
     return <TitleTool titleList={titleList} />;
-  }, [index]);
+    //Need to know to change language
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, language]);
   return (
     <>
       {toolBarBox}
