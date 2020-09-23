@@ -52,7 +52,7 @@ static void InitializeFlipper(UIApplication *application) {
   }
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   
-  UIViewController * rootViewController = [[EXScreenOrientationViewController alloc ] init ]; //默认的屏幕方向将设置为“纵向”。
+  UIViewController *rootViewController = [[EXScreenOrientationViewController alloc] init]; // The default screen orientation will be set to `portrait`.
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
