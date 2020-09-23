@@ -1,15 +1,15 @@
 import i18n from 'i18n-js';
-import React, {memo, useRef, useCallback, useState, useMemo} from 'react';
-import {CommonHeader, SectionStickyList} from '../../../components/template';
 import {View} from 'react-native';
-import {useSetState, useStateToProps} from '../../../utils/pages/hooks';
-import {GStyle} from '../../../assets/theme';
-import swapActions from '../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import {useFocusEffect} from '@react-navigation/native';
-import HomeToolBar from './components/HomeToolBar';
+import React, {memo, useRef, useCallback, useState, useMemo} from 'react';
 import Overview from './components/Overview';
+import {GStyle} from '../../../assets/theme';
+import swapActions from '../../../redux/swapRedux';
+import HomeToolBar from './components/HomeToolBar';
+import {useSetState, useStateToProps} from '../../../utils/pages/hooks';
 import {AccountsItem, PairsItem, TokensItem} from './components/HomeItems';
+import {CommonHeader, SectionStickyList} from '../../../components/template';
 let isActive = true;
 const Home = () => {
   const dispatch = useDispatch();
@@ -107,13 +107,12 @@ const Home = () => {
     );
   }, [index]);
   const getData = useCallback(() => {
-    if (index === 1) {
-      return pairs;
+    if (index === 0) {
+      return tokenList;
     } else if (index === 2) {
       return accountList;
-    } else {
-      return tokenList;
     }
+    return pairs;
   }, [accountList, index, pairs, tokenList]);
   return (
     <View style={GStyle.secondContainer}>

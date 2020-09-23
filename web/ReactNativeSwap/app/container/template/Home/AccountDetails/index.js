@@ -267,9 +267,8 @@ const AccountDetails = props => {
       return addressSwapList;
     } else if (index === 1) {
       return addressAddLiquidityList;
-    } else {
-      return addressRemoveLiquidityList;
     }
+    return addressRemoveLiquidityList;
   }, [
     addressAddLiquidityList,
     addressRemoveLiquidityList,
