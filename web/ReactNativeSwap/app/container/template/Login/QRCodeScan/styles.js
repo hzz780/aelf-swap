@@ -3,7 +3,7 @@ import {sreenWidth, isIos} from '../../../../utils/common/device';
 import {pTd} from '../../../../utils/common';
 import {Colors} from '../../../../assets/theme';
 //Android BarCodeScanner will not display full screen, distinguish platform style
-export const scanHeigth = isIos ? 196 : sreenWidth * 0.67;
+export const scanHeight = isIos ? 196 : sreenWidth * 0.67;
 export default StyleSheet.create({
   container: {
     flex: 1,
@@ -19,7 +19,7 @@ export default StyleSheet.create({
   },
   border: {
     alignSelf: 'center',
-    width: scanHeigth,
+    width: scanHeight,
     height: 2,
     backgroundColor: Colors.primaryColor,
     borderRadius: 50,

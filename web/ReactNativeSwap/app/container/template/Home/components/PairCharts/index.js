@@ -1,9 +1,8 @@
-import React, {memo, useCallback, useMemo, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import {Touchable, Charts} from '../../../../../components/template';
 import {View, StyleSheet} from 'react-native';
 import swapActions from '../../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
-import {useFocusEffect} from '@react-navigation/native';
 import {useStateToProps} from '../../../../../utils/pages/hooks';
 import {TextS} from '../../../../../components/template/CommonText';
 import {Colors} from '../../../../../assets/theme';
@@ -12,12 +11,14 @@ import config from '../../../../../components/template/Charts/config';
 import swapUtils from '../../../../../utils/pages/swapUtils';
 import ToolMemo from '../../components/ToolMemo';
 import LoadView from '../LoadView';
+import IconMemo from '../IconMemo';
 const {candlestickItemStyle} = config;
 const periodConfig = ['week', 'month', 'all'];
 const defaultPeriod = periodConfig[0];
 const kPeriodConfig = [900, 3600, 14400, 86400];
 const defaultKPeriod = kPeriodConfig[kPeriodConfig.length - 1];
 const PairCharts = props => {
+  console.log(props, '======props');
   const dispatch = useDispatch();
   const {pairCandleStick, pairCharts} = useStateToProps(base => {
     const {swap} = base;
@@ -60,12 +61,10 @@ const PairCharts = props => {
     },
     [getPairCharts, symbolPair],
   );
-  useFocusEffect(
-    useCallback(() => {
-      onGetPairCandleStick(defaultKPeriod);
-      onGetPairCharts(defaultPeriod);
-    }, [onGetPairCandleStick, onGetPairCharts]),
-  );
+  useEffect(() => {
+    onGetPairCandleStick(defaultKPeriod);
+    onGetPairCharts(defaultPeriod);
+  }, [onGetPairCandleStick, onGetPairCharts]);
   const candleStickData =
     pairCandleStick && pairCandleStick[symbolPair]
       ? pairCandleStick[symbolPair][kPeriodConfig[kPeriod]]
@@ -88,13 +87,19 @@ const PairCharts = props => {
   );
   const toolMemo = useMemo(() => {
     return (
-      <ToolMemo
-        list={list}
-        toolIndex={toolIndex}
-        onSetToolIndex={onSetToolIndex}
-      />
+      <View style={styles.toolMemoBox}>
+        <ToolMemo
+          list={list}
+          toolIndex={toolIndex}
+          onSetToolIndex={onSetToolIndex}
+        />
+        <IconMemo
+          horizontal={props.horizontal}
+          component={<PairCharts horizontal {...props} toolHeight={pTd(160)} />}
+        />
+      </View>
     );
-  }, [list, onSetToolIndex, toolIndex]);
+  }, [list, onSetToolIndex, props, toolIndex]);
   const onSetPeriod = useCallback(
     index => {
       onGetPairCharts(periodConfig[index]);
@@ -256,10 +261,15 @@ const PairCharts = props => {
     return (
       <View>
         {loading && <LoadView />}
-        <Charts series={series} dates={timeDates} boundaryGap={boundaryGap} />
+        <Charts
+          {...props}
+          series={series}
+          dates={timeDates}
+          boundaryGap={boundaryGap}
+        />
       </View>
     );
-  }, [candleStickData, chartsData, kPeriod, list, toolIndex]);
+  }, [candleStickData, chartsData, kPeriod, list, props, toolIndex]);
   return (
     <View style={styles.container}>
       {toolMemo}
@@ -300,5 +310,9 @@ const styles = StyleSheet.create({
   },
   grayColor: {
     color: Colors.fontGray,
+  },
+  toolMemoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

@@ -1,4 +1,4 @@
-import React, {memo, useMemo, useState, useCallback} from 'react';
+import React, {memo, useMemo, useState, useCallback, useEffect} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {useStateToProps} from '../../../../../utils/pages/hooks';
 import {Charts, ListItem, Touchable} from '../../../../../components/template';
@@ -8,10 +8,10 @@ import {pTd} from '../../../../../utils/common';
 import swapUtils from '../../../../../utils/pages/swapUtils';
 import {useDispatch} from 'react-redux';
 import swapActions from '../../../../../redux/swapRedux';
-import {useFocusEffect} from '@react-navigation/native';
 import ToolMemo from '../../components/ToolMemo';
 import LoadView from '../LoadView';
 import i18n from 'i18n-js';
+import IconMemo from '../IconMemo';
 const periodConfig = ['week', 'month', 'all'];
 const defaultPeriod = periodConfig[0];
 const AccountCharts = props => {
@@ -21,11 +21,9 @@ const AccountCharts = props => {
     range => dispatch(swapActions.getAccountChart(address, range, symbolPair)),
     [address, dispatch, symbolPair],
   );
-  useFocusEffect(
-    useCallback(() => {
-      onGetAccountChart(defaultPeriod);
-    }, [onGetAccountChart]),
-  );
+  useEffect(() => {
+    onGetAccountChart(defaultPeriod);
+  }, [onGetAccountChart]);
   const {accountChart} = useStateToProps(base => {
     const {swap} = base;
     return {
@@ -50,13 +48,21 @@ const AccountCharts = props => {
   const charts = chartsList || chartObj;
   const toolMemo = useMemo(() => {
     return (
-      <ToolMemo
-        list={list}
-        toolIndex={toolIndex}
-        onSetToolIndex={onSetToolIndex}
-      />
+      <View style={styles.toolMemoBox}>
+        <ToolMemo
+          list={list}
+          toolIndex={toolIndex}
+          onSetToolIndex={onSetToolIndex}
+        />
+        <IconMemo
+          horizontal={props.horizontal}
+          component={
+            <AccountCharts horizontal {...props} toolHeight={pTd(160)} />
+          }
+        />
+      </View>
     );
-  }, [list, onSetToolIndex, toolIndex]);
+  }, [list, onSetToolIndex, props, toolIndex]);
   const onSetPeriod = useCallback(
     index => {
       onGetAccountChart(periodConfig[index]);
@@ -124,19 +130,26 @@ const AccountCharts = props => {
     return (
       <View>
         {loading && <LoadView />}
-        <Charts series={series} dates={timeDates} boundaryGap={boundaryGap} />
+        <Charts
+          {...props}
+          series={series}
+          dates={timeDates}
+          boundaryGap={boundaryGap}
+        />
       </View>
     );
-  }, [charts, list, toolIndex]);
+  }, [charts, list, props, toolIndex]);
   return (
     <>
-      <ListItem
-        disabled
-        rightElement={null}
-        title={i18n.t('swap.account.liquidityInPrice')}
-        subtitle={`$ ${swapUtils.USDdigits(liquidityInPrice)}`}
-        subtitleStyle={styles.subtitleStyle}
-      />
+      {!props.horizontal && (
+        <ListItem
+          disabled
+          rightElement={null}
+          title={i18n.t('swap.account.liquidityInPrice')}
+          subtitle={`$ ${swapUtils.USDdigits(liquidityInPrice)}`}
+          subtitleStyle={styles.subtitleStyle}
+        />
+      )}
       <View style={styles.container}>
         {toolMemo}
         {PeriodMemo}
@@ -176,5 +189,9 @@ const styles = StyleSheet.create({
     fontSize: pTd(28),
     fontWeight: 'bold',
     color: Colors.fontBlack,
+  },
+  toolMemoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

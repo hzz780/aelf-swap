@@ -9,7 +9,7 @@ import {useSetState} from '../../../../utils/pages/hooks';
 import {ScrollView} from 'react-native-gesture-handler';
 const arrowSize = pTd(9);
 import i18n from 'i18n-js';
-import {bottomBarHeigth} from '../../../../utils/common/device';
+import {bottomBarHeight} from '../../../../utils/common/device';
 const arrowStyle = {
   borderLeftColor: 'transparent',
   borderRightColor: 'transparent',
@@ -164,6 +164,6 @@ const styles = StyleSheet.create({
   },
   listBox: {
     paddingHorizontal: pTd(50),
-    paddingBottom: bottomBarHeigth,
+    paddingBottom: bottomBarHeight,
   },
 });

@@ -1,4 +1,4 @@
-import React, {memo, useMemo, useState, useCallback} from 'react';
+import React, {memo, useMemo, useState, useCallback, useEffect} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {useStateToProps} from '../../../../../utils/pages/hooks';
 import {Charts, Touchable} from '../../../../../components/template';
@@ -8,9 +8,9 @@ import {pTd} from '../../../../../utils/common';
 import swapUtils from '../../../../../utils/pages/swapUtils';
 import {useDispatch} from 'react-redux';
 import swapActions from '../../../../../redux/swapRedux';
-import {useFocusEffect} from '@react-navigation/native';
 import ToolMemo from '../../components/ToolMemo';
 import LoadView from '../LoadView';
+import IconMemo from '../IconMemo';
 const periodConfig = ['week', 'month', 'all'];
 const defaultPeriod = periodConfig[0];
 const TokenCharts = props => {
@@ -26,11 +26,9 @@ const TokenCharts = props => {
     },
     [getTokenChart, symbol],
   );
-  useFocusEffect(
-    useCallback(() => {
-      onGetTokenChart(defaultPeriod);
-    }, [onGetTokenChart]),
-  );
+  useEffect(() => {
+    onGetTokenChart(defaultPeriod);
+  }, [onGetTokenChart]);
   const {tokenChart} = useStateToProps(base => {
     const {swap} = base;
     return {
@@ -51,13 +49,21 @@ const TokenCharts = props => {
   const charts = tokenChart?.[symbol]?.[periodConfig[period]];
   const toolMemo = useMemo(() => {
     return (
-      <ToolMemo
-        list={list}
-        toolIndex={toolIndex}
-        onSetToolIndex={onSetToolIndex}
-      />
+      <View style={styles.toolMemoBox}>
+        <ToolMemo
+          list={list}
+          toolIndex={toolIndex}
+          onSetToolIndex={onSetToolIndex}
+        />
+        <IconMemo
+          horizontal={props.horizontal}
+          component={
+            <TokenCharts horizontal {...props} toolHeight={pTd(160)} />
+          }
+        />
+      </View>
     );
-  }, [list, onSetToolIndex, toolIndex]);
+  }, [list, onSetToolIndex, props, toolIndex]);
   const onSetPeriod = useCallback(
     index => {
       onGetTokenChart(periodConfig[index]);
@@ -125,10 +131,15 @@ const TokenCharts = props => {
     return (
       <View>
         {loading && <LoadView />}
-        <Charts series={series} dates={timeDates} boundaryGap={boundaryGap} />
+        <Charts
+          {...props}
+          series={series}
+          dates={timeDates}
+          boundaryGap={boundaryGap}
+        />
       </View>
     );
-  }, [charts, list, toolIndex]);
+  }, [charts, list, props, toolIndex]);
   return (
     <View style={styles.container}>
       {toolMemo}
@@ -162,5 +173,9 @@ const styles = StyleSheet.create({
   },
   grayColor: {
     color: Colors.fontGray,
+  },
+  toolMemoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

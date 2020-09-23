@@ -5,7 +5,7 @@ import aelfUtils from '../../../../utils/pages/aelfUtils';
 const {
   defaultOption,
   xAxis,
-  chartsHeigth,
+  chartsHeight,
   candlestickItemStyle,
   dataZoom,
 } = config;
@@ -36,7 +36,7 @@ const Candlestick = props => {
       itemStyle: candlestickItemStyle,
     },
   };
-  return <ECharts height={chartsHeigth} option={option} />;
+  return <ECharts height={chartsHeight} option={option} />;
 };
 
 export default memo(Candlestick);

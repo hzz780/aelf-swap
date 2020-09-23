@@ -22,6 +22,7 @@ import KeyboardScrollView from './KeyboardScrollView';
 import Candlestick from './Charts/Candlestick';
 import ECharts from './ECharts';
 import Charts from './Charts';
+import HorizontalModal from './HorizontalModal';
 export {
   Input,
   Loading,
@@ -45,4 +46,5 @@ export {
   Candlestick,
   ECharts,
   Charts,
+  HorizontalModal,
 };

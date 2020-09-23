@@ -2,7 +2,7 @@ import React, {memo} from 'react';
 import ECharts from '../../ECharts';
 import config from '../config';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
-const {dataZoom, grid, chartsHeigth, colorList, tooltip, xAxis, yAxis} = config;
+const {dataZoom, grid, chartsHeight, colorList, tooltip, xAxis, yAxis} = config;
 const AreaChart = props => {
   const {data} = props;
   let dates = [],
@@ -31,7 +31,7 @@ const AreaChart = props => {
       areaStyle: {},
     },
   };
-  return <ECharts height={chartsHeigth} option={option} />;
+  return <ECharts height={chartsHeight} option={option} />;
 };
 
 export default memo(AreaChart);

@@ -1,7 +1,7 @@
 import {pTd} from '../../../../utils/common';
 import {
   statusBarHeight,
-  bottomBarHeigth,
+  bottomBarHeight,
 } from '../../../../utils/common/device';
 import {StyleSheet} from 'react-native';
 import {Colors} from '../../../../assets/theme';
@@ -24,7 +24,7 @@ export default StyleSheet.create({
     marginBottom: pTd(50),
   },
   BottomBox: {
-    marginBottom: bottomBarHeigth + pTd(100),
+    marginBottom: bottomBarHeight + pTd(100),
   },
   premium: {
     alignSelf: 'center',

@@ -2,7 +2,7 @@ import config from '../config';
 const {
   top,
   grid,
-  chartsHeigth,
+  chartsHeight,
   candlestickItemStyle,
   yAxis,
   tooltip,
@@ -29,7 +29,7 @@ const defaultOption = {
 export default {
   defaultOption,
   xAxis,
-  chartsHeigth,
+  chartsHeight,
   volumeItemStyle,
   candlestickItemStyle,
   top,

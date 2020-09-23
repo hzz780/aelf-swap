@@ -6,7 +6,7 @@ import React from 'react';
 import OverlayModal from '../OverlayModal';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {
-  bottomBarHeigth,
+  bottomBarHeight,
   statusBarHeight,
   getWindowWidth,
 } from '../../../utils/common/device';
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     marginTop: getWindowWidth() * 0.4,
     paddingHorizontal: 20,
-    marginBottom: bottomBarHeigth + 50,
+    marginBottom: bottomBarHeight + 50,
   },
   sheetBox: {
     overflow: 'hidden',

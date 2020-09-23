@@ -20,7 +20,7 @@ import TitleTool from '../components/TitleTool';
 import {useFocusEffect} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import navigationService from '../../../../utils/common/navigationService';
-import {bottomBarHeigth} from '../../../../utils/common/device';
+import {bottomBarHeight} from '../../../../utils/common/device';
 import TransactionsItem from '../components/TransactionsItem';
 import swapUtils from '../../../../utils/pages/swapUtils';
 import ToolBar from '../components/ToolBar';
@@ -287,7 +287,7 @@ const AccountDetails = props => {
           whetherAutomatic
           stickyHead={stickyHead}
           renderItem={renderItem}
-          listFooterHight={bottomBarHeigth}
+          listFooterHight={bottomBarHeight}
           onEndReached={onEndReached}
           renderHeader={renderHeader}
           loadCompleted={loadCompleted?.[index]}

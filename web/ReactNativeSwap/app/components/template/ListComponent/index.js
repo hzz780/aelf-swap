@@ -13,7 +13,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import {Colors} from '../../../assets/theme';
-import {sreenHeight, bottomBarHeigth} from '../../../utils/common/device';
+import {sreenHeight, bottomBarHeight} from '../../../utils/common/device';
 export default class ListComponent extends Component {
   //renderItem
   static propTypes = {
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: bottomBarHeigth,
+    marginBottom: bottomBarHeight,
   },
   emptyBox: {
     marginTop: 200,

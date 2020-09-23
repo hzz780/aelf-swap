@@ -9,7 +9,7 @@ import {
 } from '../../../../components/template';
 import {TextL} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
-import {bottomBarHeigth} from '../../../../utils/common/device';
+import {bottomBarHeight} from '../../../../utils/common/device';
 import navigationService from '../../../../utils/common/navigationService';
 import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     paddingTop: pTd(30),
-    paddingBottom: bottomBarHeigth || pTd(30),
+    paddingBottom: bottomBarHeight || pTd(30),
     backgroundColor: 'white',
     borderTopWidth: 2,
     borderTopColor: Colors.borderColor,

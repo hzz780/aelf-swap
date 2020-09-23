@@ -6,7 +6,8 @@ import {pTd} from '../../../../../utils/common';
 import swapUtils from '../../../../../utils/pages/swapUtils';
 import ToolMemo from '../../components/ToolMemo';
 import LoadView from '../LoadView';
-const OverviewCharts = () => {
+import IconMemo from '../IconMemo';
+const OverviewCharts = props => {
   const {overviewChart} = useStateToProps(base => {
     const {swap} = base;
     return {
@@ -20,13 +21,19 @@ const OverviewCharts = () => {
   }, []);
   const toolMemo = useMemo(() => {
     return (
-      <ToolMemo
-        list={list}
-        toolIndex={toolIndex}
-        onSetToolIndex={onSetToolIndex}
-      />
+      <View style={styles.toolBox}>
+        <ToolMemo
+          list={list}
+          toolIndex={toolIndex}
+          onSetToolIndex={onSetToolIndex}
+        />
+        <IconMemo
+          horizontal={props.horizontal}
+          component={<OverviewCharts horizontal toolHeight={pTd(100)} />}
+        />
+      </View>
     );
-  }, [list, onSetToolIndex, toolIndex]);
+  }, [list, onSetToolIndex, props.horizontal, toolIndex]);
   const BodyMemo = useMemo(() => {
     let series, boundaryGap;
     let loading = true;
@@ -69,10 +76,15 @@ const OverviewCharts = () => {
     return (
       <View>
         {loading && <LoadView />}
-        <Charts series={series} dates={timeDates} boundaryGap={boundaryGap} />
+        <Charts
+          {...props}
+          series={series}
+          dates={timeDates}
+          boundaryGap={boundaryGap}
+        />
       </View>
     );
-  }, [list, overviewChart, toolIndex]);
+  }, [list, overviewChart, props, toolIndex]);
   return (
     <View style={styles.container}>
       {toolMemo}
@@ -87,5 +99,10 @@ const styles = StyleSheet.create({
     marginTop: pTd(20),
     paddingTop: pTd(10),
     backgroundColor: 'white',
+  },
+  toolBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });

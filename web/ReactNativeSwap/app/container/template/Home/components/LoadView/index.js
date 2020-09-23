@@ -2,7 +2,7 @@ import React, {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {BounceSpinner} from '../../../../../components/template';
 import config from '../../../../../components/template/Charts/config';
-const {chartsHeigth} = config;
+const {chartsHeight} = config;
 const LoadView = () => {
   return (
     <View style={styles.loadView}>
@@ -19,6 +19,6 @@ const styles = StyleSheet.create({
     zIndex: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    height: chartsHeigth,
+    height: chartsHeight,
   },
 });

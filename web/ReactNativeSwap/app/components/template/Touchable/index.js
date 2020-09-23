@@ -1,6 +1,11 @@
 'use strict';
 import React, {memo} from 'react';
-import {View, TouchableOpacity, TouchableHighlight} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  TouchableHighlight,
+  ViewPropTypes,
+} from 'react-native';
 import PropTypes from 'prop-types';
 
 // Touchable hooks
@@ -40,6 +45,9 @@ const Touchable = props => {
   );
 };
 Touchable.propTypes = {
+  onPress: PropTypes.func,
+  onPressIn: PropTypes.func,
+  style: ViewPropTypes.style,
   onPressWithSecond: PropTypes.number, // Click once every few seconds
   highlight: PropTypes.bool, //use or not TouchableHighlight
 };

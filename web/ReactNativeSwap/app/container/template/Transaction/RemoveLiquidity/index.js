@@ -11,7 +11,7 @@ import {MAXComponent} from '../MAXComponent';
 import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import {TextL, TextM} from '../../../../components/template/CommonText';
 import {pTd} from '../../../../utils/common';
-import {bottomBarHeigth} from '../../../../utils/common/device';
+import {bottomBarHeight} from '../../../../utils/common/device';
 import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
 import swapUtils from '../../../../utils/pages/swapUtils';
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e5e5e5',
     padding: pTd(20),
     borderRadius: pTd(15),
-    marginBottom: pTd(30) + bottomBarHeigth,
+    marginBottom: pTd(30) + bottomBarHeight,
   },
   myLiquidityItemBox: {
     marginTop: pTd(30),

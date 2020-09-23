@@ -6,7 +6,7 @@ import {TextL, TextTitle} from '../../../../components/template/CommonText';
 import privacyPolicy from '../config/privacyPolicy';
 import {GStyle} from '../../../../assets/theme';
 import {pTd} from '../../../../utils/common';
-import {bottomBarHeigth} from '../../../../utils/common/device';
+import {bottomBarHeight} from '../../../../utils/common/device';
 import {useStateToProps} from '../../../../utils/pages/hooks';
 const PrivacyPolicy = () => {
   const {language} = useStateToProps(base => {
@@ -38,6 +38,6 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingHorizontal: pTd(15),
-    paddingBottom: pTd(30) + bottomBarHeigth,
+    paddingBottom: pTd(30) + bottomBarHeight,
   },
 });

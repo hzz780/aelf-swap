@@ -53,8 +53,8 @@ const formatter = params => {
   }
 };
 const top = 30;
-const heigth = 200;
-const chartsHeigth = top + heigth + 30 + 30;
+const height = 200;
+const chartsHeight = top + height + 30 + 30;
 const candlestickItemStyle = {
   color: Colors.kGreen,
   color0: Colors.kRed,
@@ -140,7 +140,7 @@ const grid = {
   left: isIos ? 20 : 18,
   right: 20,
   top: top,
-  height: heigth,
+  height: height,
 };
 const dataZoom = [
   {
@@ -152,7 +152,7 @@ const dataZoom = [
   {
     show: true,
     type: 'slider',
-    top: top + heigth + 30,
+    top: top + height + 30,
     start: 0,
     end: 100,
     height: 20,
@@ -169,8 +169,8 @@ const legend = {
 export default {
   grid,
   top,
-  heigth,
-  chartsHeigth,
+  height,
+  chartsHeight,
   candlestickItemStyle,
   areaStyle,
   colorList,

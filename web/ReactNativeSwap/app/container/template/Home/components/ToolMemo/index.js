@@ -35,6 +35,7 @@ const ToolMemo = props => {
 export default memo(ToolMemo);
 const styles = StyleSheet.create({
   toolBox: {
+    flex: 1,
     paddingLeft: pTd(20),
     flexDirection: 'row',
   },

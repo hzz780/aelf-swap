@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {pTd} from '../../../../utils/common';
 import {Colors} from '../../../../assets/theme';
-import {bottomBarHeigth} from '../../../../utils/common/device';
+import {bottomBarHeight} from '../../../../utils/common/device';
 const styles = StyleSheet.create({
   overviewBox: {
     paddingTop: pTd(15),
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     paddingTop: pTd(30),
-    paddingBottom: bottomBarHeigth || pTd(30),
+    paddingBottom: bottomBarHeight || pTd(30),
     backgroundColor: 'white',
     borderTopWidth: 2,
     borderTopColor: Colors.borderColor,

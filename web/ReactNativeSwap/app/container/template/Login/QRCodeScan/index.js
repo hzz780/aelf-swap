@@ -11,7 +11,7 @@ import {GStyle} from '../../../../assets/theme';
 import {CommonHeader, CommonToast} from '../../../../components/template';
 import i18n from 'i18n-js';
 import {iconScanRect} from '../../../../assets/images';
-import styles, {scanHeigth} from './styles';
+import styles, {scanHeight} from './styles';
 import {useSetState} from '../../../../utils/pages/hooks';
 import * as ImagePicker from 'expo-image-picker';
 import navigationService from '../../../../utils/common/navigationService';
@@ -33,7 +33,7 @@ const QRCodeLogin = props => {
     moveAnim.setValue(-2);
     Animated.sequence([
       Animated.timing(moveAnim, {
-        toValue: scanHeigth,
+        toValue: scanHeight,
         duration: 1500,
         easing: Easing.linear,
         useNativeDriver: true,

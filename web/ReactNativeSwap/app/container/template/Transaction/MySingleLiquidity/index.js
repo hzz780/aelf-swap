@@ -2,7 +2,7 @@ import React, {memo} from 'react';
 import {View, StyleSheet} from 'react-native';
 import i18n from 'i18n-js';
 import {pTd} from '../../../../utils/common';
-import {bottomBarHeigth} from '../../../../utils/common/device';
+import {bottomBarHeight} from '../../../../utils/common/device';
 import {Colors} from '../../../../assets/theme';
 import {TextL, TextM} from '../../../../components/template/CommonText';
 import {useStateToProps} from '../../../../utils/pages/hooks';
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F3F3',
     padding: pTd(20),
     borderRadius: pTd(15),
-    marginBottom: pTd(30) + bottomBarHeigth,
+    marginBottom: pTd(30) + bottomBarHeight,
   },
   themeColor: {
     color: Colors.primaryColor,
