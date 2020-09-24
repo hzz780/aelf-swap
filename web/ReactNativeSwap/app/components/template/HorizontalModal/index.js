@@ -12,6 +12,7 @@ const show = component => {
       isIos ? (
         component
       ) : (
+        // Android hide StatusBar
         <>
           <StatusBar hidden={true} />
           {component}
@@ -44,6 +45,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 20,
     overflow: 'hidden',
+    paddingRight: pTd(15),
     backgroundColor: 'white',
     marginLeft: isIos ? statusBarHeight : 0,
   },

@@ -33,7 +33,17 @@ const isIphoneX = (function() {
   );
 })();
 
-const statusBarHeight = Constants.statusBarHeight;
+const statusBarHeight = (function() {
+  let BarHeight = Constants.statusBarHeight;
+  if (isIos && !BarHeight) {
+    if (isIphoneX) {
+      BarHeight = 44;
+    } else {
+      BarHeight = 20;
+    }
+  }
+  return BarHeight;
+})();
 const bottomBarHeight = (function() {
   let Height = 0;
   if (isIos && isIphoneX) {
