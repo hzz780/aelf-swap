@@ -49,7 +49,6 @@ const getAddData = (firstToken, secondToken, currentPair) => {
       secondToken.token,
     );
     amountBDesired = getDecimalTokenHigher(firstToken.input, firstToken.token);
-    console.log(amountADesired, amountBDesired);
   }
   return {symbolA, symbolB, amountADesired, amountBDesired};
 };

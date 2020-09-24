@@ -37,7 +37,6 @@ function* getLocationSaga() {
     const {coords} = location;
     const geocode = yield Location.reverseGeocodeAsync(coords);
     const {isoCountryCode} = geocode[0] || {};
-    console.log(geocode, '=====geocode');
     if (blackList.includes(isoCountryCode)) {
       ActionSheet.alert(
         i18n.t('safetyReminder'),

@@ -158,7 +158,6 @@ const TokenDetails = props => {
       <View
         onLayout={({nativeEvent: {layout}}) => {
           headerHeight = layout.height;
-          console.log(headerHeight, '+++++headerHeight');
         }}>
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>

@@ -112,7 +112,6 @@ const AddLiquidity = props => {
         if (firstToken?.token) {
           if (firstToken?.input) {
             const Pair = swapUtils.getPair(firstToken, item, pairs);
-            console.log(Pair, '======Pair');
             if (Pair) {
               obj = {
                 ...obj,
