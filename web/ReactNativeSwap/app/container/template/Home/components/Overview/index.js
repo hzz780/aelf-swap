@@ -8,6 +8,7 @@ import OverviewCharts from '../../components/OverviewCharts';
 import {useStateToProps} from '../../../../../utils/pages/hooks';
 import {BounceSpinner, ListItem} from '../../../../../components/template';
 import swapUtils from '../../../../../utils/pages/swapUtils';
+import TradingViewDemo from '../../../../../components/template/TradingView/demo';
 const Overview = props => {
   const {overviewInfo} = useStateToProps(base => {
     const {settings, swap} = base;
@@ -66,7 +67,8 @@ const Overview = props => {
         rightElement={null}
         subtitleStyle={styles.subtitleStyle}
       />
-      <OverviewCharts />
+      <TradingViewDemo />
+      {/* <OverviewCharts /> */}
       <View style={styles.overviewBox}>
         <TextL style={{color: Colors.primaryColor}}>
           {i18n.t('swap.allMarkets')}
