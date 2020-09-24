@@ -21,6 +21,7 @@ const TransactionsItem = props => {
     amountB,
     symbolB,
     txId,
+    time,
   } = item || {};
   let leftTitle = i18n.t('swap.swap'),
     rigthTitle = i18n.t('swap.for');
@@ -56,9 +57,7 @@ const TransactionsItem = props => {
         style={styles.senderStyle}>
         {aelfUtils.formatAddress(sender)}
       </TextS>
-      <TextS style={styles.timeStyle}>
-        {aelfUtils.timeConversion(new Date().getTime())}
-      </TextS>
+      <TextS style={styles.timeStyle}>{aelfUtils.timeConversion(time)}</TextS>
     </Touchable>
   );
 };
