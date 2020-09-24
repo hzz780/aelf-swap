@@ -309,7 +309,7 @@ const TokenDetails = props => {
             loadCompleted={loadCompleted?.[index]}
             upPullRefresh={upPullRefresh}
           />
-          {/* {BottomButton} */}
+          {BottomButton}
         </>
       ) : (
         <BounceSpinner type="Wave" style={styles.spinnerStyle} />
