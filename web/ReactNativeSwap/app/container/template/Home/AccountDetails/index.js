@@ -25,6 +25,7 @@ import TransactionsItem from '../components/TransactionsItem';
 import swapUtils from '../../../../utils/pages/swapUtils';
 import ToolBar from '../components/ToolBar';
 import PairItem from '../components/PairItem';
+import aelfUtils from '../../../../utils/pages/aelfUtils';
 let headerHeight = pTd(1732);
 let isActive = false;
 let totalScroll = 0,
@@ -186,7 +187,7 @@ const AccountDetails = props => {
             {i18n.t('swap.overview')}
           </TextL>
         </View>
-        {Item(i18n.t('account'), address)}
+        {Item(i18n.t('account'), aelfUtils.formatAddress(address))}
         {Item(
           i18n.t('swap.account.totalSwapped'),
           `$ ${swapUtils.USDdigits(totalSwapped)}`,
@@ -285,7 +286,7 @@ const AccountDetails = props => {
   ]);
   return (
     <View style={GStyle.secondContainer}>
-      <CommonHeader title={`${address}`} canBack />
+      <CommonHeader title={aelfUtils.formatAddress(address)} canBack />
       {addressDetails ? (
         <SectionStickyList
           ref={list}
