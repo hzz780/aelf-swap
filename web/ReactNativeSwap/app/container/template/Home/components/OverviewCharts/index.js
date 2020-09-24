@@ -15,7 +15,7 @@ const OverviewCharts = props => {
     };
   });
   const list = ['Liquidity', 'Volume'];
-  const [toolIndex, setToolIndex] = useState(0);
+  const [toolIndex, setToolIndex] = useState(props.toolIndex || 0);
   const onSetToolIndex = useCallback(index => {
     setToolIndex(index);
   }, []);
@@ -29,7 +29,13 @@ const OverviewCharts = props => {
         />
         <IconMemo
           horizontal={props.horizontal}
-          component={<OverviewCharts horizontal toolHeight={pTd(100)} />}
+          component={
+            <OverviewCharts
+              toolIndex={toolIndex}
+              horizontal
+              toolHeight={pTd(100)}
+            />
+          }
         />
       </View>
     );

@@ -18,26 +18,15 @@ const defaultPeriod = periodConfig[0];
 const kPeriodConfig = [900, 3600, 14400, 86400];
 const defaultKPeriod = kPeriodConfig[kPeriodConfig.length - 1];
 const PairCharts = props => {
-  console.log(props, '======props');
   const dispatch = useDispatch();
+  const {symbolPair, symbolA, symbolB} = props;
   const {pairCandleStick, pairCharts} = useStateToProps(base => {
     const {swap} = base;
     return {
-      pairCandleStick: swap.pairCandleStick,
-      pairCharts: swap.pairCharts,
+      pairCandleStick: swap.pairCandleStick?.[symbolPair],
+      pairCharts: swap.pairCharts?.[symbolPair],
     };
   });
-  const getPairCandleStick = useCallback(
-    (symbolPair, interval) =>
-      dispatch(swapActions.getPairCandleStick(symbolPair, interval)),
-    [dispatch],
-  );
-  const getPairCharts = useCallback(
-    (symbolPair, range) =>
-      dispatch(swapActions.getPairCharts(symbolPair, range)),
-    [dispatch],
-  );
-  const {symbolPair, symbolA, symbolB} = props;
   const list = [
     'Liquidity',
     'Volume',
@@ -46,37 +35,28 @@ const PairCharts = props => {
   ];
   const periodList = ['1W', '1M', 'All'];
   const kPeriodList = ['15min', '1hour', '4hour', '1day'];
-  const [toolIndex, setToolIndex] = useState(0);
-  const [period, setPeriod] = useState(0);
-  const [kPeriod, setKPeriod] = useState(kPeriodConfig.length - 1);
+  const [toolIndex, setToolIndex] = useState(props.toolIndex || 0);
+  const [period, setPeriod] = useState(props.period || 0);
+  const [kPeriod, setKPeriod] = useState(
+    props.kPeriod !== undefined ? props.kPeriod : kPeriodConfig.length - 1,
+  );
   const onGetPairCandleStick = useCallback(
-    interval => {
-      getPairCandleStick(symbolPair, interval);
-    },
-    [getPairCandleStick, symbolPair],
+    interval => dispatch(swapActions.getPairCandleStick(symbolPair, interval)),
+    [dispatch, symbolPair],
   );
   const onGetPairCharts = useCallback(
-    range => {
-      getPairCharts(symbolPair, range);
-    },
-    [getPairCharts, symbolPair],
+    range => dispatch(swapActions.getPairCharts(symbolPair, range)),
+    [dispatch, symbolPair],
   );
   useEffect(() => {
     onGetPairCandleStick(defaultKPeriod);
     onGetPairCharts(defaultPeriod);
   }, [onGetPairCandleStick, onGetPairCharts]);
-  const candleStickData =
-    pairCandleStick && pairCandleStick[symbolPair]
-      ? pairCandleStick[symbolPair][kPeriodConfig[kPeriod]]
-      : undefined;
-
-  const chartsData =
-    pairCharts && pairCharts[symbolPair]
-      ? pairCharts[symbolPair][periodConfig[period]]
-      : undefined;
+  const candleStickData = pairCandleStick?.[kPeriodConfig[kPeriod]];
+  const chartsData = pairCharts?.[periodConfig[period]];
   const onSetToolIndex = useCallback(
     index => {
-      if (index === 0 || index === 1) {
+      if (index < 2) {
         onGetPairCharts(periodConfig[period]);
       } else {
         onGetPairCandleStick(kPeriodConfig[kPeriod]);
@@ -95,11 +75,20 @@ const PairCharts = props => {
         />
         <IconMemo
           horizontal={props.horizontal}
-          component={<PairCharts horizontal {...props} toolHeight={pTd(160)} />}
+          component={
+            <PairCharts
+              horizontal
+              {...props}
+              period={period}
+              kPeriod={kPeriod}
+              toolIndex={toolIndex}
+              toolHeight={pTd(160)}
+            />
+          }
         />
       </View>
     );
-  }, [list, onSetToolIndex, props, toolIndex]);
+  }, [kPeriod, list, onSetToolIndex, period, props, toolIndex]);
   const onSetPeriod = useCallback(
     index => {
       onGetPairCharts(periodConfig[index]);

@@ -50,6 +50,9 @@ const {Types, Creators} = createActions({
   getTokenChart: ['symbol', 'range'],
   setTokenChart: ['tokenChart'],
 
+  getPriceCandleStick: ['symbol', 'interval'],
+  setPriceCandleStick: ['priceCandleStick'],
+
   //pair list
   getPairSwapList: ['symbolPair', 'loadingPaging', 'callBack'],
   setPairSwap: ['pairSwap'],
@@ -96,6 +99,7 @@ export const INITIAL_STATE = Immutable({
   accountList: [],
   tokenList: [],
   tokenChart: {},
+  priceCandleStick: {},
 
   pairSwap: {},
   pairAddLiquidity: {},
@@ -122,6 +126,10 @@ export const swapSelectors = {
   pairCandleStick: createSelector(
     _baseSelector,
     base => base.pairCandleStick,
+  ),
+  priceCandleStick: createSelector(
+    _baseSelector,
+    base => base.priceCandleStick,
   ),
   pairCharts: createSelector(
     _baseSelector,
@@ -241,7 +249,6 @@ export const setPairCandleStick = (state, {pairCandleStick}) => {
     ),
   });
 };
-
 export const getPairCharts = state => {
   return state.merge();
 };
@@ -321,6 +328,20 @@ export const setTokenChart = (state, {tokenChart}) => {
   const {tokenChart: charts} = state;
   return state.merge({
     tokenChart: Object.assign({}, charts || {}, tokenChart || {}),
+  });
+};
+
+export const getPriceCandleStick = state => {
+  return state.merge();
+};
+export const setPriceCandleStick = (state, {priceCandleStick}) => {
+  const {priceCandleStick: candleStick} = state;
+  return state.merge({
+    priceCandleStick: Object.assign(
+      {},
+      candleStick || {},
+      priceCandleStick || {},
+    ),
   });
 };
 
@@ -470,6 +491,9 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.GET_TOKEN_CHART]: getTokenChart,
   [Types.SET_TOKEN_CHART]: setTokenChart,
+
+  [Types.GET_PRICE_CANDLE_STICK]: getPriceCandleStick,
+  [Types.SET_PRICE_CANDLE_STICK]: setPriceCandleStick,
 
   [Types.GET_PAIR_SWAP_LIST]: getPairSwapList,
   [Types.SET_PAIR_SWAP]: setPairSwap,

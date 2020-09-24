@@ -317,6 +317,29 @@ function* getPairCandleStickSaga({symbolPair, interval}) {
     console.log(error, '======getPairCandleStickSaga');
   }
 }
+function* getPriceCandleStickSaga({symbol, interval}) {
+  try {
+    const utcOffset = swapUtils.getUTCOffset();
+    const result = yield getFetchRequest(
+      `${swapPath}/priceChart?symbol=${symbol}&interval=${interval}&utcOffset=${utcOffset}`,
+    );
+    if (result.msg === 'success') {
+      let obj;
+      const candleStick = yield select(swapSelectors.priceCandleStick);
+      let priceCandleStick;
+      if (candleStick) {
+        priceCandleStick = candleStick[symbol];
+      }
+      obj = {
+        [symbol]: {...(priceCandleStick || {}), [interval]: result.data},
+      };
+      console.log(obj, '=======getPriceCandleStick');
+      yield put(swapActions.setPriceCandleStick(obj));
+    }
+  } catch (error) {
+    console.log(error, '======getPairCandleStickSaga');
+  }
+}
 function* getPairChartsSaga({symbolPair, range}) {
   try {
     const utcOffset = swapUtils.getUTCOffset();
@@ -881,6 +904,7 @@ export default function* SwapSaga() {
 
     yield takeLatest(swapTypes.GET_TOKEN_LIST, getTokenListSaga),
     yield takeLatest(swapTypes.GET_TOKEN_CHART, getTokenChartSaga),
+    yield takeLatest(swapTypes.GET_PRICE_CANDLE_STICK, getPriceCandleStickSaga),
 
     //pair transactions
     yield takeLatest(swapTypes.GET_PAIR_SWAP_LIST, getPairSwapListSaga),

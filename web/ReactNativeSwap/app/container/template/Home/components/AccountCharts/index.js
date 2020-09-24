@@ -32,8 +32,8 @@ const AccountCharts = props => {
   });
   const periodList = ['1W', '1M', 'All'];
   const list = ['Liquidity'];
-  const [toolIndex, setToolIndex] = useState(0);
-  const [period, setPeriod] = useState(0);
+  const [toolIndex, setToolIndex] = useState(props.toolIndex || 0);
+  const [period, setPeriod] = useState(props.period || 0);
   const onSetToolIndex = useCallback(
     index => {
       onGetAccountChart(periodConfig[period]);
@@ -41,9 +41,7 @@ const AccountCharts = props => {
     },
     [onGetAccountChart, period],
   );
-  console.log(symbolPair, '====symbolPair');
   const chartObj = accountChart?.[symbolPair || 'all']?.[periodConfig[period]];
-  console.log(chartObj, accountChart, '====accountChart');
   const {list: chartsList, liquidityInPrice} = chartObj || {};
   const charts = chartsList || chartObj;
   const toolMemo = useMemo(() => {
@@ -57,12 +55,18 @@ const AccountCharts = props => {
         <IconMemo
           horizontal={props.horizontal}
           component={
-            <AccountCharts horizontal {...props} toolHeight={pTd(160)} />
+            <AccountCharts
+              horizontal
+              {...props}
+              period={period}
+              toolIndex={toolIndex}
+              toolHeight={pTd(160)}
+            />
           }
         />
       </View>
     );
-  }, [list, onSetToolIndex, props, toolIndex]);
+  }, [list, onSetToolIndex, period, props, toolIndex]);
   const onSetPeriod = useCallback(
     index => {
       onGetAccountChart(periodConfig[index]);
