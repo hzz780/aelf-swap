@@ -20,6 +20,13 @@ const PairItem = props => {
   if (!item) {
     return;
   }
+  let sA = item.symbolA,
+    sB = item.symbolB;
+  if ((!sA || !sB) && typeof item.symbolPair === 'string') {
+    const sStr = item.symbolPair.split('-');
+    sA = sStr[0];
+    sB = sStr[0];
+  }
   return (
     <Touchable
       onPress={() =>
@@ -34,10 +41,10 @@ const PairItem = props => {
           $ {swapUtils.USDdigits(item.liquidityInPrice)}
         </TextS>
         <SymbolText margin>
-          {item.liquidityA} {item.symbolA}
+          {item.liquidityA} {sA}
         </SymbolText>
         <SymbolText>
-          {item.liquidityB} {item.symbolB}
+          {item.liquidityB} {sB}
         </SymbolText>
       </View>
       <View style={styles.flexBox}>
@@ -45,10 +52,10 @@ const PairItem = props => {
           $ {swapUtils.USDdigits(item.volumeInPrice)}
         </TextS>
         <SymbolText margin>
-          {item.volumeA} {item.symbolA}
+          {item.volumeA || '0'} {sA}
         </SymbolText>
         <SymbolText>
-          {item.volumeB} {item.symbolB}
+          {item.volumeB || '0'} {sB}
         </SymbolText>
       </View>
     </Touchable>

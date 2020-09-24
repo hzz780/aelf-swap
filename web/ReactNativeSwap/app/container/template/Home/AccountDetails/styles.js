@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
   },
   allPairsStyle: {
     marginVertical: pTd(20),
-    paddingHorizontal: pTd(50),
   },
 });
 

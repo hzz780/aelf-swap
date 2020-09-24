@@ -23,7 +23,10 @@ import RateItem from '../components/RateItem';
 import TransactionsItem from '../components/TransactionsItem';
 import ToolBar from '../components/ToolBar';
 import PairItem from '../components/PairItem';
+let headerHeight = pTd(1748);
 let isActive = false;
+let totalScroll = 0,
+  scroll = {};
 const TokenDetails = props => {
   const dispatch = useDispatch();
   const getTokenInfo = useCallback(
@@ -91,12 +94,13 @@ const TokenDetails = props => {
       ),
     [dispatch, endList, symbol],
   );
-  console.log(tokenDetails, '=====tokenDetails');
   useFocusEffect(
     useCallback(() => {
       isActive = true;
       upPullRefresh();
       return () => {
+        totalScroll = 0;
+        scroll = {};
         isActive = false;
       };
     }, [upPullRefresh]),
@@ -126,9 +130,8 @@ const TokenDetails = props => {
             ]}
           />
           {topPairs
-            .slice(0, topPairs.length > 2 ? 2 : topPairs.length - 1)
+            .slice(0, topPairs.length > 2 ? 2 : topPairs.length)
             .map((item, i) => {
-              console.log(item, '=====item');
               return <PairItem item={item} key={i} />;
             })}
         </>
@@ -152,7 +155,11 @@ const TokenDetails = props => {
       return <BounceSpinner />;
     }
     return (
-      <>
+      <View
+        onLayout={({nativeEvent: {layout}}) => {
+          headerHeight = layout.height;
+          console.log(headerHeight, '+++++headerHeight');
+        }}>
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.overview')}
@@ -175,7 +182,7 @@ const TokenDetails = props => {
         />
         <RateItem
           title={`${i18n.t('swap.TXS')}(24h)`}
-          subtitle={txsCount}
+          subtitle={txsCount || '0'}
           rate={txsCountRate}
         />
         <TokenCharts symbol={symbol} />
@@ -186,24 +193,25 @@ const TokenDetails = props => {
             {i18n.t('swap.transactions')}
           </TextL>
         </View>
-      </>
+      </View>
     );
   }, [TopPairs, symbol, tokenDetails]);
   const stickyHead = useCallback(() => {
     return (
       <ToolBar
         setIndex={i => {
-          list.current?.scrollTo({
-            sectionIndex: 0,
-            itemIndex: 0,
-            animated: false,
-          });
           setIndex(i);
+          if (totalScroll >= headerHeight) {
+            const y =
+              scroll[i] && scroll[i] > headerHeight ? scroll[i] : headerHeight;
+            list.current?.scrollTo(y);
+          }
         }}
         index={index}
       />
     );
-  }, [index]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, totalScroll]);
   const renderItem = useCallback(
     ({item}) => <TransactionsItem item={item} index={index} />,
     [index],
@@ -289,6 +297,10 @@ const TokenDetails = props => {
             data={getData()}
             showFooter
             whetherAutomatic
+            onScroll={v => {
+              totalScroll = v;
+              scroll[index] = v;
+            }}
             stickyHead={stickyHead}
             renderItem={renderItem}
             listFooterHight={pTd(200)}
@@ -297,7 +309,7 @@ const TokenDetails = props => {
             loadCompleted={loadCompleted?.[index]}
             upPullRefresh={upPullRefresh}
           />
-          {BottomButton}
+          {/* {BottomButton} */}
         </>
       ) : (
         <BounceSpinner type="Wave" style={styles.spinnerStyle} />

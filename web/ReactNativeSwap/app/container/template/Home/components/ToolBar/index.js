@@ -2,7 +2,8 @@ import React, {memo} from 'react';
 import i18n from 'i18n-js';
 import {StyleSheet, View} from 'react-native';
 import {Touchable} from '../../../../../components/template';
-import {TextL} from '../../../../../components/template/CommonText';
+import {TextL, TextM} from '../../../../../components/template/CommonText';
+import {Colors} from '../../../../../assets/theme';
 const ToolBar = memo(props => {
   const {index, setIndex} = props;
   const toolList = [
@@ -31,10 +32,10 @@ const ToolBar = memo(props => {
         })}
       </View>
       <View style={styles.toolListTitile}>
-        <TextL style={{color: Colors.primaryColor}}>{toolList[index]}</TextL>
-        <TextL style={{color: Colors.primaryColor}}>
+        <TextM style={{color: Colors.fontGray}}>{toolList[index]}</TextM>
+        <TextM style={{color: Colors.fontGray}}>
           {i18n.t('swap.totalValue')}
-        </TextL>
+        </TextM>
       </View>
     </>
   );

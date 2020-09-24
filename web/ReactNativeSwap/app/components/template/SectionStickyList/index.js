@@ -14,6 +14,7 @@ import {Colors} from '../../../assets/theme';
 import {pTd} from '../../../utils/common';
 import {bottomBarHeight} from '../../../utils/common/device';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {TextL} from '../CommonText';
 const scrollToTopBottom = 40; //The distance between the icon and the bottom
 const showScrollToTop = 300; //y-axis scroll distance
 export default class SectionStickyList extends Component {
@@ -49,14 +50,26 @@ export default class SectionStickyList extends Component {
   componentWillUnmount() {
     this.endRefresh && clearTimeout(this.endRefresh);
   }
-  scrollTo(params) {
+  scrollToLocation(params) {
     this.endCanLoadMore();
     if (!params) {
       return;
     }
     this._list?.scrollToLocation(params);
   }
+  scrollTo = (offset, animated = false) => {
+    this.endCanLoadMore();
+    if (this.isScrollToTop) {
+      this._list._wrapperListRef._listRef.scrollToOffset({
+        offset,
+        animated,
+      });
+    } else {
+      console.warn('This device does not currently support scrollToOffset');
+    }
+  };
   scrollToTop = _ => {
+    this.endCanLoadMore();
     if (this.isScrollToTop) {
       this._list._wrapperListRef._listRef.scrollToOffset({
         offset: 0,
@@ -67,7 +80,7 @@ export default class SectionStickyList extends Component {
   };
   ListFooterComponent = _ => {
     const {bottomLoad} = this.state;
-    const {loadCompleted, bottomLoadTip, listFooterHight} = this.props;
+    const {loadCompleted, bottomLoadTip, listFooterHight, data} = this.props;
     let FirstComponent = null,
       SecondComponent = null;
     if (listFooterHight) {
@@ -75,7 +88,15 @@ export default class SectionStickyList extends Component {
       SecondComponent = <View style={{height: height}} />;
     }
     if (loadCompleted) {
-      FirstComponent = <View />;
+      if (Array.isArray(data) && data.length === 0) {
+        FirstComponent = (
+          <View style={styles.noMorebox}>
+            <TextL style={{color: Colors.fontGray}}>No More...</TextL>
+          </View>
+        );
+      } else {
+        FirstComponent = <View />;
+      }
     } else {
       FirstComponent = (
         <Touchable
@@ -180,6 +201,7 @@ export default class SectionStickyList extends Component {
           {...this.props}
           windowSize={50}
           maxToRenderPerBatch={5}
+          initialNumToRender={20}
           // removeClippedSubviews={false}
           // legacyImplementation={true}
           onScroll={this.onScroll}
@@ -238,5 +260,9 @@ const styles = StyleSheet.create({
         elevation: 1,
       },
     }),
+  },
+  noMorebox: {
+    alignItems: 'center',
+    marginVertical: pTd(140),
   },
 });

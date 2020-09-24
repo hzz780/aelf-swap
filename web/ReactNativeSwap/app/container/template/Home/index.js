@@ -10,7 +10,11 @@ import HomeToolBar from './components/HomeToolBar';
 import {useSetState, useStateToProps} from '../../../utils/pages/hooks';
 import {AccountsItem, PairsItem, TokensItem} from './components/HomeItems';
 import {CommonHeader, SectionStickyList} from '../../../components/template';
+import {pTd} from '../../../utils/common';
+let headerHeight = pTd(1408);
 let isActive = true;
+let totalScroll = 0,
+  scroll = {};
 const Home = () => {
   const dispatch = useDispatch();
   const list = useRef();
@@ -89,7 +93,13 @@ const Home = () => {
     [index],
   );
   const renderHeader = useMemo(() => {
-    return <Overview />;
+    return (
+      <Overview
+        onLayout={({nativeEvent: {layout}}) => {
+          headerHeight = layout.height;
+        }}
+      />
+    );
   }, []);
   const stickyHead = useCallback(() => {
     return (
@@ -97,15 +107,16 @@ const Home = () => {
         index={index}
         setIndex={i => {
           setIndex(i);
-          list.current?.scrollTo({
-            sectionIndex: 0,
-            itemIndex: 0,
-            animated: false,
-          });
+          if (totalScroll >= headerHeight) {
+            const y =
+              scroll[i] && scroll[i] > headerHeight ? scroll[i] : headerHeight;
+            list.current?.scrollTo(y);
+          }
         }}
       />
     );
-  }, [index]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, totalScroll]);
   const getData = useCallback(() => {
     if (index === 0) {
       return tokenList;
@@ -122,6 +133,10 @@ const Home = () => {
         data={getData()}
         showFooter
         whetherAutomatic
+        onScroll={v => {
+          totalScroll = v;
+          scroll[index] = v;
+        }}
         stickyHead={stickyHead}
         renderItem={renderItem}
         renderHeader={renderHeader}

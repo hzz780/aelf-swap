@@ -8,7 +8,7 @@ import OverviewCharts from '../../components/OverviewCharts';
 import {useStateToProps} from '../../../../../utils/pages/hooks';
 import {BounceSpinner, ListItem} from '../../../../../components/template';
 import swapUtils from '../../../../../utils/pages/swapUtils';
-const Overview = () => {
+const Overview = props => {
   const {overviewInfo} = useStateToProps(base => {
     const {settings, swap} = base;
     return {
@@ -29,7 +29,7 @@ const Overview = () => {
     return <BounceSpinner type="Wave" />;
   }
   return (
-    <>
+    <View {...props}>
       <View style={styles.overviewBox}>
         <TextL style={{color: Colors.primaryColor}}>
           {i18n.t('swap.overview')}
@@ -72,7 +72,7 @@ const Overview = () => {
           {i18n.t('swap.allMarkets')}
         </TextL>
       </View>
-    </>
+    </View>
   );
 };
 

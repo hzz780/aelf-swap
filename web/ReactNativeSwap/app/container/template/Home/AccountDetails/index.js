@@ -25,7 +25,10 @@ import TransactionsItem from '../components/TransactionsItem';
 import swapUtils from '../../../../utils/pages/swapUtils';
 import ToolBar from '../components/ToolBar';
 import PairItem from '../components/PairItem';
+let headerHeight = pTd(1732);
 let isActive = false;
+let totalScroll = 0,
+  scroll = {};
 const AccountDetails = props => {
   const dispatch = useDispatch();
   const getAccountInfo = useCallback(
@@ -93,7 +96,6 @@ const AccountDetails = props => {
       ),
     [address, dispatch, endList],
   );
-  console.log(state, '======state');
   const addressDetails = accountInfo ? accountInfo[address] : undefined;
   const {totalSwapped, feePaid, txsCount, pairList} = addressDetails || {};
   useFocusEffect(
@@ -101,6 +103,8 @@ const AccountDetails = props => {
       isActive = true;
       upPullRefresh();
       return () => {
+        totalScroll = 0;
+        scroll = {};
         isActive = false;
       };
     }, [upPullRefresh]),
@@ -141,9 +145,11 @@ const AccountDetails = props => {
               `${i18n.t('swap.volume')}(24h)`,
             ]}
           />
-          {pairList.map((item, i) => {
-            return <PairItem item={item} key={i} />;
-          })}
+          {pairList
+            .slice(0, pairList.length > 2 ? 2 : pairList.length)
+            .map((item, i) => {
+              return <PairItem item={item} key={i} />;
+            })}
         </>
       );
     }
@@ -173,7 +179,8 @@ const AccountDetails = props => {
   }, [onSelect, pairList]);
   const renderHeader = useMemo(() => {
     return (
-      <>
+      <View
+        onLayout={({nativeEvent: {layout}}) => (headerHeight = layout.height)}>
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.overview')}
@@ -202,7 +209,7 @@ const AccountDetails = props => {
             {i18n.t('swap.transactions')}
           </TextL>
         </View>
-      </>
+      </View>
     );
   }, [
     Item,
@@ -218,17 +225,18 @@ const AccountDetails = props => {
     return (
       <ToolBar
         setIndex={i => {
-          list.current?.scrollTo({
-            sectionIndex: 0,
-            itemIndex: 0,
-            animated: false,
-          });
           setIndex(i);
+          if (totalScroll >= headerHeight) {
+            const y =
+              scroll[i] && scroll[i] > headerHeight ? scroll[i] : headerHeight;
+            list.current?.scrollTo(y);
+          }
         }}
         index={index}
       />
     );
-  }, [index]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, totalScroll]);
   const renderItem = useCallback(
     ({item}) => <TransactionsItem item={item} index={index} />,
     [index],
@@ -275,7 +283,6 @@ const AccountDetails = props => {
     addressSwapList,
     index,
   ]);
-  console.log(loadCompleted, '=====loadCompleted');
   return (
     <View style={GStyle.secondContainer}>
       <CommonHeader title={`${address}`} canBack />
@@ -284,6 +291,10 @@ const AccountDetails = props => {
           ref={list}
           showFooter
           data={getData()}
+          onScroll={v => {
+            totalScroll = v;
+            scroll[index] = v;
+          }}
           whetherAutomatic
           stickyHead={stickyHead}
           renderItem={renderItem}

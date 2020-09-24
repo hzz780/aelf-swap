@@ -21,7 +21,10 @@ import {useFocusEffect} from '@react-navigation/native';
 import RateItem from './RateItem';
 import TransactionsItem from '../components/TransactionsItem';
 import ToolBar from '../components/ToolBar';
+let headerHeight = pTd(1510);
 let isActive = false;
+let totalScroll = 0,
+  scroll = {};
 const PairDetails = props => {
   const list = useRef();
   const [pairData, setPairData] = useState(props.route.params?.pairData || {});
@@ -102,6 +105,8 @@ const PairDetails = props => {
       isActive = true;
       upPullRefresh();
       return () => {
+        totalScroll = 0;
+        scroll = {};
         isActive = false;
       };
     }, [upPullRefresh]),
@@ -121,7 +126,8 @@ const PairDetails = props => {
       feeInPriceRate,
     } = pairInfo || {};
     return (
-      <>
+      <View
+        onLayout={({nativeEvent: {layout}}) => (headerHeight = layout.height)}>
         <View style={styles.overviewBox}>
           <TextL style={{color: Colors.primaryColor}}>
             {i18n.t('swap.overview')}
@@ -131,6 +137,7 @@ const PairDetails = props => {
           title={i18n.t('swap.liquidity')}
           subtitle={subtitle}
           rate={liquidityInPriceRate}
+          fColor={Colors.fontGray}
           tA={liquidityA}
           tB={liquidityB}
           sA={symbolA}
@@ -183,24 +190,25 @@ const PairDetails = props => {
             {i18n.t('swap.transactions')}
           </TextL>
         </View>
-      </>
+      </View>
     );
   }, [pairData, pairInfo, tokenUSD]);
   const stickyHead = useCallback(() => {
     return (
       <ToolBar
         setIndex={i => {
+          if (totalScroll >= headerHeight) {
+            const y =
+              scroll[i] && scroll[i] > headerHeight ? scroll[i] : headerHeight;
+            list.current?.scrollTo(y);
+          }
           setIndex(i);
-          list.current?.scrollTo({
-            sectionIndex: 0,
-            itemIndex: 0,
-            animated: false,
-          });
         }}
         index={index}
       />
     );
-  }, [index]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, totalScroll]);
   const renderItem = useCallback(
     ({item}) => <TransactionsItem item={item} index={index} />,
     [index],
@@ -280,6 +288,10 @@ const PairDetails = props => {
         data={getData()}
         showFooter
         whetherAutomatic
+        onScroll={v => {
+          totalScroll = v;
+          scroll[index] = v;
+        }}
         stickyHead={stickyHead}
         renderItem={renderItem}
         listFooterHight={pTd(180)}
