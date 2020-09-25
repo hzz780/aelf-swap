@@ -1,6 +1,7 @@
 import {useState, useCallback} from 'react';
 import {useSelector, shallowEqual} from 'react-redux';
 import {createSelector} from 'reselect';
+import aelfUtils from './aelfUtils';
 
 const useSetState = (initial = {}, difference) => {
   const [state, saveState] = useState(initial);
@@ -11,7 +12,7 @@ const useSetState = (initial = {}, difference) => {
           return newState;
         }
         const NewState = Object.assign({}, prev || {}, newState || {});
-        if (difference && JSON.stringify(newState) === JSON.stringify(prev)) {
+        if (difference && aelfUtils.deepEqual(newState, prev)) {
           return prev;
         }
         return NewState;

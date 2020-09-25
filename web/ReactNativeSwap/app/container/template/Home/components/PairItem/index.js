@@ -25,7 +25,7 @@ const PairItem = props => {
   if ((!sA || !sB) && typeof item.symbolPair === 'string') {
     const sStr = item.symbolPair.split('-');
     sA = sStr[0];
-    sB = sStr[0];
+    sB = sStr[1];
   }
   return (
     <Touchable

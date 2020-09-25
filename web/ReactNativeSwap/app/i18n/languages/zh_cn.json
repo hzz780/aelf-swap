@@ -320,7 +320,7 @@
       "totalSwapped": "总交换价值",
       "feePaid": "已付手续费",
       "TXSCount": "总交易额",
-      "liquidityInPrice": "流动性（包括费用）",
+      "liquidityInPrice": "流动性（包括手续费）",
       "pairList": "交易对列表"
     },
     "token": {

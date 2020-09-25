@@ -12,6 +12,19 @@ export default class Echarts extends Component {
   constructor(props) {
     super(props);
     this.lodEnd = false;
+    this.state = {
+      hide: !isIos,
+    };
+  }
+  componentDidMount() {
+    if (this.state.hide) {
+      this.timer = setTimeout(() => {
+        this.setState({hide: false});
+      }, 100);
+    }
+  }
+  componentWillUnmount() {
+    this.timer && clearTimeout(this.timer);
   }
   static defaultProps = {
     height: defaultHeight,
@@ -58,27 +71,29 @@ export default class Echarts extends Component {
     const {style, height} = this.props;
     return (
       <View style={[styles.container, style, height && {height}]}>
-        <WebView
-          {...this.props}
-          source={source}
-          originWhitelist={['*']}
-          scalesPageToFit={!isIos}
-          onMessage={this.onMessage}
-          startInLoadingState={true}
-          ref={v => (this.chart = v)}
-          renderLoading={this.renderLoading}
-          onLoad={() => (this.lodEnd = true)}
-          injectedJavaScript={renderChart({
-            ...this.props,
-            typeName: [
-              1,
-              i18n.t('swap.open'),
-              i18n.t('swap.close'),
-              i18n.t('swap.lowest'),
-              i18n.t('swap.highest'),
-            ],
-          })}
-        />
+        {!this.state.hide && (
+          <WebView
+            {...this.props}
+            source={source}
+            originWhitelist={['*']}
+            scalesPageToFit={!isIos}
+            onMessage={this.onMessage}
+            startInLoadingState={true}
+            ref={v => (this.chart = v)}
+            renderLoading={this.renderLoading}
+            onLoad={() => (this.lodEnd = true)}
+            injectedJavaScript={renderChart({
+              ...this.props,
+              typeName: [
+                1,
+                i18n.t('swap.open'),
+                i18n.t('swap.close'),
+                i18n.t('swap.lowest'),
+                i18n.t('swap.highest'),
+              ],
+            })}
+          />
+        )}
       </View>
     );
   }
