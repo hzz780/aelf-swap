@@ -170,7 +170,7 @@ const PairDetails = props => {
           subtitle={`≈ ${swapUtils.detailsPrice(
             reserveA,
             reserveB,
-          )} ${symbolB} ($ ${swapUtils.getUSD(symbolA, tokenUSD)})`}
+          )} ${symbolB || ''} ($ ${swapUtils.getUSD(symbolA, tokenUSD)})`}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
@@ -180,7 +180,7 @@ const PairDetails = props => {
           subtitle={`≈ ${swapUtils.detailsPrice(
             reserveB,
             reserveA,
-          )} ${symbolA} ($ ${swapUtils.getUSD(symbolB, tokenUSD)})`}
+          )} ${symbolA || ''} ($ ${swapUtils.getUSD(symbolB, tokenUSD)})`}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />

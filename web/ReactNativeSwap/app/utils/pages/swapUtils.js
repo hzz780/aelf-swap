@@ -74,9 +74,11 @@ const detailsPrice = (reserveA, reserveB) => {
   }
 };
 const getUSD = (symbolA, USDS) => {
-  if (USDS) {
+  if (USDS && symbolA) {
     const {USD} = USDS[symbolA] || {};
     return USD;
+  } else {
+    return 0;
   }
 };
 
