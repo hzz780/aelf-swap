@@ -25,12 +25,21 @@ const PairItem = props => {
   if ((!sA || !sB) && typeof item.symbolPair === 'string') {
     const sStr = item.symbolPair.split('-');
     sA = sStr[0];
-    sB = sStr[0];
+    sB = sStr[1];
   }
+  console.log(item, '======item');
   return (
     <Touchable
       onPress={() =>
-        navigationService.navigate('PairDetails', {pairData: item})
+        navigationService.navigate('PairDetails', {
+          pairData: {
+            symbolA: sA,
+            symbolB: sB,
+            reserveA: item.liquidityA,
+            reserveB: item.liquidityB,
+            ...item,
+          },
+        })
       }
       style={styles.listItemBox}>
       <TextM numberOfLines={1} style={styles.titleStyle}>

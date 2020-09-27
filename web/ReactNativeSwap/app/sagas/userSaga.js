@@ -89,16 +89,12 @@ function* onAppInitSaga({privateKey}) {
       return;
     }
     privateKey = privateKey || userInfo.privateKey;
-    console.log(privateKey, '=======privateKey');
-    if (privateKey) {
-      const contract = yield getContract(privateKey, contractNameAddressSets);
-      console.log(contract, '======contract');
-      if (contract && Object.keys(contract).length > 0) {
-        yield put(contractsActions.setContracts({contracts: contract}));
-        yield put(userActions.getAllowanceList());
-        yield put(userActions.getUserBalance());
-        yield put(swapActions.getPairs());
-      }
+    const contract = yield getContract(privateKey, contractNameAddressSets);
+    if (contract && Object.keys(contract).length > 0) {
+      yield put(contractsActions.setContracts({contracts: contract}));
+      yield put(userActions.getAllowanceList());
+      yield put(userActions.getUserBalance());
+      yield put(swapActions.getPairs());
     }
   } catch (error) {
     console.log(error, 'appInitSaga');

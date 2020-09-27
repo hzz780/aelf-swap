@@ -73,6 +73,8 @@ const styles = StyleSheet.create({
     paddingVertical: pTd(20),
     backgroundColor: 'white',
     borderWidth: 1,
+    borderLeftWidth: 0.5,
+    borderRightWidth: 0.5,
     borderColor: Colors.primaryColor,
   },
   whiteColor: {
