@@ -97,7 +97,7 @@ const AccountDetails = props => {
       ),
     [address, dispatch, endList],
   );
-  const addressDetails = accountInfo ? accountInfo[address] : undefined;
+  const addressDetails = accountInfo?.[address];
   const {totalSwapped, feePaid, txsCount, pairList} = addressDetails || {};
   useFocusEffect(
     useCallback(() => {
