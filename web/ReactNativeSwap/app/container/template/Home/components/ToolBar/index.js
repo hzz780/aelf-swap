@@ -19,6 +19,7 @@ const ToolBar = memo(props => {
           return (
             <Touchable
               highlight
+              disabled={current}
               underlayColor={Colors.bottonPressColor}
               onPress={() => setIndex(j)}
               key={j}

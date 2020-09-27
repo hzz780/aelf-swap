@@ -28,6 +28,7 @@ const HomeToolBar = memo(props => {
             <Touchable
               key={j}
               highlight
+              disabled={current}
               onPress={() => setIndex?.(j)}
               underlayColor={Colors.bottonPressColor}
               style={[
