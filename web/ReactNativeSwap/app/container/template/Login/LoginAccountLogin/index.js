@@ -37,7 +37,7 @@ const LoginAccountLogin = () => {
       VerifyPassword.passwordShow(keystore, async value => {
         if (value) {
           onLoginSuccess({
-            itemAddress,
+            address: itemAddress,
             keystore,
             userName,
             balance: 0,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   accountBox: {
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: Colors.borderColor,

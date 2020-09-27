@@ -91,7 +91,11 @@ const NetworkManagement = props => {
         copy: true,
       },
       {title: i18n.t('mineModule.transferM.memo'), details: details.memo},
-      {title: i18n.t('mineModule.status'), details: Status, color: 'green'},
+      {
+        title: i18n.t('mineModule.status'),
+        details: Status,
+        color: Colors.green,
+      },
       {
         title: i18n.t('mineModule.transactionID'),
         details: TransactionId,
@@ -107,9 +111,13 @@ const NetworkManagement = props => {
       <View style={styles.container}>
         <View style={styles.amountBox}>
           {amount > 0 ? (
-            <FontAwesome5 name="arrow-circle-up" size={30} color={'red'} />
+            <FontAwesome5 name="arrow-circle-up" size={30} color={Colors.red} />
           ) : (
-            <FontAwesome5 name="arrow-circle-down" size={30} color={'green'} />
+            <FontAwesome5
+              name="arrow-circle-down"
+              size={30}
+              color={Colors.green}
+            />
           )}
           <TextL style={styles.amount}>
             {unitConverter.toLower(amount)} {symbol}

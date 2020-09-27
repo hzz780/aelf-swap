@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   poolToken: {
     paddingTop: pTd(10),
     width: '100%',
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     alignItems: 'flex-end',
     paddingRight: pTd(30),
     height: pTd(110),

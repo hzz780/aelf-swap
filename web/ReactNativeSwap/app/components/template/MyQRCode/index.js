@@ -1,7 +1,7 @@
 'use strict';
 import React, {memo} from 'react';
 import QRCode from 'react-native-qrcode-svg';
-import {aelfBlue} from '../../../assets/images';
+import {QRCodeIcon} from '../../../assets/images';
 import {sreenWidth} from '../../../utils/common/device';
 import {View, StyleSheet} from 'react-native';
 import BounceSpinner from '../BounceSpinner';
@@ -16,10 +16,10 @@ const MyQRCode = props => {
   }
   return (
     <QRCode
-      logo={aelfBlue}
+      logo={QRCodeIcon}
       logoSize={38}
       logoMargin={4}
-      logoBackgroundColor={'#fff'}
+      logoBackgroundColor={Colors.icon1}
       size={sreenWidth * 0.55}
       {...props}
       value={value}

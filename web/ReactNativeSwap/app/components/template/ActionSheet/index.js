@@ -104,12 +104,12 @@ export default {
 };
 const styles = StyleSheet.create({
   alertBgstyle: {
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: Colors.modalBlackBG,
     alignItems: 'center',
     justifyContent: 'center',
   },
   bgStyle: {
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: Colors.modalBlackBG,
     flexDirection: 'column-reverse',
   },
   containerStyle: {
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   sheetBox: {
     overflow: 'hidden',
     borderRadius: 5,
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   itemText: {
     color: Colors.primaryColor,
@@ -146,14 +146,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   alertBox: {
     overflow: 'hidden',
     borderRadius: 10,
     alignItems: 'center',
     width: '85%',
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   alertContainerStyle: {
     marginBottom: statusBarHeight,

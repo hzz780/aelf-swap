@@ -38,6 +38,6 @@ const styles = StyleSheet.create({
   },
   maxText: {
     fontWeight: 'bold',
-    color: 'white',
+    color: Colors.fontWhite,
   },
 });

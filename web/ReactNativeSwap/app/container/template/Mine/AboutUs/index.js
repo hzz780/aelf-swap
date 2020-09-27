@@ -4,7 +4,7 @@ import {GStyle, Colors} from '../../../../assets/theme';
 import {CommonHeader, ListItem} from '../../../../components/template';
 import i18n from 'i18n-js';
 import {pTd} from '../../../../utils/common';
-import {aelfLogo} from '../../../../assets/images';
+import {appLogo} from '../../../../assets/images';
 import {TextL} from '../../../../components/template/CommonText';
 import Constants from 'expo-constants';
 import navigationService from '../../../../utils/common/navigationService';
@@ -16,7 +16,7 @@ const AboutUs = () => {
         <View style={styles.logoBox}>
           <Image
             resizeMode="contain"
-            source={aelfLogo}
+            source={appLogo}
             style={styles.logoStyle}
           />
           <TextL>
@@ -48,7 +48,7 @@ const AboutUs = () => {
 export default memo(AboutUs);
 const styles = StyleSheet.create({
   logoBox: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: pTd(50),

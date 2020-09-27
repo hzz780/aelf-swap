@@ -69,7 +69,7 @@ const PayComponents = props => {
     <ScrollView alwaysBounceVertical={false} keyboardShouldPersistTaps="always">
       <View style={[styles.container]}>
         <View style={styles.pleasePayPwdBox}>
-          <AntDesign color={'white'} size={pTd(40)} name="close" />
+          <AntDesign color={Colors.icon1} size={pTd(40)} name="close" />
           <TextM style={styles.pleasePayPwd} numberOfLines={1}>
             {i18n.t('pleasePayPwd')}
           </TextM>
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   style: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: Colors.modalBlackBG,
   },
   containerStyle: {},
   buttonItem: {

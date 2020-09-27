@@ -7,7 +7,7 @@ export default StyleSheet.create({
     marginTop: pTd(20),
   },
   topBox: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     padding: pTd(50),
     paddingTop: pTd(30),
     alignItems: 'center',
@@ -19,7 +19,7 @@ export default StyleSheet.create({
   shotView: {
     justifyContent: 'center',
     padding: pTd(30),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     alignItems: 'center',
     alignSelf: 'center',
   },

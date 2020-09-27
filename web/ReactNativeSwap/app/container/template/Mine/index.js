@@ -149,7 +149,7 @@ const Mine = props => {
         <TextL style={styles.textTitle}>
           {i18n.t('mineModule.username')}: {userName}
         </TextL>
-        <Icon name="qrcode" size={pTd(180)} color="#fff" />
+        <Icon name="qrcode" size={pTd(180)} color={Colors.icon1} />
       </Touchable>
       <View style={styles.balanceBox}>
         <TextL style={styles.textTitle}>

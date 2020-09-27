@@ -4,7 +4,7 @@ import {Colors} from '../../../../assets/theme';
 
 const styles = StyleSheet.create({
   itemBox: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     paddingVertical: pTd(20),
     width: '100%',
     borderBottomWidth: 1,
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     borderRadius: pTd(10),
   },
   whiteText: {
-    color: 'white',
+    color: Colors.fontWhite,
   },
 });
 

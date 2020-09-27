@@ -321,12 +321,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingVertical: pTd(20),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     borderWidth: 1,
     borderColor: Colors.primaryColor,
   },
   whiteColor: {
-    color: 'white',
+    color: Colors.fontWhite,
   },
   bottomBox: {
     flexDirection: 'row',
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingTop: pTd(30),
     paddingBottom: bottomBarHeight || pTd(30),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     borderTopWidth: 2,
     borderTopColor: Colors.borderColor,
   },

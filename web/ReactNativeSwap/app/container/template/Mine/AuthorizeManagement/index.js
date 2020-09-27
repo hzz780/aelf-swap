@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: pTd(10),
     paddingHorizontal: pTd(50),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   rowItem: {
     width: '100%',
@@ -150,6 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   authorizeText: {
-    color: 'white',
+    color: Colors.fontWhite,
   },
 });

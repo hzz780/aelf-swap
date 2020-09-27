@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#ccc',
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   inputItem: {
     height: sreenWidth / 8,

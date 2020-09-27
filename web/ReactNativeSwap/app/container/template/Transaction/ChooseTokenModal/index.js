@@ -103,7 +103,7 @@ const show = props => {
 export default {show};
 const styles = StyleSheet.create({
   bgStyle: {
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: Colors.modalBlackBG,
     flexDirection: 'column-reverse',
   },
   containerStyle: {

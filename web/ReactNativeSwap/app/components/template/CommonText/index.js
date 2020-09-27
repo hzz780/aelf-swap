@@ -7,20 +7,25 @@ import {onCopyText} from '../../../utils/pages';
 const styles = StyleSheet.create({
   textS: {
     fontSize: pTd(24),
+    color: Colors.fontPrimary,
   },
   textM: {
     fontSize: pTd(28),
+    color: Colors.fontPrimary,
   },
   textL: {
     fontSize: pTd(32),
+    color: Colors.fontPrimary,
   },
   textTitle: {
     fontSize: pTd(38),
     fontWeight: '500',
+    color: Colors.fontPrimary,
   },
   mutilText: {
     lineHeight: pTd(36),
     fontSize: pTd(28),
+    color: Colors.fontPrimary,
   },
   copyText: {
     fontSize: pTd(30),

@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.borderColor,
     paddingLeft: pTd(30),
     paddingVertical: pTd(20),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   timeStyle: {
     color: Colors.fontGray,

@@ -12,16 +12,16 @@ export default StyleSheet.create({
     paddingBottom: pTd(30),
   },
   textTitle: {
-    color: 'white',
+    color: Colors.fontWhite,
   },
   balanceBox: {
     alignItems: 'center',
     justifyContent: 'center',
     height: pTd(80),
-    backgroundColor: '#ab7ee6',
+    backgroundColor: Colors.blanceBG,
   },
   toolBox: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     paddingVertical: pTd(30),
     flexDirection: 'row',
     justifyContent: 'space-around',

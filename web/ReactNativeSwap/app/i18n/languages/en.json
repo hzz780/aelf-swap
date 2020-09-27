@@ -301,7 +301,7 @@
     "pairExists": "The trading pair already exists",
     "inputError": "Input error",
     "insufficientLiquidity": "Insufficient liquidity",
-    "minimumReceived": "Minimum Received",
+    "minimumReceived": "Minimum Received:",
     "createdSuccess": "Created successfully",
     "addSuccess": "Add success",
     "swapSuccess": "SwapSuccess",

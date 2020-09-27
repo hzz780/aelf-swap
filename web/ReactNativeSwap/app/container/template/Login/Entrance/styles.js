@@ -17,7 +17,7 @@ export default StyleSheet.create({
   bgStyle: {
     flex: 1,
     width: '100%',
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     marginTop: -offset,
   },
   loginButton: {
@@ -55,7 +55,7 @@ export default StyleSheet.create({
     color: Colors.fontColor,
   },
   hideLanguage: {
-    color: 'white',
+    color: Colors.fontWhite,
   },
   jLooking: {
     color: Colors.fontColor,

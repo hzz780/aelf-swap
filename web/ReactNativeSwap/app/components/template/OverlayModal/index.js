@@ -47,7 +47,7 @@ export default class OverlayModal extends React.Component {
 }
 const styles = StyleSheet.create({
   bgStyle: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   containerStyle: {
     flex: 1,

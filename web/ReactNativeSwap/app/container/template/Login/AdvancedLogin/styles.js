@@ -16,7 +16,7 @@ export default StyleSheet.create({
     alignSelf: 'center',
   },
   style: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     borderColor: tabActiveColor,
     elevation: 0,
     borderWidth: 2,

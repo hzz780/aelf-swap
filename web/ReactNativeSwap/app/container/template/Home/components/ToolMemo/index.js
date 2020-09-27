@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryColor,
   },
   textColor: {
-    color: 'white',
+    color: Colors.fontWhite,
   },
   borderColor: {
     borderBottomWidth: 2,

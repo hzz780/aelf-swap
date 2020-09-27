@@ -65,9 +65,9 @@ const areaStyle = {
   color: Colors.primaryColor,
 };
 const colorList = [
-  'rgba(92, 40, 169, 0.7)',
+  Colors.primaryColor + 'D0',
   '#2f4554',
-  '#d48265',
+  '#5c28a9',
   '#d34A64',
   '#91c7ae',
   '#749f83',
