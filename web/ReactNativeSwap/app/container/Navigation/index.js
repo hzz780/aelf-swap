@@ -24,6 +24,7 @@ const stackNav = [
     name: 'SecurityLock',
     component: SecurityLock,
     options: {
+      //Swipe left is prohibited to return
       gestureEnabled: false,
     },
   },
