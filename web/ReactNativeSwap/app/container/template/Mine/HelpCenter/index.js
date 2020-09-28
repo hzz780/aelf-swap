@@ -92,15 +92,11 @@ const HelpCenter = () => {
 
 export default memo(HelpCenter);
 const styles = StyleSheet.create({
-  box: {
-    padding: pTd(20),
-    backgroundColor: 'white',
-  },
   bottomBox: {
     padding: pTd(30),
     borderBottomWidth: 1,
     borderBottomColor: Colors.borderColor,
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   itemBox: {
     marginBottom: pTd(20),

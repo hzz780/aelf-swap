@@ -134,6 +134,7 @@ function* getUserBalanceSaga() {
   }
 }
 function* onLoginSuccessSaga({data}) {
+  console.log(data, '=====data');
   try {
     yield put(
       contractsActions.setContracts({

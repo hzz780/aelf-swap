@@ -28,6 +28,7 @@ const HomeToolBar = memo(props => {
             <Touchable
               key={j}
               highlight
+              disabled={current}
               onPress={() => setIndex?.(j)}
               underlayColor={Colors.bottonPressColor}
               style={[
@@ -71,14 +72,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingVertical: pTd(20),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     borderWidth: 1,
     borderLeftWidth: 0.5,
     borderRightWidth: 0.5,
     borderColor: Colors.primaryColor,
   },
   whiteColor: {
-    color: 'white',
+    color: Colors.fontWhite,
   },
   toolBarBox: {
     flexDirection: 'row',

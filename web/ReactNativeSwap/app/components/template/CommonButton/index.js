@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
   textStyles: {
     fontWeight: 'bold',
-    color: 'white',
+    color: Colors.fontWhite,
   },
   spinnerStyle: {
     alignSelf: 'center',

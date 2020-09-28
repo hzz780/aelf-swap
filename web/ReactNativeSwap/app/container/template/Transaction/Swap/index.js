@@ -286,7 +286,7 @@ const Swap = props => {
     [currentPair, setState, showTokenModal, swapToken, toSwapToken],
   );
   const Description = useMemo(() => {
-    let color = 'green';
+    let color = Colors.green;
     return (
       <View style={styles.descriptionBox}>
         {tType === 'swapToken' ? (

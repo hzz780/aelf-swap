@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     paddingRight: pTd(15),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     marginLeft: isIos ? statusBarHeight : 0,
   },
   bgStyle: {

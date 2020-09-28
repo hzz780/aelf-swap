@@ -87,7 +87,11 @@ const NetworkManagement = props => {
         details: spender,
         copy: true,
       },
-      {title: i18n.t('mineModule.status'), details: Status, color: 'green'},
+      {
+        title: i18n.t('mineModule.status'),
+        details: Status,
+        color: Colors.green,
+      },
       {
         title: i18n.t('mineModule.transactionID'),
         details: TransactionId,

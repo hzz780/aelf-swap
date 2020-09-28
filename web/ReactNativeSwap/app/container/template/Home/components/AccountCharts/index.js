@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   container: {
     marginTop: pTd(20),
     paddingTop: pTd(10),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   toolBox: {
     paddingLeft: pTd(20),

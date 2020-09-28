@@ -54,7 +54,7 @@ const show = props => {
 export default {show};
 const styles = StyleSheet.create({
   bgStyle: {
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: Colors.modalBlackBG,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     width: '85%',
     borderRadius: 10,
     overflow: 'hidden',
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor,
     marginBottom: statusBarHeight,
     padding: 15,
   },
@@ -86,6 +86,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   okText: {
-    color: 'white',
+    color: Colors.fontWhite,
   },
 });

@@ -12,7 +12,7 @@ const GStyle = StyleSheet.create({
   },
   pwTip: {
     marginTop: 3,
-    color: 'red',
+    color: Colors.red,
   },
   shadow: {
     ...Platform.select({

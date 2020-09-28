@@ -12,7 +12,7 @@ import KeyboardScrollView from '../KeyboardScrollView';
 const styles = StyleSheet.create({
   statusBarStyle: {
     paddingTop: statusBarHeight,
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   headerWrap: {
     height: pTd(88),

@@ -6,7 +6,7 @@ export default StyleSheet.create({
   input: {
     paddingHorizontal: pTd(20),
     marginTop: pTd(20),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     borderBottomWidth: 0,
   },
   tips: {

@@ -1,20 +1,32 @@
 const Colors = {
   kRed: '#D34A64',
   kGreen: '#07A88B',
-  primaryColor: '#5c28a9', //主要颜色
-  bottonPressColor: '#5b29aa', //按钮按下颜色
-  disabledColor: '#d7d7d7', //按钮禁止交互颜色
 
-  borderColor: '#d0d0d0', //边框颜色
+  red: 'red',
+  green: 'green',
 
-  fontBlack: '#333333', //字体主要颜色
-  fontGray: '#999999', //字体灰
-  fontColor: '#5c28a9', //颜色字体
+  modalBlackBG: 'rgba(0,0,0,0.2)',
 
-  bgColor: '#ffffff', //页面背景颜色
+  primaryColor: '#d45d02',
+  bottonPressColor: '#e07d26', //Button press color
+  disabledColor: '#d7d7d7', //Buttons disable interactive colors
+
+  borderColor: '#d0d0d0',
+
+  fontPrimary: '#333333', //main font color
+  fontBlack: '#333333',
+  fontGray: '#999999',
+  fontColor: '#d45d02',
+  fontWhite: 'white',
+
+  icon1: 'white',
+
+  bgColor: 'white',
+  bgColor2: 'white',
+  blanceBG: '#e07d26',
 
   btnDefault: '',
-  btnColor: '#8FC323', //绿色按钮
+  btnColor: '#8FC323',
 };
 global.Colors = Colors;
 

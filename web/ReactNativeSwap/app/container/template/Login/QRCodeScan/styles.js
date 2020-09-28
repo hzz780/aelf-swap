@@ -26,7 +26,7 @@ export default StyleSheet.create({
   },
   rectangleText: {
     flex: 0,
-    color: '#fff',
+    color: Colors.icon1,
     marginTop: 10,
   },
   ...(isIos

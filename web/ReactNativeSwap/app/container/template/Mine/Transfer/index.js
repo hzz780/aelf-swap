@@ -209,11 +209,11 @@ export default memo(Transfer);
 const styles = StyleSheet.create({
   box: {
     padding: pTd(40),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
   },
   amountBox: {
     padding: pTd(40),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     marginTop: pTd(20),
   },
   inputStyle: {
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tokenBox: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     paddingHorizontal: pTd(40),
   },
 });

@@ -5,7 +5,7 @@ import {pTd} from '../../../../utils/common';
 const styles = StyleSheet.create({
   shotView: {
     padding: pTd(30),
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     alignItems: 'center',
     alignSelf: 'center',
   },

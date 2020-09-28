@@ -48,7 +48,7 @@ const TokenDetails = props => {
       symbolRemoveLiquidityList: swap.symbolRemoveLiquidity?.[symbol],
     };
   });
-  const tokenDetails = tokenInfo[symbol];
+  const tokenDetails = tokenInfo?.[symbol];
   const [index, setIndex] = useState(0);
   const [loadCompleted, setLoadCompleted] = useSetState(null, true);
   const list = useRef();

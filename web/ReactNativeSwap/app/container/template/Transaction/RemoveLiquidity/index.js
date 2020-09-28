@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   },
   redColor: {
     marginTop: pTd(30),
-    color: 'red',
+    color: Colors.red,
   },
   mrginText: {
     marginTop: pTd(40),

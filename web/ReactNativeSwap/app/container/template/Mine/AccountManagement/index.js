@@ -164,7 +164,7 @@ const AccountManagement = () => {
               onPress={() => onDeletePress(item)}
               name="minuscircle"
               size={20}
-              color="red"
+              color={Colors.red}
               style={styles.deleteStyle}
             />
           )}
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   },
   accountBox: {
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: Colors.bgColor2,
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: Colors.borderColor,
