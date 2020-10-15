@@ -21,6 +21,7 @@ const explorerURL = 'https://explorer-test-side01.aelf.io';
 const walletURL = 'https://tdvv-wallet-test.aelf.io';
 const swapURL = 'https://swap-test.aelf.io';
 // test environment
+// const swapURL = 'http://192.168.197.55:7300';
 // const explorerURL = 'http://1.119.195.50:11109';
 // const walletURL = 'http://1.119.195.50:11107';
 export default {
