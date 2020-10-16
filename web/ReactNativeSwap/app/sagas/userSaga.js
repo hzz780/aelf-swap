@@ -28,7 +28,7 @@ import {Alert} from 'react-native';
 import swapActions from '../redux/swapRedux';
 import {getFetchRequest} from '../utils/common/networkRequest';
 const {swapURL} = config;
-const swapRoute = '/api/test';
+const swapRoute = '/api/swap';
 const swapPath = swapURL + swapRoute;
 const {
   explorerURL,
@@ -322,7 +322,12 @@ function* getAllTokensSaga({num}) {
           }
         }
         AllList = AllList.concat(list);
-        if (!aelfUtils.containsAllTokens(allTokens, AllList, 'symbol')) {
+        if (
+          (pageNum === 1 &&
+            allTokenPageSize > AllList.length &&
+            JSON.stringify(allTokens) !== JSON.stringify(AllList)) ||
+          !aelfUtils.containsAllTokens(allTokens, AllList, 'symbol')
+        ) {
           AllList = swapUtils.removeDuplicates(AllList, 'symbol');
           yield put(userActions.setAllTokens(AllList));
           yield put(userActions.getTokenUsd());

@@ -56,6 +56,7 @@ const AddLiquidity = props => {
   const firstBalance = userBalances[(firstToken?.token)] || 0;
   const secondBalance = userBalances[(secondToken?.token)] || 0;
   const currentPair = swapUtils.getPair(firstToken, secondToken, pairs);
+  const Added = currentPair && currentPair?.reserveA && currentPair?.reserveB;
   const totalSupply = totalSupplys?.[currentPair?.symbolPair];
   const addLiquidity = useCallback(
     data => dispatch(swapActions.addLiquidity(data)),
@@ -152,7 +153,7 @@ const AddLiquidity = props => {
   const onMAX = useCallback(
     (type, item) => {
       let obj = {[type]: {...item, input: item.balance}};
-      if (currentPair) {
+      if (Added) {
         if (type === 'firstToken') {
           obj = {
             [type]: {...item, input: item.balance},
@@ -184,6 +185,7 @@ const AddLiquidity = props => {
       setState(obj);
     },
     [
+      Added,
       currentPair,
       firstBalance,
       firstToken,
@@ -219,7 +221,7 @@ const AddLiquidity = props => {
   );
   const onChangeFirst = useCallback(
     v => {
-      if (currentPair) {
+      if (Added) {
         setState({
           firstToken: {...firstToken, input: v},
           secondToken: {
@@ -238,7 +240,7 @@ const AddLiquidity = props => {
         });
       }
     },
-    [currentPair, firstToken, secondToken, setState],
+    [Added, currentPair, firstToken, secondToken, setState],
   );
   const firstItem = useMemo(() => {
     return (
@@ -266,7 +268,7 @@ const AddLiquidity = props => {
   }, [firstBalance, firstToken, onChangeFirst, rightElement]);
   const onChangeSecond = useCallback(
     v => {
-      if (currentPair) {
+      if (Added) {
         setState({
           secondToken: {...secondToken, input: v},
           firstToken: {
@@ -283,7 +285,7 @@ const AddLiquidity = props => {
         setState({secondToken: {...secondToken, input: v}});
       }
     },
-    [currentPair, firstToken, secondToken, setState],
+    [Added, currentPair, firstToken, secondToken, setState],
   );
   const secondItem = useMemo(() => {
     return (
@@ -469,7 +471,7 @@ const AddLiquidity = props => {
         title={i18n.t('swap.addLiquidity')}
         canBack
         scrollViewProps={{upPullRefresh}}>
-        {currentPair ? (
+        {Added ? (
           <View style={styles.container}>
             {firstItem}
             {secondItem}

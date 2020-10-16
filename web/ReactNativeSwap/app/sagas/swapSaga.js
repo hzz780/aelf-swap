@@ -24,7 +24,7 @@ import swapUtils from '../utils/pages/swapUtils';
 import SwapTransactionPopup from '../container/template/Transaction/SwapTransactionPopup';
 import {SWAP_PAGE_SIZE} from '../config/swapConstant';
 const {swapURL} = config;
-const swapRoute = '/api/test';
+const swapRoute = '/api/swap';
 const swapPath = swapURL + swapRoute;
 const Success = result => {
   if (result.Status === 'PENDING' || result.Status === 'MINED') {
@@ -71,7 +71,7 @@ function* getPairsSaga({pair, callBack}) {
             ),
           };
         });
-        console.log(pairArr, '=====pairArr');
+        console.log(pairArr, '=====pair Array');
         if (pair) {
           callBack?.(1, pairArr[0]);
         } else {
@@ -99,13 +99,12 @@ function* getTotalSupplySaga({pairs}) {
         let obj = {};
         for (let i = 0, j = results.length; i < j; i++) {
           const element = results[i];
-          obj[element.symbolPair] = unitConverter.toDecimalLower(
-            element.totalSupply,
+          obj[element.symbolPair] = swapUtils.digits(
+            unitConverter.toDecimalLower(element.totalSupply),
           );
         }
-        console.log(totalSupplys, '=====totalSupplys');
+        console.log(totalSupplys, '=====total Supply');
         if (JSON.stringify(totalSupplys) !== JSON.stringify(obj)) {
-          console.log(obj, '======obj');
           yield put(swapActions.setTotalSupply(obj));
         }
       }
@@ -372,9 +371,9 @@ function* getPairInfoSaga({symbolPair}) {
     if (result.msg === 'success') {
       yield put(swapActions.setPairInfo({[symbolPair]: result.data}));
     }
-    console.log(result, '======result');
+    console.log(result, '======getPairInfoSaga');
   } catch (error) {
-    console.log(error, '=getPairInfoSagagetPairInfoSaga');
+    console.log(error, '=getPairInfoSaga');
   }
 }
 function* getOverviewChartSaga() {
