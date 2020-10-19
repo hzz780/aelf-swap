@@ -328,6 +328,7 @@ const getPair = (A, B, pairs) => {
 };
 const getSharePool = (willPoolToken, totalSupply) => {
   willPoolToken = Number(willPoolToken);
+  totalSupply = Number(totalSupply);
   if (willPoolToken && totalSupply) {
     return getPoolShare(willPoolToken, willPoolToken + totalSupply);
   }

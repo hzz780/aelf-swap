@@ -368,10 +368,11 @@ function* getPairInfoSaga({symbolPair}) {
     const result = yield getFetchRequest(
       `${swapPath}/pairInfo?symbolPair=${symbolPair}`,
     );
+    console.log(symbolPair, '====symbolPair', new Date());
+    console.log(result, '====getPairInfoSaga');
     if (result.msg === 'success') {
       yield put(swapActions.setPairInfo({[symbolPair]: result.data}));
     }
-    console.log(result, '======getPairInfoSaga');
   } catch (error) {
     console.log(error, '=getPairInfoSaga');
   }
