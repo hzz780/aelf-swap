@@ -1,4 +1,4 @@
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useRef, useEffect} from 'react';
 import {useSelector, shallowEqual} from 'react-redux';
 import {createSelector} from 'reselect';
 import aelfUtils from './aelfUtils';
@@ -32,4 +32,32 @@ const useStateToProps = combiner => {
     shallowEqual,
   );
 };
-export {useSetState, useStateToProps};
+const useFetchSetState = (...props) => {
+  const focus = useRef();
+  const [state, setState] = useSetState(...props);
+  useEffect(() => {
+    focus.current = true;
+    return () => (focus.current = false);
+  }, []);
+  const setFetchState = useCallback(
+    (...params) => {
+      focus.current && setState(...params);
+    },
+    [setState],
+  );
+  return [state, setFetchState];
+};
+
+const useFetchState = (...props) => {
+  const focus = useRef();
+  const [state, setState] = useState(...props);
+  useEffect(() => {
+    focus.current = true;
+    return () => (focus.current = false);
+  }, []);
+  const setFetchState = useCallback((...params) => {
+    focus.current && setState(...params);
+  }, []);
+  return [state, setFetchState];
+};
+export {useSetState, useStateToProps, useFetchState, useFetchSetState};

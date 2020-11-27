@@ -14,7 +14,7 @@ import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
 import swapUtils from '../../../../utils/pages/swapUtils';
-import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
+import {useFetchSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import TokenCharts from '../components/TokenCharts';
 import styles from './styles';
 import TitleTool from '../components/TitleTool';
@@ -24,7 +24,6 @@ import TransactionsItem from '../components/TransactionsItem';
 import ToolBar from '../components/ToolBar';
 import PairItem from '../components/PairItem';
 let headerHeight = pTd(1748);
-let isActive = false;
 let totalScroll = 0,
   scroll = {};
 const TokenDetails = props => {
@@ -50,13 +49,10 @@ const TokenDetails = props => {
   });
   const tokenDetails = tokenInfo?.[symbol];
   const [index, setIndex] = useState(0);
-  const [loadCompleted, setLoadCompleted] = useSetState(null, true);
+  const [loadCompleted, setLoadCompleted] = useFetchSetState(null, true);
   const list = useRef();
   const endList = useCallback(
     (v, i) => {
-      if (!isActive) {
-        return;
-      }
       if (v === 1) {
         setLoadCompleted({[i]: false});
       } else {
@@ -96,12 +92,10 @@ const TokenDetails = props => {
   );
   useFocusEffect(
     useCallback(() => {
-      isActive = true;
       upPullRefresh();
       return () => {
         totalScroll = 0;
         scroll = {};
-        isActive = false;
       };
     }, [upPullRefresh]),
   );

@@ -12,7 +12,6 @@ import {AccountsItem, PairsItem, TokensItem} from './components/HomeItems';
 import {CommonHeader, SectionStickyList} from '../../../components/template';
 import {pTd} from '../../../utils/common';
 let headerHeight = pTd(1408);
-let isActive = true;
 let totalScroll = 0,
   scroll = {};
 const Home = () => {
@@ -26,9 +25,6 @@ const Home = () => {
   );
   const endList = useCallback(
     (v, i) => {
-      if (!isActive) {
-        return;
-      }
       if (v === 1) {
         setLoadCompleted({[i]: false});
       } else {

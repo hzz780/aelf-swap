@@ -13,7 +13,11 @@ import {TextL} from '../../../../components/template/CommonText';
 import i18n from 'i18n-js';
 import swapActions from '../../../../redux/swapRedux';
 import {useDispatch} from 'react-redux';
-import {useStateToProps, useSetState} from '../../../../utils/pages/hooks';
+import {
+  useStateToProps,
+  useSetState,
+  useFetchSetState,
+} from '../../../../utils/pages/hooks';
 import AccountCharts from '../components/AccountCharts';
 import styles from './styles';
 import TitleTool from '../components/TitleTool';
@@ -27,7 +31,6 @@ import ToolBar from '../components/ToolBar';
 import PairItem from '../components/PairItem';
 import aelfUtils from '../../../../utils/pages/aelfUtils';
 let headerHeight = pTd(1732);
-let isActive = false;
 let totalScroll = 0,
   scroll = {};
 const AccountDetails = props => {
@@ -38,7 +41,7 @@ const AccountDetails = props => {
     [dispatch],
   );
   const [state, setState] = useSetState({symbolPair: null}, true);
-  const [loadCompleted, setLoadCompleted] = useSetState(null, true);
+  const [loadCompleted, setLoadCompleted] = useFetchSetState(null, true);
   const {symbolPair} = state;
   const address = props.route.params?.address ?? '';
   const {
@@ -57,9 +60,6 @@ const AccountDetails = props => {
   });
   const endList = useCallback(
     (v, i) => {
-      if (!isActive) {
-        return;
-      }
       if (v === 1) {
         setLoadCompleted({[i]: false});
       } else {
@@ -101,12 +101,10 @@ const AccountDetails = props => {
   const {totalSwapped, feePaid, txsCount, pairList} = addressDetails || {};
   useFocusEffect(
     useCallback(() => {
-      isActive = true;
       upPullRefresh();
       return () => {
         totalScroll = 0;
         scroll = {};
-        isActive = false;
       };
     }, [upPullRefresh]),
   );

@@ -11,7 +11,7 @@ import {
 import {pTd} from '../../../../../utils/common';
 import {useFocusEffect} from '@react-navigation/native';
 import {aelfInstance} from '../../../../../utils/common/aelfProvider';
-import {useSetState} from '../../../../../utils/pages/hooks';
+import {useFetchSetState} from '../../../../../utils/pages/hooks';
 import {TextL} from '../../../../../components/template/CommonText';
 import unitConverter from '../../../../../utils/pages/unitConverter';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -22,7 +22,7 @@ import config from '../../../../../config';
 import i18n from 'i18n-js';
 const {contractAddresses} = config;
 const NetworkManagement = props => {
-  const [state, setState] = useSetState({
+  const [state, setState] = useFetchSetState({
     result: null,
     details: null,
     time,
@@ -31,7 +31,6 @@ const NetworkManagement = props => {
   const {params} = props.route || {};
   useFocusEffect(
     useCallback(() => {
-      let isActive = true;
       const fetch = async () => {
         const {TransactionId} = params || {};
         if (TransactionId) {
@@ -39,22 +38,18 @@ const NetworkManagement = props => {
             const txResult = await aelfInstance.chain.getTxResult(
               TransactionId,
             );
-            if (isActive) {
-              setState({
-                result: txResult,
-                details: JSON.parse(txResult.Transaction.Params),
-              });
-            }
+            setState({
+              result: txResult,
+              details: JSON.parse(txResult.Transaction.Params),
+            });
             const blockByHeight = await aelfInstance.chain.getBlockByHeight(
               txResult.BlockNumber || txResult.Transaction.RefBlockNumber,
               false,
             );
             const {Time} = blockByHeight.Header;
-            if (isActive) {
-              setState({
-                time: Time,
-              });
-            }
+            setState({
+              time: Time,
+            });
           } catch (error) {
             console.log(error, '=====error');
             CommonToast.fail(i18n.t('mineModule.transactionFailed'));
@@ -62,9 +57,6 @@ const NetworkManagement = props => {
         }
       };
       fetch();
-      return () => {
-        isActive = false;
-      };
     }, [params, setState]),
   );
   const Element = useMemo(() => {
