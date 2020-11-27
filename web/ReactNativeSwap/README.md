@@ -1,5 +1,5 @@
 # README
-React Native: 0.62.4 with expo SDK
+React Native: 0.63.3 with expo SDK
 
 AccountTemplate is separated from a third-party project for aelf.
 
