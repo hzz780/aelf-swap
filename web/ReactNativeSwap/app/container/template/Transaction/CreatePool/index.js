@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useMemo} from 'react';
+import React, {memo, useCallback} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
 import {
@@ -9,7 +9,7 @@ import {
   CommonToast,
 } from '../../../../components/template';
 import {pTd} from '../../../../utils/common';
-import {TextL, TextM} from '../../../../components/template/CommonText';
+import {TextM} from '../../../../components/template/CommonText';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useSetState, useStateToProps} from '../../../../utils/pages/hooks';
 import i18n from 'i18n-js';
