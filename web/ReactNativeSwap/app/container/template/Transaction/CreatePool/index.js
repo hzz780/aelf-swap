@@ -76,31 +76,31 @@ const CreatePool = () => {
     },
     [allTokens, firstToken, onSelect, secondToken, userBalances],
   );
-  const tokenDetails = useMemo(() => {
-    const List = [
-      {title: i18n.t('swap.tokenName'), subtitle: firstToken?.symbol},
-      {
-        title: i18n.t('swap.totalSupply'),
-        subtitle: `0.948835 ${firstToken?.symbol || ''}`,
-      },
-      {
-        title: i18n.t('swap.circulatingSupply'),
-        subtitle: `0.948835 ${firstToken?.symbol || ''}`,
-      },
-    ];
-    return (
-      <View style={styles.tokenDetailsBox}>
-        {List.map((item, index) => {
-          return (
-            <View key={index} style={styles.tokenDetailsItemBox}>
-              <TextL>{item.title}</TextL>
-              <TextM style={styles.rightText}>{item.subtitle}</TextM>
-            </View>
-          );
-        })}
-      </View>
-    );
-  }, [firstToken]);
+  // const tokenDetails = useMemo(() => {
+  //   const List = [
+  //     {title: i18n.t('swap.tokenName'), subtitle: firstToken?.symbol},
+  //     {
+  //       title: i18n.t('swap.totalSupply'),
+  //       subtitle: `0.948835 ${firstToken?.symbol || ''}`,
+  //     },
+  //     {
+  //       title: i18n.t('swap.circulatingSupply'),
+  //       subtitle: `0.948835 ${firstToken?.symbol || ''}`,
+  //     },
+  //   ];
+  //   return (
+  //     <View style={styles.tokenDetailsBox}>
+  //       {List.map((item, index) => {
+  //         return (
+  //           <View key={index} style={styles.tokenDetailsItemBox}>
+  //             <TextL>{item.title}</TextL>
+  //             <TextM style={styles.rightText}>{item.subtitle}</TextM>
+  //           </View>
+  //         );
+  //       })}
+  //     </View>
+  //   );
+  // }, [firstToken]);
   const onCreatePair = useCallback(() => {
     if (Array.isArray(pairs)) {
       if (
