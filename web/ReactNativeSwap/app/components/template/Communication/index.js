@@ -26,7 +26,7 @@ export const phonecall = function (phoneNumber, prompt) {
     url = 'tel:';
   }
 
-  url += phoneNumber.replace(/\-/g, '');
+  url += phoneNumber.replace(/-/g, '');
   LaunchURL(url);
 };
 
