@@ -111,7 +111,7 @@ const tooltip = {
     color: Colors.primaryColor,
   },
   formatter,
-  position: function(pos, params, el, elRect, size) {
+  position: function (pos, params, el, elRect, size) {
     let obj = {
       top: 30,
     };

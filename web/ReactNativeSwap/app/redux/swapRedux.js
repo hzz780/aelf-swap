@@ -119,43 +119,19 @@ export const INITIAL_STATE = Immutable({
 const _baseSelector = state => state.swap;
 
 export const swapSelectors = {
-  totalSupplys: createSelector(
-    _baseSelector,
-    base => base.totalSupplys,
-  ),
-  pairCandleStick: createSelector(
-    _baseSelector,
-    base => base.pairCandleStick,
-  ),
+  totalSupplys: createSelector(_baseSelector, base => base.totalSupplys),
+  pairCandleStick: createSelector(_baseSelector, base => base.pairCandleStick),
   priceCandleStick: createSelector(
     _baseSelector,
     base => base.priceCandleStick,
   ),
-  pairCharts: createSelector(
-    _baseSelector,
-    base => base.pairCharts,
-  ),
-  overviewInfo: createSelector(
-    _baseSelector,
-    base => base.overviewInfo,
-  ),
-  accountList: createSelector(
-    _baseSelector,
-    base => base.accountList,
-  ),
-  tokenList: createSelector(
-    _baseSelector,
-    base => base.tokenList,
-  ),
-  tokenChart: createSelector(
-    _baseSelector,
-    base => base.tokenChart,
-  ),
+  pairCharts: createSelector(_baseSelector, base => base.pairCharts),
+  overviewInfo: createSelector(_baseSelector, base => base.overviewInfo),
+  accountList: createSelector(_baseSelector, base => base.accountList),
+  tokenList: createSelector(_baseSelector, base => base.tokenList),
+  tokenChart: createSelector(_baseSelector, base => base.tokenChart),
 
-  pairSwap: createSelector(
-    _baseSelector,
-    base => base.pairSwap,
-  ),
+  pairSwap: createSelector(_baseSelector, base => base.pairSwap),
   pairAddLiquidity: createSelector(
     _baseSelector,
     base => base.pairAddLiquidity,
@@ -165,10 +141,7 @@ export const swapSelectors = {
     base => base.pairRemoveLiquidity,
   ),
 
-  symbolSwap: createSelector(
-    _baseSelector,
-    base => base.symbolSwap,
-  ),
+  symbolSwap: createSelector(_baseSelector, base => base.symbolSwap),
   symbolAddLiquidity: createSelector(
     _baseSelector,
     base => base.symbolAddLiquidity,
@@ -177,14 +150,8 @@ export const swapSelectors = {
     _baseSelector,
     base => base.symbolRemoveLiquidity,
   ),
-  accountChart: createSelector(
-    _baseSelector,
-    base => base.accountChart,
-  ),
-  addressSwap: createSelector(
-    _baseSelector,
-    base => base.addressSwap,
-  ),
+  accountChart: createSelector(_baseSelector, base => base.accountChart),
+  addressSwap: createSelector(_baseSelector, base => base.addressSwap),
   addressAddLiquidity: createSelector(
     _baseSelector,
     base => base.addressAddLiquidity,

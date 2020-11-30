@@ -2,7 +2,7 @@
 
 import {Linking, Platform} from 'react-native';
 
-export const phonecall = function(phoneNumber, prompt) {
+export const phonecall = function (phoneNumber, prompt) {
   if (arguments.length !== 2) {
     console.log('you must supply exactly 2 arguments');
     return;
@@ -30,7 +30,7 @@ export const phonecall = function(phoneNumber, prompt) {
   LaunchURL(url);
 };
 
-export const email = function(to, cc, bcc, subject, body) {
+export const email = function (to, cc, bcc, subject, body) {
   let url = 'mailto:';
   let argLength = arguments.length;
 
@@ -103,7 +103,7 @@ export const email = function(to, cc, bcc, subject, body) {
   LaunchURL(url);
 };
 
-export const sms = function(phoneNumber = null, body = null) {
+export const sms = function (phoneNumber = null, body = null) {
   if (arguments.length > 2) {
     console.log(
       'you supplied too many arguments. You can either supply 0 or 1 or 2',
@@ -148,7 +148,7 @@ export const sms = function(phoneNumber = null, body = null) {
   LaunchURL(url);
 };
 
-export const smsWithoutEncoding = function(phoneNumber = null, body = null) {
+export const smsWithoutEncoding = function (phoneNumber = null, body = null) {
   if (arguments.length > 2) {
     console.log(
       'you supplied too many arguments. You can either supply 0 or 1 or 2',
@@ -200,7 +200,7 @@ export const web = (address = null) => {
   LaunchURL(address);
 };
 
-const LaunchURL = function(url) {
+const LaunchURL = function (url) {
   Linking.canOpenURL(url)
     .then(supported => {
       if (!supported) {
@@ -217,9 +217,9 @@ const LaunchURL = function(url) {
     .catch(err => console.warn('An unexpected error happened', err));
 };
 
-const getValidArgumentsFromArray = function(array, type) {
+const getValidArgumentsFromArray = function (array, type) {
   var validValues = [];
-  array.forEach(function(value) {
+  array.forEach(function (value) {
     if (isCorrectType(type, value)) {
       validValues.push(value);
     }
@@ -228,7 +228,7 @@ const getValidArgumentsFromArray = function(array, type) {
   return validValues;
 };
 
-const isCorrectType = function(expected, actual) {
+const isCorrectType = function (expected, actual) {
   return Object.prototype.toString.call(actual).slice(8, -1) === expected;
 };
 

@@ -54,22 +54,10 @@ export const INITIAL_STATE = {
 const _baseSelector = state => state.user;
 
 export const userSelectors = {
-  getKeystore: createSelector(
-    _baseSelector,
-    base => base.keystore,
-  ),
-  getAddress: createSelector(
-    _baseSelector,
-    base => base.address,
-  ),
-  getUserList: createSelector(
-    _baseSelector,
-    base => base.userList,
-  ),
-  getUserName: createSelector(
-    _baseSelector,
-    base => base.userName,
-  ),
+  getKeystore: createSelector(_baseSelector, base => base.keystore),
+  getAddress: createSelector(_baseSelector, base => base.address),
+  getUserList: createSelector(_baseSelector, base => base.userList),
+  getUserName: createSelector(_baseSelector, base => base.userName),
   getUserInfo: createSelector(
     [state => state.user, state => state.contracts],
     (user, settings) => ({
@@ -77,34 +65,13 @@ export const userSelectors = {
       ...settings,
     }),
   ),
-  allowanceList: createSelector(
-    _baseSelector,
-    base => base.allowanceList,
-  ),
-  getPrivateKey: createSelector(
-    _baseSelector,
-    base => base.privateKey,
-  ),
-  getBalance: createSelector(
-    _baseSelector,
-    base => base.balance,
-  ),
-  allTokens: createSelector(
-    _baseSelector,
-    base => base.allTokens,
-  ),
-  userBalances: createSelector(
-    _baseSelector,
-    base => base.userBalances,
-  ),
-  tokenUSD: createSelector(
-    _baseSelector,
-    base => base.tokenUSD,
-  ),
-  allTokenObj: createSelector(
-    _baseSelector,
-    base => base.allTokenObj,
-  ),
+  allowanceList: createSelector(_baseSelector, base => base.allowanceList),
+  getPrivateKey: createSelector(_baseSelector, base => base.privateKey),
+  getBalance: createSelector(_baseSelector, base => base.balance),
+  allTokens: createSelector(_baseSelector, base => base.allTokens),
+  userBalances: createSelector(_baseSelector, base => base.userBalances),
+  tokenUSD: createSelector(_baseSelector, base => base.tokenUSD),
+  allTokenObj: createSelector(_baseSelector, base => base.allTokenObj),
 };
 
 /* ------------- Reducers ------------- */

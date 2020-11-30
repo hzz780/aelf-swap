@@ -15,7 +15,7 @@ function saveFilePath(fileName) {
  */
 function timeoutFetch(fetchPromise, timeout = 20000) {
   //Timeout function
-  const timeoutPromise = new Promise(function(resolve, reject) {
+  const timeoutPromise = new Promise(function (resolve, reject) {
     setTimeout(() => reject(new Error('time out')), timeout);
   });
   //After timeout, a timeout promise is sent. At this time, if the request ends, the request promise is returned. If it is still requested, the timeout promise is returned.

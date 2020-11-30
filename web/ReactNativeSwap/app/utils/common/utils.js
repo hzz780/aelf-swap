@@ -6,7 +6,7 @@ if (Array.prototype.equals) {
 }
 // attach the .equals method to Array's prototype to call it on any array
 // eslint-disable-next-line no-extend-native
-Array.prototype.equals = function(array) {
+Array.prototype.equals = function (array) {
   // if the other array is a falsy value, return
   if (!array) {
     return false;

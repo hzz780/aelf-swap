@@ -21,10 +21,7 @@ export const INITIAL_STATE = {
 const _baseSelector = state => state.contracts;
 
 export const contractsSelectors = {
-  getContracts: createSelector(
-    _baseSelector,
-    base => base.contracts,
-  ),
+  getContracts: createSelector(_baseSelector, base => base.contracts),
 };
 
 /* ------------- Reducers ------------- */

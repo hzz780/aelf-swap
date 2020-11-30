@@ -53,8 +53,8 @@ const AddLiquidity = props => {
     [dispatch],
   );
   const {firstToken, secondToken} = state;
-  const firstBalance = userBalances[(firstToken?.token)] || 0;
-  const secondBalance = userBalances[(secondToken?.token)] || 0;
+  const firstBalance = userBalances[firstToken?.token] || 0;
+  const secondBalance = userBalances[secondToken?.token] || 0;
   const currentPair = swapUtils.getPair(firstToken, secondToken, pairs);
   const Added = currentPair && currentPair?.reserveA && currentPair?.reserveB;
   const totalSupply = totalSupplys?.[currentPair?.symbolPair];

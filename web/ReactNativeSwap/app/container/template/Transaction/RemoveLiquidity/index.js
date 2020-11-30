@@ -288,10 +288,9 @@ const RemoveLiquidity = props => {
           disabled
           title={symbolA}
           style={styles.itemBox}
-          subtitle={`≈ ${swapUtils.detailsPrice(
-            reserveA,
-            reserveB,
-          )} ${symbolB || ''} ($ ${swapUtils.getUSD(symbolA, tokenUSD)})`}
+          subtitle={`≈ ${swapUtils.detailsPrice(reserveA, reserveB)} ${
+            symbolB || ''
+          } ($ ${swapUtils.getUSD(symbolA, tokenUSD)})`}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
@@ -299,10 +298,9 @@ const RemoveLiquidity = props => {
           disabled
           title={symbolB}
           style={styles.itemBox}
-          subtitle={`≈ ${swapUtils.detailsPrice(
-            reserveB,
-            reserveA,
-          )} ${symbolA || ''} ($ ${swapUtils.getUSD(symbolB, tokenUSD)})`}
+          subtitle={`≈ ${swapUtils.detailsPrice(reserveB, reserveA)} ${
+            symbolA || ''
+          } ($ ${swapUtils.getUSD(symbolB, tokenUSD)})`}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />

@@ -38,38 +38,14 @@ export const INITIAL_STATE = Immutable({
 const _baseSelector = state => state.settings;
 
 export const settingsSelectors = {
-  getLanguage: createSelector(
-    _baseSelector,
-    base => base.language,
-  ),
-  getBarStyle: createSelector(
-    _baseSelector,
-    base => base.barStyle,
-  ),
-  getPayPw: createSelector(
-    _baseSelector,
-    base => base.payPw,
-  ),
-  getBiometrics: createSelector(
-    _baseSelector,
-    base => base.biometrics,
-  ),
-  getInform: createSelector(
-    _baseSelector,
-    base => base.inform,
-  ),
-  getCurrencyUnit: createSelector(
-    _baseSelector,
-    base => base.currencyUnit,
-  ),
-  getSecurityLock: createSelector(
-    _baseSelector,
-    base => base.securityLock,
-  ),
-  getCanUse: createSelector(
-    _baseSelector,
-    base => base.canUse,
-  ),
+  getLanguage: createSelector(_baseSelector, base => base.language),
+  getBarStyle: createSelector(_baseSelector, base => base.barStyle),
+  getPayPw: createSelector(_baseSelector, base => base.payPw),
+  getBiometrics: createSelector(_baseSelector, base => base.biometrics),
+  getInform: createSelector(_baseSelector, base => base.inform),
+  getCurrencyUnit: createSelector(_baseSelector, base => base.currencyUnit),
+  getSecurityLock: createSelector(_baseSelector, base => base.securityLock),
+  getCanUse: createSelector(_baseSelector, base => base.canUse),
 };
 
 /* ------------- Reducers ------------- */

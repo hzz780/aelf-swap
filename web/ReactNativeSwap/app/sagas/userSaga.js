@@ -168,7 +168,10 @@ function* onLoginSuccessSaga({data}) {
 function* deleteUserSaga({address}) {
   try {
     let List = [...(yield select(userSelectors.getUserList))];
-    List.splice(List.findIndex(item => item.address === address), 1);
+    List.splice(
+      List.findIndex(item => item.address === address),
+      1,
+    );
     yield put(userActions.setUserList(List));
   } catch (error) {
     console.log(error, 'deleteUserSaga');

@@ -430,12 +430,14 @@ function* getAccountChartSaga({address, range, symbolPair}) {
   try {
     const sPair = symbolPair || 'all';
     console.log(
-      `${swapPath}/accountChart?address=${address}&utcOffset=${swapUtils.getUTCOffset()}&range=${range ||
-        'week'}${symbolPair ? `&symbolPair=${symbolPair}` : ''}`,
+      `${swapPath}/accountChart?address=${address}&utcOffset=${swapUtils.getUTCOffset()}&range=${
+        range || 'week'
+      }${symbolPair ? `&symbolPair=${symbolPair}` : ''}`,
     );
     const result = yield getFetchRequest(
-      `${swapPath}/accountChart?address=${address}&utcOffset=${swapUtils.getUTCOffset()}&range=${range ||
-        'week'}${symbolPair ? `&symbolPair=${symbolPair}` : ''}`,
+      `${swapPath}/accountChart?address=${address}&utcOffset=${swapUtils.getUTCOffset()}&range=${
+        range || 'week'
+      }${symbolPair ? `&symbolPair=${symbolPair}` : ''}`,
     );
     if (result.msg === 'success') {
       const accountChart = yield select(swapSelectors.accountChart);

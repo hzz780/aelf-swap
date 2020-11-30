@@ -75,8 +75,8 @@ const Swap = props => {
     },
   });
   const {swapToken, toSwapToken, tType, conversion} = state;
-  const swapBalance = userBalances[(swapToken?.token)] || 0;
-  const toSwapBalance = userBalances[(toSwapToken?.token)] || 0;
+  const swapBalance = userBalances[swapToken?.token] || 0;
+  const toSwapBalance = userBalances[toSwapToken?.token] || 0;
   const currentPair = swapUtils.getPair(swapToken, toSwapToken, pairs);
   const onModal = useCallback(
     (item, type) => {

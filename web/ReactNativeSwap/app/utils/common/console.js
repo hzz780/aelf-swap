@@ -1,6 +1,6 @@
 //Rewrite js console
-console.log = (function(logFunc) {
-  return function() {
+console.log = (function (logFunc) {
+  return function () {
     // If it is not debug
     if (!__DEV__) {
       return;

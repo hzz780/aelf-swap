@@ -161,20 +161,18 @@ const PairDetails = props => {
         <ListItem
           disabled
           title={symbolA}
-          subtitle={`≈ ${swapUtils.detailsPrice(
-            reserveA,
-            reserveB,
-          )} ${symbolB || ''} ($ ${swapUtils.getUSD(symbolA, tokenUSD)})`}
+          subtitle={`≈ ${swapUtils.detailsPrice(reserveA, reserveB)} ${
+            symbolB || ''
+          } ($ ${swapUtils.getUSD(symbolA, tokenUSD)})`}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />
         <ListItem
           disabled
           title={symbolB}
-          subtitle={`≈ ${swapUtils.detailsPrice(
-            reserveB,
-            reserveA,
-          )} ${symbolA || ''} ($ ${swapUtils.getUSD(symbolB, tokenUSD)})`}
+          subtitle={`≈ ${swapUtils.detailsPrice(reserveB, reserveA)} ${
+            symbolA || ''
+          } ($ ${swapUtils.getUSD(symbolB, tokenUSD)})`}
           rightElement={null}
           subtitleStyle={styles.subtitleStyle}
         />

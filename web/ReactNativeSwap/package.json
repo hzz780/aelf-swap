@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "cd ios && pod update Firebase/CoreOnly && cd ..",
     "eslintInstall": "cp .hooks/* ../../.git/hooks/ && chmod u+x ../../.git/hooks/*",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -74,7 +73,7 @@
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/runtime": "^7.8.4",
-    "@react-native-community/eslint-config": "^0.0.5",
+    "@react-native-community/eslint-config": "^1.1.0",
     "babel-jest": "^25.1.0",
     "eslint": "^6.5.1",
     "jest": "^25.1.0",
