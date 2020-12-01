@@ -42,9 +42,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   leftBox: {
-    height: '100%',
+    paddingVertical: 3,
     paddingHorizontal: 15,
-    justifyContent: 'center',
   },
   titleBox: {
     flex: 2,
