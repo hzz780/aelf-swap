@@ -11,6 +11,7 @@ export const reducers = combineReducers({
 });
 let store;
 export default () => {
+  const middlewares = [];
   let finalReducers = reducers;
   // If rehydration is on use persistReducer otherwise default combineReducers
   if (reduxPersist.active) {
@@ -21,7 +22,12 @@ export default () => {
 
   //saga
   const sagaMiddleware = createSagaMiddleware();
-  store = createStore(finalReducers, applyMiddleware(sagaMiddleware));
+  middlewares.push(sagaMiddleware);
+  if (__DEV__) {
+    const createDebugger = require('redux-flipper').default;
+    middlewares.push(createDebugger());
+  }
+  store = createStore(finalReducers, applyMiddleware(...middlewares));
   sagaMiddleware.run(sagas);
 
   if (module.hot) {
