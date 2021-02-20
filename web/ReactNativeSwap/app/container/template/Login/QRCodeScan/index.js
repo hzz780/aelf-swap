@@ -14,8 +14,10 @@ import {iconScanRect} from '../../../../assets/images';
 import styles, {scanHeight} from './styles';
 import {useSetState} from '../../../../utils/pages/hooks';
 import * as ImagePicker from 'expo-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import navigationService from '../../../../utils/common/navigationService';
 import {permissionDenied} from '../../../../utils/pages';
+import {isIos} from '../../../../utils/common/device';
 const QRCodeLogin = props => {
   const {scanResult} = props.route.params || {};
   const intervalRef = useRef(null);
@@ -76,7 +78,7 @@ const QRCodeLogin = props => {
     [scanResult, scanned, setState],
   );
   /* Identify QR code */
-  const recoginze = useCallback(
+  const recognize = useCallback(
     async images => {
       try {
         const imageData = await BarCodeScanner.scanFromURLAsync(images.uri, [
@@ -88,8 +90,15 @@ const QRCodeLogin = props => {
         } else {
           CommonToast.text(i18n.t('login.qRCodeScan.imageFailed'));
         }
-      } catch {
-        CommonToast.text(i18n.t('login.qRCodeScan.imageFailed'));
+      } catch (error) {
+        const {message, stack} = error;
+        const Error =
+          typeof error === 'string'
+            ? `Error:${error}`
+            : `${message ? `Error: ${message}\n` : ''}${
+                stack ? `Stack: ${stack}` : ''
+              }`;
+        CommonToast.text(Error);
       }
     },
     [onBarCodeRead],
@@ -102,19 +111,41 @@ const QRCodeLogin = props => {
       if (camera.status !== 'granted' && cameraRoll.status !== 'granted') {
         permissionDenied(i18n.t('permission.cameraRoll'));
       } else {
-        const images = await ImagePicker.launchImageLibraryAsync({
-          allowMultipleSelection: false,
-        });
-        if (images.uri) {
-          recoginze(images);
+        if (isIos) {
+          const images = await ImagePicker.launchImageLibraryAsync({
+            allowMultipleSelection: false,
+          });
+          if (images.cancelled) {
+            CommonToast.text(i18n.t('login.qRCodeScan.UserCanceled'));
+          } else if (images.uri) {
+            recognize(images);
+          } else {
+            CommonToast.text(i18n.t('login.qRCodeScan.imageFailed'));
+          }
         } else {
-          CommonToast.text(i18n.t('login.qRCodeScan.imageFailed'));
+          launchImageLibrary({mediaType: 'photo'}, images => {
+            if (images.didCancel) {
+              CommonToast.text(i18n.t('login.qRCodeScan.UserCanceled'));
+            } else if (images.uri) {
+              recognize(images);
+            } else {
+              CommonToast.text(i18n.t('login.qRCodeScan.imageFailed'));
+            }
+          });
         }
       }
-    } catch (err) {
-      CommonToast.text(i18n.t('login.qRCodeScan.imageFailed'));
+    } catch (error) {
+      const {message, stack} = error;
+      const Error =
+        typeof error === 'string'
+          ? `Error:${error}`
+          : `${message ? `Error: ${message}\n` : ''}${
+              stack ? `Stack: ${stack}` : ''
+            }`;
+      console.log(message, stack);
+      CommonToast.text(Error);
     }
-  }, [recoginze]);
+  }, [recognize]);
 
   return (
     <View style={GStyle.container}>
