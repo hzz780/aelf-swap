@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>879358697403-715q2ihigdlg5eb1p8h6vidb6ntrs4pq.apps.googleusercontent.com</string>
+	<string>301384505189-fvg9qnon4gjjnqu63biukafj2phcgqeb.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.879358697403-715q2ihigdlg5eb1p8h6vidb6ntrs4pq</string>
+	<string>com.googleusercontent.apps.301384505189-fvg9qnon4gjjnqu63biukafj2phcgqeb</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAiDSfRy0LwcecLOH-QLMPMD9DaOzgagWU</string>
+	<string>AIzaSyAoc7dz-LHE95MHqOIUyTW7BbPo5lUzyE0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>879358697403</string>
+	<string>301384505189</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.aelf.aelfMarketMaker</string>
 	<key>PROJECT_ID</key>
-	<string>aelf-marketmaker</string>
+	<string>aelf-swap</string>
 	<key>STORAGE_BUCKET</key>
-	<string>aelf-marketmaker.appspot.com</string>
+	<string>aelf-swap.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:879358697403:ios:8c3fa6c60e38d98195ee9e</string>
-	<key>DATABASE_URL</key>
-	<string>https://aelf-marketmaker.firebaseio.com</string>
+	<string>1:301384505189:ios:ca32b3f45c1cd31df0338c</string>
 </dict>
 </plist>

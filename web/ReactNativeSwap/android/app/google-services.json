@@ -1,34 +1,33 @@
 {
   "project_info": {
-    "project_number": "879358697403",
-    "firebase_url": "https://aelf-marketmaker.firebaseio.com",
-    "project_id": "aelf-marketmaker",
-    "storage_bucket": "aelf-marketmaker.appspot.com"
+    "project_number": "301384505189",
+    "project_id": "aelf-swap",
+    "storage_bucket": "aelf-swap.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:879358697403:android:029e1a76b98b810495ee9e",
+        "mobilesdk_app_id": "1:301384505189:android:79d2ce1a96e36ef1f0338c",
         "android_client_info": {
           "package_name": "com.aelf.aelfmarketmaker"
         }
       },
       "oauth_client": [
         {
-          "client_id": "879358697403-0gcot4jtb4a1803jj2imdpo024vusrpu.apps.googleusercontent.com",
+          "client_id": "301384505189-l8l13ur0esi6130b05v285vk5730buts.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD5CPPqCMeGPq4Hkwm77wxo6y-KG-HyBFI"
+          "current_key": "AIzaSyDm7DeSWldUTo7PkkfrE7RIYxn36IaZqWk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "879358697403-0gcot4jtb4a1803jj2imdpo024vusrpu.apps.googleusercontent.com",
+              "client_id": "301384505189-l8l13ur0esi6130b05v285vk5730buts.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
