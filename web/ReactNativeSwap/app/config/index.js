@@ -17,13 +17,13 @@ const keystoreOptions = {
   },
 };
 
-const explorerURL = 'https://explorer-test-side01.aelf.io';
-const walletURL = 'https://tdvv-wallet-test.aelf.io';
-const swapURL = 'https://swap-test.aelf.io';
+// const explorerURL = 'https://explorer-test-side01.aelf.io';
+// const walletURL = 'https://tdvv-wallet-test.aelf.io';
+// const swapURL = 'https://swap-test.aelf.io';
 // test environment
-// const swapURL = 'http://192.168.197.55:7300';
-// const explorerURL = 'http://1.119.195.50:11107';
-// const walletURL = 'http://1.119.195.50:11109';
+const swapURL = 'http://192.168.197.55:8080';
+const explorerURL = 'http://1.119.195.50:11107';
+const walletURL = 'http://1.119.195.50:11109';
 export default {
   commonPrivateKey:
     'b7a6b643f2a66848cb2229bf26c8330d5384e0eac325709a66f4baacc89d3108',
@@ -50,7 +50,8 @@ export default {
   contractNameAddressSets: {
     consensusContract: 'BNPFPPwQ3DE9rwxzdY61Q2utU9FZx9KYUnrYHQqCR6N4LLhUE',
     tokenContract: '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX',
-    swapContract: 'RXcxgSXuagn8RrvhQAV81Z652EEYSwR6JLnqHYJ5UVpEptW8Y',
+    // swapContract: 'RXcxgSXuagn8RrvhQAV81Z652EEYSwR6JLnqHYJ5UVpEptW8Y',
+    swapContract: '2wRDbyVF28VBQoSPgdSEFaL4x7CaXz8TCBujYhgWc9qTMxBE3n',
     //test environment
     // swapContract: '2wRDbyVF28VBQoSPgdSEFaL4x7CaXz8TCBujYhgWc9qTMxBE3n',
   },

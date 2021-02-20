@@ -44,6 +44,11 @@ function* getPairsSaga({pair, callBack}) {
       } else {
         pairs = yield swapContract.GetPairs.call();
       }
+      if (!pairs) {
+        callBack?.(-1);
+        console.log(pairs, 'getPairsSaga-pairs');
+        return;
+      }
       yield put(swapActions.getTotalSupply(pairs));
       const reserves = yield swapContract.GetReserves.call(pairs);
       const {results} = reserves;
@@ -93,6 +98,10 @@ function* getTotalSupplySaga({pairs}) {
     const contracts = yield select(contractsSelectors.getContracts);
     const {swapContract} = contracts || {};
     if (swapContract) {
+      if (!pairs) {
+        console.log(pairs, 'getTotalSupplySaga-pairs');
+        return;
+      }
       const {results} = yield swapContract.GetTotalSupply.call(pairs);
       if (Array.isArray(results)) {
         const totalSupplys = yield select(swapSelectors.totalSupplys);
@@ -854,9 +863,6 @@ function* getAddressRemoveLiquidityListSaga({
     if (loadingPaging && Array.isArray(addressLiquidityList)) {
       pageNum = Math.ceil(addressLiquidityList.length / SWAP_PAGE_SIZE) + 1;
     }
-    console.log(
-      `${swapPath}/liquidityList?address=${address}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=remove`,
-    );
     const result = yield getFetchRequest(
       `${swapPath}/liquidityList?address=${address}&pageNum=${pageNum}&pageSize=${SWAP_PAGE_SIZE}&type=remove`,
     );
