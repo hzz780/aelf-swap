@@ -11,6 +11,7 @@ import {AppState} from 'react-native';
 import navigationService from '../../utils/common/navigationService';
 import config from '../../config';
 import {useStateToProps} from '../../utils/pages/hooks';
+import {BackHandlerHoc} from '../../utils/common/backHandler';
 const {safeTime} = config;
 let timer = null;
 const Tab = createBottomTabNavigator();
@@ -105,4 +106,4 @@ const TabNavigatorStack = () => {
   );
 };
 
-export default TabNavigatorStack;
+export default BackHandlerHoc(TabNavigatorStack);

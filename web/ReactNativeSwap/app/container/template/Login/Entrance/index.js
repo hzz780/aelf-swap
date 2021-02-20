@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {launchScreen} from '../../../../assets/images';
 import {View, ImageBackground} from 'react-native';
 import {
@@ -18,6 +18,8 @@ import {BarCodeScanner} from 'expo-barcode-scanner';
 import {GStyle} from '../../../../assets/theme';
 import {permissionDenied} from '../../../../utils/pages';
 import {useStateToProps} from '../../../../utils/pages/hooks';
+import {BackHandlerComponent} from '../../../../utils/common/backHandler';
+import {isIos} from '../../../../utils/common/device';
 const Entrance = props => {
   const {addAccount} = props.route.params || {};
   const dispatch = useDispatch();
@@ -147,4 +149,15 @@ const Entrance = props => {
     </View>
   );
 };
-export default memo(Entrance);
+const EntranceProps = props => {
+  const {addAccount} = props.route.params || {};
+  if (addAccount && !isIos) {
+    return <Entrance {...props} />;
+  }
+  return (
+    <BackHandlerComponent {...props}>
+      <Entrance {...props} />
+    </BackHandlerComponent>
+  );
+};
+export default EntranceProps;
