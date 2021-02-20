@@ -146,8 +146,11 @@ const Mine = props => {
         activeOpacity={1}
         onPress={() => navigationService.navigate('PersonalCenter')}
         style={styles.topBGStyles}>
-        <TextL style={styles.textTitle}>
-          {i18n.t('mineModule.username')}: {userName}
+        <TextL
+          numberOfLines={1}
+          ellipsizeMode="middle"
+          style={styles.textTitle}>
+          {i18n.t('mineModule.username') + ':' + userName}
         </TextL>
         <Icon name="qrcode" size={pTd(180)} color={Colors.icon1} />
       </Touchable>

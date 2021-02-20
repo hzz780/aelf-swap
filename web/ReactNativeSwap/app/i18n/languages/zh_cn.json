@@ -27,6 +27,9 @@
   "address": "地址",
   "delete": "删除",
   "copied": "复制成功",
+  "latestVersion": "已是最新版本",
+  "toLogin": "去登录",
+  "toLoginTip": "你还未登录，需先登录才能进行相关操作",
   "setPwd": {
     "title": "设置支付密码",
     "setPwd1": "请设置交易密码",
@@ -67,7 +70,7 @@
     },
     "enterPassword": {
       "title": "输入密码",
-      "enterAccountPwd": "请输入账户{{userName}}的密码"
+      "enterAccountPwd": "账户{{userName}}"
     },
     "QRCodeTip": "此二维码是您的账户，丢失二维码等同于丢失账户，您的资产将无法找回，请务必妥善保管您的二维码账户",
     "qRCodeScan": {

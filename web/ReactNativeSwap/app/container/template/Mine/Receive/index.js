@@ -32,7 +32,7 @@ const Receive = () => {
             </TextL>
             <View ref={viewShot} style={styles.shotView}>
               <TextL style={styles.userNameStyle}>
-                {i18n.t('mineModule.username')}:{userName}
+                {i18n.t('mineModule.username')}: {userName}
               </TextL>
               <MyQRCode value={QRCodeValue} />
             </View>

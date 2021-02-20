@@ -27,6 +27,9 @@
   "address": "Address",
   "delete": "Delete",
   "copied": "Copy succeeded",
+  "latestVersion": "Is the latest version",
+  "toLogin": "Go to login",
+  "toLoginTip": "You are not logged in, you need to log in to perform related operations",
   "setPwd": {
     "title": "Set up payment password",
     "setPwd1": "Please set transaction password",
@@ -67,7 +70,7 @@
     },
     "enterPassword": {
       "title": "Enter password",
-      "enterAccountPwd": "Please enter the account password of {{userName}}"
+      "enterAccountPwd": "Account {{userName}}"
     },
     "QRCodeTip": "This QR Code is your account. Losing the QR Code is the same as losing the account. Your assets will also not be recovered. Please back up your QR Code and keep it safe",
     "qRCodeScan": {

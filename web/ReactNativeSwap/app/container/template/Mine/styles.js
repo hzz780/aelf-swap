@@ -12,6 +12,7 @@ export default StyleSheet.create({
     paddingBottom: pTd(30),
   },
   textTitle: {
+    marginHorizontal: 20,
     color: Colors.fontWhite,
   },
   balanceBox: {

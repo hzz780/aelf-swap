@@ -55,7 +55,7 @@ const EnterPassword = props => {
         onLoginSuccess({
           address: params.address,
           keystore: params,
-          userName: params.nickName,
+          userName: params.nickName || aelfUtils.formatAddress(params.address),
           balance: 0,
           saveQRCode: true,
           privateKey,
@@ -86,7 +86,8 @@ const EnterPassword = props => {
         style={styles.container}>
         <TextL style={styles.nickNameStyles}>
           {i18n.t('login.enterPassword.enterAccountPwd', {
-            userName: params.nickName,
+            userName:
+              params.nickName + ':\n' + aelfUtils.formatAddress(params.address),
           })}
         </TextL>
         <Input

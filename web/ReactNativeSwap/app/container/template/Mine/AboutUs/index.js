@@ -1,7 +1,11 @@
 import React, {memo, useMemo} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
 import {GStyle, Colors} from '../../../../assets/theme';
-import {CommonHeader, ListItem} from '../../../../components/template';
+import {
+  CommonHeader,
+  CommonToast,
+  ListItem,
+} from '../../../../components/template';
 import i18n from 'i18n-js';
 import {pTd} from '../../../../utils/common';
 import {appLogo} from '../../../../assets/images';
@@ -25,8 +29,18 @@ const AboutUs = () => {
             })}
           </TextL>
         </View>
-        <ListItem title={i18n.t('mineModule.aboutUs.CheckUpdates')} />
         <ListItem
+          onPress={() => CommonToast.text(i18n.t('latestVersion'))}
+          title={i18n.t('mineModule.aboutUs.CheckUpdates')}
+        />
+        <ListItem
+          onPress={() =>
+            CommonToast.text(
+              i18n.t('mineModule.version', {
+                number: Constants.nativeAppVersion,
+              }),
+            )
+          }
           title={i18n.t('mineModule.aboutUs.versionLog')}
           style={styles.itemBox}
         />

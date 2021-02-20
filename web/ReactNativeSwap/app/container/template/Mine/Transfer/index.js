@@ -37,7 +37,7 @@ const Transfer = props => {
   const {userInfo, userBalances, allTokens} = useStateToProps(base => {
     const {user} = base;
     return {
-      userInfo: {...user},
+      userInfo: {...(user || {})},
       userBalances: user.userBalances,
       allTokens: user.allTokens,
     };

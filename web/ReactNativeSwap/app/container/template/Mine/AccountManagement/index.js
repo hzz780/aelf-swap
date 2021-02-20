@@ -16,6 +16,7 @@ import {pTd} from '../../../../utils/common';
 import userActions from '../../../../redux/userRedux';
 import {useDispatch} from 'react-redux';
 import {useStateToProps} from '../../../../utils/pages/hooks';
+import aelfUtils from '../../../../utils/pages/aelfUtils';
 const AccountManagement = () => {
   const dispatch = useDispatch();
   const [edit, setEdit] = useState(false);
@@ -128,7 +129,7 @@ const AccountManagement = () => {
             onLoginSuccess({
               address,
               keystore,
-              userName,
+              userName: userName || aelfUtils.formatAddress(address),
               balance: 0,
               saveQRCode: true,
               privateKey,
@@ -147,11 +148,13 @@ const AccountManagement = () => {
       ? userList.map(item => ({
           ...item,
           title: item.userName,
-          details: item.address,
+          ...(item.userName !== aelfUtils.formatAddress(item.address)
+            ? {details: item.address}
+            : {}),
         }))
       : [];
     return accountList.map((item, index) => {
-      const current = item.details === address;
+      const current = (item.details || item.userName) === address;
       return (
         <View
           key={index}
