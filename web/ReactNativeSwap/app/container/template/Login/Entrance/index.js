@@ -112,11 +112,13 @@ const Entrance = props => {
               onPress={onRegister}
             />
             <View style={styles.premiumBox}>
-              {/* <TextL
-                onPress={() => navigationService.navigate('AdvancedLogin')}
-                style={styles.premium}>
-                {i18n.t('login.premiumTips')}
-              </TextL> */}
+              <View style={styles.premiumAccountBox}>
+                <TextL
+                  onPress={() => navigationService.navigate('AdvancedLogin')}
+                  style={styles.premium}>
+                  {i18n.t('login.premiumTips')}
+                </TextL>
+              </View>
               {userList && userList.length ? (
                 <View style={styles.loginAccountBox}>
                   <TextL

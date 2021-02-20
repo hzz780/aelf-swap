@@ -38,10 +38,10 @@ const {
   keystoreOptions,
   contractNameAddressSets,
 } = config;
-function* onRegisteredSaga(actios) {
+function* onRegisteredSaga(actions) {
   Loading.show();
   yield delay(500);
-  const {pwd, userName, newWallet} = actios;
+  const {pwd, userName, newWallet, advanced} = actions;
   try {
     const keystoreCustomOptions = isIos
       ? keystoreOptions.ios
@@ -67,12 +67,20 @@ function* onRegisteredSaga(actios) {
       }),
     );
     Loading.hide();
-    CommonToast.success(i18n.t('userSaga.registrationSuccess'));
+    if (advanced) {
+      CommonToast.success(i18n.t('loginSuccess'));
+    } else {
+      CommonToast.success(i18n.t('userSaga.registrationSuccess'));
+    }
     yield delay(500);
     navigationService.reset([{name: 'Tab'}, {name: 'GenerateQRCode'}]);
   } catch (error) {
     Loading.hide();
-    CommonToast.fail(i18n.t('userSaga.registrationFailed'));
+    if (advanced) {
+      CommonToast.success(i18n.t('fail'));
+    } else {
+      CommonToast.fail(i18n.t('userSaga.registrationFailed'));
+    }
     console.log(error, 'onRegisteredSaga');
     return false;
   }
@@ -157,7 +165,7 @@ function* onLoginSuccessSaga({data}) {
       balance: data.balance,
       privateKey: data.privateKey,
     };
-    userList.unshift(userObj);
+    userList = aelfUtils.unshift(userList, userObj);
     userList = removeDuplicates(userList);
     yield put(userActions.setUserData({...userObj, userList}));
     yield put(userActions.setAllowanceList([]));

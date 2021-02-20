@@ -4,7 +4,7 @@ import {createSelector} from 'reselect';
 
 const {Types, Creators} = createActions({
   onAppInit: ['privateKey'],
-  onRegistered: ['newWallet', 'pwd', 'userName'],
+  onRegistered: ['newWallet', 'pwd', 'userName', 'advanced'],
   onLoginSuccess: ['data'],
   setUserData: ['data'],
   getUserBalance: [],

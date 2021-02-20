@@ -68,7 +68,7 @@ const PersonalCenter = () => {
           </View>
           {/* <ListItem
             style={styles.premium}
-            title={i18n.t('mineModule.personalCenter.premiumAccount')}
+            title={i18n.t('mineModule.personalCenter.advancedAccount')}
           /> */}
           {/* <ListItem
             style={styles.authentication}

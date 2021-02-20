@@ -1,26 +1,29 @@
-import React, {memo, useCallback, useEffect} from 'react';
+import React, {useCallback, memo} from 'react';
 import {
-  CommonHeader,
   Touchable,
   Input,
   CommonButton,
   CommonToast,
-} from '../../../../components/template';
-import i18n from 'i18n-js';
-import {useSetState} from '../../../../utils/pages/hooks';
+} from '../../../../../components/template';
 import {View, Keyboard} from 'react-native';
-import GStyle from '../../../../assets/theme/gStyle';
-import styles from './styles';
-import {TextM} from '../../../../components/template/CommonText';
-import {PASSWORD_REG, USERNAME_REG} from '../../../../config/constant';
-import NamePasswordTips from '../NamePasswordTips';
-import userActions from '../../../../redux/userRedux';
-import AElf from 'aelf-sdk';
+import {GStyle} from '../../../../../assets/theme';
+import NamePasswordTips from '../../NamePasswordTips';
+import styles from '../styles';
+import i18n from 'i18n-js';
+import {useSetState} from '../../../../../utils/pages/hooks';
+import {
+  PASSWORD_REG,
+  USERNAME_REG,
+  PRIVATE_KEY_REG,
+} from '../../../../../config/constant';
+import {TextM} from '../../../../../components/template/CommonText';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import aelfUtils from '../../../../../utils/pages/aelfUtils';
+import userActions from '../../../../../redux/userRedux';
 import {useDispatch} from 'react-redux';
-import BottomTerms from '../../Terms/BottomTerms';
-const Registered = () => {
-  const dispatch = useDispatch();
+const PrivateKeyLogin = () => {
   const [state, setState] = useSetState({
+    topInput: '',
     userName: '',
     pwd: '',
     pwdConfirm: '',
@@ -28,12 +31,11 @@ const Registered = () => {
     userNameRule: false,
     pwdRule: false,
     pwdConfirmRule: false,
-    newWallet: null,
-    agree: false,
   });
+  const dispatch = useDispatch();
   const onRegistered = useCallback(
-    (newWallet, pwd, userName) =>
-      dispatch(userActions.onRegistered(newWallet, pwd, userName)),
+    (newWallet, pwd, userName, advanced) =>
+      dispatch(userActions.onRegistered(newWallet, pwd, userName, advanced)),
     [dispatch],
   );
   const userNameBlur = useCallback(() => {
@@ -58,7 +60,7 @@ const Registered = () => {
       setState({pwdDifferent: false});
     }
   }, [setState, state]);
-  const pwdComfirmBlur = useCallback(() => {
+  const pwdConfirmBlur = useCallback(() => {
     const {pwdConfirm, pwd} = state;
     if (!PASSWORD_REG.test(pwdConfirm)) {
       setState({pwdConfirmRule: true});
@@ -72,32 +74,28 @@ const Registered = () => {
       setState({pwdDifferent: false});
     }
   }, [setState, state]);
-  const registered = useCallback(() => {
+  const login = useCallback(() => {
     Keyboard.dismiss();
-    const {userName, pwd, newWallet, pwdConfirm, agree} = state;
-    if (
-      USERNAME_REG.test(userName) &&
-      pwdConfirm === pwd &&
-      PASSWORD_REG.test(pwd) &&
-      agree
-    ) {
-      onRegistered(newWallet, pwd, userName);
-    } else {
-      CommonToast.fail('fail');
+    const {topInput, userName, pwd, pwdConfirm} = state;
+    if (!PRIVATE_KEY_REG.test(topInput)) {
+      return CommonToast.fail(i18n.t('login.advancedLogin.PrivateKeyTip'));
+    }
+    try {
+      const newWallet = aelfUtils.getWalletByPrivateKey(topInput.trim());
+      if (
+        newWallet &&
+        USERNAME_REG.test(userName) &&
+        pwdConfirm === pwd &&
+        PASSWORD_REG.test(pwd)
+      ) {
+        onRegistered(newWallet, pwd, userName, true);
+      } else {
+        CommonToast.fail(i18n.t('fail'));
+      }
+    } catch (error) {
+      CommonToast.fail(i18n.t('login.advancedLogin.PrivateKeyTip'));
     }
   }, [onRegistered, state]);
-  const generateKeystore = useCallback(async () => {
-    let newWallet;
-    try {
-      newWallet = AElf.wallet.createNewWallet();
-    } catch (error) {
-      console.error(error);
-    }
-    setState({newWallet});
-  }, [setState]);
-  useEffect(() => {
-    generateKeystore();
-  }, [generateKeystore]);
   const {
     userNameRule,
     pwdRule,
@@ -106,21 +104,30 @@ const Registered = () => {
     userName,
     pwdConfirm,
     pwd,
-    agree,
   } = state;
   return (
-    <View style={GStyle.container}>
-      <CommonHeader title={i18n.t('login.register')} canBack>
-        <Touchable
-          style={styles.container}
-          activeOpacity={1}
-          onPress={() => Keyboard.dismiss()}>
+    <Touchable
+      style={GStyle.container}
+      activeOpacity={1}
+      onPress={() => Keyboard.dismiss()}>
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps="handled"
+        keyboardOpeningTime={0}
+        extraHeight={50}>
+        <View style={styles.container}>
           <Input
+            multiline={true}
+            style={styles.input}
+            onChangeText={topInput => setState({topInput})}
+            placeholder={i18n.t('login.pleaseEnt')}
+          />
+          <Input
+            maxLength={30}
             leftTitleBox={styles.leftTitleBox}
             leftTextStyle={styles.leftTextStyle}
             leftTitle={i18n.t('login.userName')}
             onBlur={userNameBlur}
-            onChangeText={value => setState({userName: value})}
+            onChangeText={v => setState({userName: v})}
             placeholder={i18n.t('login.pleaseEnt')}
           />
           {userNameRule && (
@@ -132,7 +139,7 @@ const Registered = () => {
             leftTextStyle={styles.leftTextStyle}
             leftTitle={i18n.t('login.newPwd')}
             onBlur={pwdBlur}
-            onChangeText={value => setState({pwd: value})}
+            onChangeText={v => setState({pwd: v})}
             placeholder={i18n.t('login.pleaseEnt')}
           />
           {pwdRule && (
@@ -143,8 +150,8 @@ const Registered = () => {
             leftTitleBox={[styles.leftTitleBox, {marginBottom: 10}]}
             leftTextStyle={styles.leftTextStyle}
             leftTitle={i18n.t('login.confirmPwd')}
-            onBlur={pwdComfirmBlur}
-            onChangeText={value => setState({pwdConfirm: value})}
+            onBlur={pwdConfirmBlur}
+            onChangeText={v => setState({pwdConfirm: v})}
             placeholder={i18n.t('login.pleaseEnt')}
           />
           {pwdConfirmRule && (
@@ -156,23 +163,18 @@ const Registered = () => {
           <NamePasswordTips />
           <CommonButton
             disabled={
-              !agree ||
               !USERNAME_REG.test(userName) ||
               !PASSWORD_REG.test(pwd) ||
               !(pwdConfirm === pwd)
             }
-            onPress={registered}
-            title={i18n.t('login.register')}
+            onPress={login}
+            title={i18n.t('login.login')}
             style={styles.buttonStyles}
           />
-          <BottomTerms
-            value={agree}
-            changeState={() => setState({agree: !agree})}
-          />
-        </Touchable>
-      </CommonHeader>
-    </View>
+        </View>
+      </KeyboardAwareScrollView>
+    </Touchable>
   );
 };
 
-export default memo(Registered);
+export default memo(PrivateKeyLogin);

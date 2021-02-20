@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   leftBox: {
     paddingVertical: 3,
-    paddingHorizontal: 15,
+    paddingLeft: 15,
   },
   titleBox: {
     flex: 2,
@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   rightBox: {
+    flexWrap: 'wrap',
     padding: 5,
   },
 });
@@ -78,6 +79,10 @@ const Header = props => {
     leftTitle,
     leftOnPress,
     titleBox,
+    hideBottomWidth,
+    leftStyle,
+    rightStyle,
+    canBackOnPress,
   } = props;
   return (
     <View
@@ -88,13 +93,21 @@ const Header = props => {
         },
       ]}>
       {statusBar && statusBar}
-      <View style={[styles.headerWrap, headerStyle]}>
-        <View style={styles.leftStyle}>
+      <View
+        style={[
+          styles.headerWrap,
+          headerStyle,
+          // eslint-disable-next-line react-native/no-inline-styles
+          hideBottomWidth && {borderBottomWidth: 0},
+        ]}>
+        <View style={[styles.leftStyle, leftStyle]}>
           {canBack ? (
             <TouchableOpacity
               style={styles.leftBox}
               activeOpacity={0.75}
-              onPress={() => navigationService.goBack()}>
+              onPress={() =>
+                canBackOnPress ? canBackOnPress() : navigationService.goBack()
+              }>
               <Icon name={'left'} size={24} color={Colors.fontColor} />
             </TouchableOpacity>
           ) : null}
@@ -102,7 +115,7 @@ const Header = props => {
             leftElement
           ) : leftTitle ? (
             <Touchable
-              style={styles.rightBox}
+              style={styles.leftBox}
               onPress={() => leftOnPress && leftOnPress()}>
               <TextM style={styles.leftTitleStyle}>{leftTitle}</TextM>
             </Touchable>
@@ -125,7 +138,7 @@ const Header = props => {
           </View>
         )}
 
-        <View style={styles.rightStyle}>
+        <View style={[styles.rightStyle, rightStyle]}>
           {rightElement ? (
             rightElement
           ) : rightTitle ? (

@@ -66,7 +66,11 @@
     },
     "advancedLogin": {
       "title": "Premium account login",
-      "PrivateKey": "Private Key"
+      "PrivateKey": "Private Key",
+      "Mnemonic": "Mnemonic",
+      "PrivateKeyTip": "Please enter the correct private key",
+      "KeyStore": "KeyStore or password error",
+      "MnemonicTip": "Please enter the correct mnemonic"
     },
     "enterPassword": {
       "title": "Enter password",
@@ -166,7 +170,7 @@
     "personalCenter": {
       "title": "Personal Center",
       "qRCodeTip": "This QR Code is your account. Losing the QR Code is the same as losing the account. Your assets will also not be recovered. Please back up your QR Code and keep it safe",
-      "premiumAccount": "Premium account",
+      "advancedAccount": "Premium account",
       "authentication": "Authentication",
       "notCompleted": "Not completed",
       "authenticationTip": "After completing identity authentication, you can get the following rights：\n* You can make a single fiat currency transaction of more than 2,000 CNY or a cumulative amount of more than 10,000 CNY",
@@ -211,6 +215,19 @@
       "to": "To",
       "transactionDetails": "Transaction Details",
       "transferSelfTip": "Can't transfer money to myself"
+    },
+    "AdvancedAccount": {
+      "Export": "Export {{type}}",
+      "PrivateKey": "Private Key",
+      "Mnemonic": "Mnemonic",
+      "Copy": "Copy {{type}}",
+      "Description": "{{type}} description",
+      "PrivateKeyExplanation": "Obtaining the private key is equal to having the ownership of account assets. If your mobile phone is lost, stolen or damaged, the private key can recover your property.",
+      "KeystoreExplanation": "Acquiring keystore and account password is equal to having the ownership of account assets. If your mobile phone is lost, stolen or damaged, keystore and account password can recover your property.",
+      "MnemonicExplanation": "Obtaining the mnemonic is equal to having the ownership of account assets. If your mobile phone is lost, stolen or damaged, the mnemonic can recover your property.",
+      "MnemonicEmptyTip": "This account doesn't have any Mnemonic.",
+      "OfflineStorage": "Offline storage",
+      "OfflineExplanation": "Keep it in a safe offline place;\ndo not share and store {{type}} in the networking environment, such as email, photo album, social application, etc."
     }
   },
   "permission": {
